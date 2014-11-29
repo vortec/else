@@ -1,0 +1,5 @@
+﻿
+- switch from 3rd party NotifyIcon to pure .NET version from the winforms namespace (since we don't use wpf capabilities)
+- hotkey unregistration?
+- setup rawinput, same as c++
+	- make escape global key to close the launcher, even if it's not currently focused
