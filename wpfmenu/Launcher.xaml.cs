@@ -72,9 +72,8 @@ namespace wpfmenu
 
             // bind results to engine.results
             testResultsList.DataContext = engine;
-            
 
-            // tmeporarily show window (we can only bind to a window that has been shown once)
+            // tmeporarily show window (we can only bind to a window that has been shown once.
             Show();
             
             // register message pump

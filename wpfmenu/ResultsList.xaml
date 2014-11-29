@@ -9,7 +9,7 @@
         
     </UserControl.Resources>
     
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Name="scroller">
         <ItemsControl ItemsSource="{Binding results}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

@@ -3,3 +3,10 @@
 - hotkey unregistration?
 - setup rawinput, same as c++
 	- make escape global key to close the launcher, even if it's not currently focused
+- program list
+	- keyboard up/down arrow and enter key to launch
+	- mouse click to launch
+	- scrolling?
+
+- keyboard up/down arrow keyboard for program list
+- 
