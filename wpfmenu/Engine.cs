@@ -7,20 +7,24 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
+using System.Windows.Data;
+using System.ComponentModel;
 
 namespace wpfmenu
 {
     
     
     
-    class Engine
+    public class Engine
     {
         public class Result
         {
             public string Title {get; set;}
             public BitmapSource Icon {get; set;}
+            public int Index {get;set;}
+            public string SubTitle {get; set;}
         }
-        public class ResultsCollection : ObservableCollection<Result>
+        public class ResultsCollection : BindingList<Result>
         {
             public ResultsCollection() : base()
             {
@@ -50,14 +54,32 @@ namespace wpfmenu
             }
             else {
                 var xresults = p.Query(query);
-                
+
+                int i = 0;
                 foreach (var r in xresults) {
+                    r.Index = i++;
                     results.Add(r);
                 }
+                
                 
                 var nresults = xresults.Count;
                 Debug.Print("nresults = {0}", nresults);
             }
+            
         }
     }
 }
+
+
+
+/*
+
+launcher window
+    query input
+    results list
+        navigating
+    engine
+        plugins
+        threading
+    
+*/

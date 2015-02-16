@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define DEBUG
+using System;
 using System.Collections.Generic;
 
 using System.Linq;
@@ -19,8 +20,11 @@ using System.Net;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
+
+
 static class User32
 {
+    
     [DllImport("user32.dll")]
     internal static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
 
@@ -41,14 +45,16 @@ namespace wpfmenu
         Win = 0x0008
     }
     
+    
     public partial class LauncherWindow : Window
     {
+        
         public class TestData {
             public string dummyText;
         }
         TestData x = new TestData();
         
-        Engine engine = new Engine();
+        public Engine engine = new Engine();
         HwndSource hwndSource;
 
         public string dummyText {get;set;}
@@ -70,8 +76,10 @@ namespace wpfmenu
             // hook into escape key
             PreviewKeyDown += new KeyEventHandler(OnKeyDown);
 
-            // bind results to engine.results
-            testResultsList.DataContext = engine;
+            // bind ResultsList to engine.results
+            Results.DataContext = engine;
+            // bind ResultsList to keyboard input
+            PreviewKeyDown += new KeyEventHandler(Results.OnKeyDown);
 
             // tmeporarily show window (we can only bind to a window that has been shown once.
             Show();
@@ -147,7 +155,11 @@ namespace wpfmenu
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape) {
+                #if DEBUG
+                Application.Current.Shutdown();
+                #else
                 Hide();
+                #endif
             }
         }
         public void Query_onChange(object sender, TextChangedEventArgs e)
@@ -169,12 +181,6 @@ namespace wpfmenu
                 Process.Start("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", url);
                 Hide();
             }
-            if (e.Key == Key.Down) {
-
-            }
-            if (e.Key == Key.Up) {
-
-            }
         }
 
         private void onDeactivated(object sender, EventArgs e)
@@ -190,9 +196,18 @@ namespace wpfmenu
         private void onActivated(object sender, EventArgs e)
         {
             Debug.Print("Activating");
+            //var x = testResultsList.itemscontrol.ItemContainerGenerator.ContainerFromIndex(1) as Grid;
+            //x.BringIntoView();
+            
+            
+            //var y = LogicalTreeHelper.FindLogicalNode(testResultsList, "itemscontrol");
+            //var items = LogicalTreeHelper.GetChildren(y);
+            
+            
+            var a= 1+1;
             // clear text box
-            QueryInput.Text = "";
-            QueryInput.Focus();
+            //QueryInput.Text = "";
+            //QueryInput.Focus();
         }
 
         
