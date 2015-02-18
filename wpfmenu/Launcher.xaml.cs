@@ -203,11 +203,9 @@ namespace wpfmenu
             //var y = LogicalTreeHelper.FindLogicalNode(testResultsList, "itemscontrol");
             //var items = LogicalTreeHelper.GetChildren(y);
             
-            
-            var a= 1+1;
             // clear text box
-            //QueryInput.Text = "";
-            //QueryInput.Focus();
+            QueryInput.Text = "";
+            QueryInput.Focus();
         }
 
         

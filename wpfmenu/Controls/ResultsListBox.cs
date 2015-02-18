@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace wpfmenu.Controls
     
     class ResultsListBox : ListBox
     {
-        Engine.ResultsCollection results;
+        BindingList<Engine.Result> results;
         public ResultsListBox() : base()
         {
             SelectionChanged += new SelectionChangedEventHandler(ResultsListBox_SelectionChanged);

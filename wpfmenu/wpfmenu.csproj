@@ -83,7 +83,7 @@
     <Compile Include="NotifyIconViewModel.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
-    <Compile Include="Plugin_Programs.cs" />
+    <Compile Include="Plugins\Plugin_Programs.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>

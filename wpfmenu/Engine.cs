@@ -21,25 +21,15 @@ namespace wpfmenu
         {
             public string Title {get; set;}
             public BitmapSource Icon {get; set;}
-            public int Index {get;set;}
             public string SubTitle {get; set;}
         }
-        public class ResultsCollection : BindingList<Result>
-        {
-            public ResultsCollection() : base()
-            {
-            }
-        }
         
-        // members
-        
-        public ResultsCollection results { get; set; }
-        
+        public BindingList<Result> results;
 
         // constructor
         Plugin_Programs p;
         public Engine() {
-            results = new ResultsCollection();
+            //results = new ResultsCollection();
             
             p = new Plugin_Programs();
             p.Setup();
@@ -57,10 +47,8 @@ namespace wpfmenu
 
                 int i = 0;
                 foreach (var r in xresults) {
-                    r.Index = i++;
                     results.Add(r);
                 }
-                
                 
                 var nresults = xresults.Count;
                 Debug.Print("nresults = {0}", nresults);
