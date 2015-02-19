@@ -24,13 +24,12 @@ namespace wpfmenu
             public string SubTitle {get; set;}
         }
         
-        public BindingList<Result> results;
+        public BindingList<Result> results = new BindingList<Result>();
 
         // constructor
         Plugin_Programs p;
         public Engine() {
-            //results = new ResultsCollection();
-            
+            results = new BindingList<Result>();
             p = new Plugin_Programs();
             p.Setup();
         }

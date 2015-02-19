@@ -57,14 +57,11 @@ namespace wpfmenu
         public Engine engine = new Engine();
         HwndSource hwndSource;
 
-        public string dummyText {get;set;}
         
         
         
         public LauncherWindow()
         {
-            dummyText = "ASDFASDFASDF";
-            
             InitializeComponent();
             
             // setup window
@@ -77,7 +74,7 @@ namespace wpfmenu
             PreviewKeyDown += new KeyEventHandler(OnKeyDown);
 
             // bind ResultsList to engine.results
-            Results.DataContext = engine;
+            //Results.DataContext = engine;
             // bind ResultsList to keyboard input
             PreviewKeyDown += new KeyEventHandler(Results.OnKeyDown);
 
@@ -104,7 +101,7 @@ namespace wpfmenu
             var DEBUG = true;
             if (DEBUG) {
                 Show();
-                engine.QueryChanged("notepad");
+                //engine.QueryChanged("notepad");
             }
         }
 
@@ -164,6 +161,7 @@ namespace wpfmenu
         }
         public void Query_onChange(object sender, TextChangedEventArgs e)
         {
+            Results.SelectedIndex = 0;
             engine.QueryChanged(QueryInput.Text);
         }
         private void query_onKeyDown(object sender, KeyEventArgs e)

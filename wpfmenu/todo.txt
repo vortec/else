@@ -9,4 +9,8 @@
 	- scrolling?
 
 - keyboard up/down arrow keyboard for program list
-- 
+- fix automatic selection of results (currently broken)
+
+
+
+

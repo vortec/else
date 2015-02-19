@@ -14,17 +14,35 @@ namespace wpfmenu.Controls
     
     class ResultsListBox : ListBox
     {
-        BindingList<Engine.Result> results;
+        public BindingList<Engine.Result> results {get;set;}
         public ResultsListBox() : base()
         {
-            SelectionChanged += new SelectionChangedEventHandler(ResultsListBox_SelectionChanged);
-            var parent = Application.Current.MainWindow as LauncherWindow;
-            results = parent.engine.results;
+            SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
+            Loaded += new RoutedEventHandler(OnLoaded);
+            
         }
-        void ResultsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        // todo: wire this up properly.
+        public void OnResultsChange()
         {
+        }
+        void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.Print("OnSelectionChanged");
             ScrollIntoView(SelectedItem);
         }
+        
+        void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (DesignerProperties.GetIsInDesignMode(this)) {
+                return;
+            }
+            Debug.Print("OnLoaded");
+            var parent = Application.Current.MainWindow as LauncherWindow;
+            results = parent.engine.results;
+            DataContext = this;
+        
+        }
+        
         
         public void OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -38,15 +56,12 @@ namespace wpfmenu.Controls
                 else if (e.Key == Key.Down) {
                     inc++;
                 }
-                Debug.Print("inc {0}", inc);
                 if (inc != 0) {
                     var move = SelectedIndex + inc;
                     if (move >= 0 && move < results.Count) {
                         SelectedIndex = move;
-                        Debug.Print("moving {0}", move);
                     }
                 }
-                //Resultsx.ScrollIntoView(parent.engine.results[selectedIndex]);
             }
             
             //var a = Resultsx;
