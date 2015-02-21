@@ -48,17 +48,8 @@ namespace wpfmenu
     
     public partial class LauncherWindow : Window
     {
-        
-        public class TestData {
-            public string dummyText;
-        }
-        TestData x = new TestData();
-        
         public Engine engine = new Engine();
         HwndSource hwndSource;
-
-        
-        
         
         public LauncherWindow()
         {
@@ -167,18 +158,18 @@ namespace wpfmenu
         private void query_onKeyDown(object sender, KeyEventArgs e)
         {
             
-            if (e.Key == Key.Return) {
-                string url = "";
-                var query = QueryInput.Text.Trim();
-                if (query.StartsWith("http")) {
-                    url = query;
-                }
-                else {
-                    url = "http://google.co.uk/search?q=" + WebUtility.UrlEncode(query);
-                }
-                Process.Start("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", url);
-                Hide();
-            }
+            //if (e.Key == Key.Return) {
+            //    string url = "";
+            //    var query = QueryInput.Text.Trim();
+            //    if (query.StartsWith("http")) {
+            //        url = query;
+            //    }
+            //    else {
+            //        url = "http://google.co.uk/search?q=" + WebUtility.UrlEncode(query);
+            //    }
+            //    Process.Start("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", url);
+            //    Hide();
+            //}
         }
 
         private void onDeactivated(object sender, EventArgs e)

@@ -20,8 +20,54 @@ It might be better to convert them when needed, and cache MRU style.
 */
 namespace wpfmenu
 {
-    class Plugin_Programs
+    
+    abstract class Plugin
     {
+        
+        abstract public void Setup();
+        abstract public List<Engine.Result> Query(string query);
+        abstract public void Launch(Engine.Result result);
+        public List<string> tokens = new List<string>();
+    }
+    class Plugin_Programs : Plugin
+    {
+        
+        public override void Setup()
+        {
+            tokens = new List<String>(){
+                "asdf",
+                "asdf2"
+            };
+            Debug.Print("Scanning for programs..");
+            if (true) {
+                ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
+                ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
+            }
+        }
+        // launcher gives us a query, we respond with results..
+        public override List<Engine.Result> Query(string query)
+        {
+            var x = tokens.Where(f => f.StartsWith(query));
+            List<Engine.Result> results = new List<Engine.Result>();
+            //var n = 0;
+            //foreach (var x in found) {
+            //    if (x.label.ToLower().Contains(query.ToLower()) && n < 10) {
+            //        var item = new Engine.Result();
+            //        item.Title = x.label;
+            //        item.Icon = x.icon;
+            //        n += 1;
+            //        results.Add(item);
+            //    }
+            //}
+            return results;
+        }
+        public override void Launch(Engine.Result result)
+        {
+            Debug.Print(ToString());
+        }
+
+        //////////
+
         public struct ProgramMetaData {
             //public string iconLocation;
             public string exePath;
@@ -30,18 +76,9 @@ namespace wpfmenu
             //public Icon icon;
             public BitmapSource icon;
         }
-
-        List<ProgramMetaData> found = new List<ProgramMetaData>();
-        public void Setup()
-        {
-            Debug.Print("Scanning for programs..");
-            if (true) {
-                ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
-                ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
-            }
-            
-        }
+        
         // scan directory for .lnk files
+        List<ProgramMetaData> found = new List<ProgramMetaData>();
         void ProcessDirectory(string dir)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(dir);
@@ -51,7 +88,6 @@ namespace wpfmenu
                 }
             }
         }
-        
         // inspect a .lnk (windows shortcut) and store data for later searching
         void ResolveShortcut(FileInfo file)
         {
@@ -78,21 +114,14 @@ namespace wpfmenu
             found.Add(link);
         }
         
-        // launcher gives us a query, we respond with results..
-        public List<Engine.Result> Query(string query)
-        {
-            List<Engine.Result> results = new List<Engine.Result>();
-            var n = 0;
-            foreach (var x in found) {
-                if (x.label.ToLower().Contains(query.ToLower()) && n < 10) {
-                    var item = new Engine.Result();
-                    item.Title = x.label;
-                    item.Icon = x.icon;
-                    n += 1;
-                    results.Add(item);
-                }
-            }
-            return results;
-        }
+        
+
+
+        
+        
+        
+        
+        
+        
     }
 }

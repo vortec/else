@@ -15,11 +15,11 @@ namespace wpfmenu.Controls
     class ResultsListBox : ListBox
     {
         public BindingList<Engine.Result> results {get;set;}
+        public Engine engine;
         public ResultsListBox() : base()
         {
             SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
             Loaded += new RoutedEventHandler(OnLoaded);
-            
         }
         // todo: wire this up properly.
         public void OnResultsChange()
@@ -27,10 +27,14 @@ namespace wpfmenu.Controls
         }
         void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Debug.Print("OnSelectionChanged");
+            // ensure selected item is scrolled into view
             ScrollIntoView(SelectedItem);
         }
-        
+        void OnResultsUpdated()
+        {
+            // ensure first item is selected when new results are added
+            SelectedIndex = 0;
+        }
         void OnLoaded(object sender, RoutedEventArgs e)
         {
             if (DesignerProperties.GetIsInDesignMode(this)) {
@@ -38,47 +42,38 @@ namespace wpfmenu.Controls
             }
             Debug.Print("OnLoaded");
             var parent = Application.Current.MainWindow as LauncherWindow;
-            results = parent.engine.results;
+            engine = parent.engine;
+            results = engine.results;
             DataContext = this;
-        
+            engine.ResultsUpdated += OnResultsUpdated;
         }
-        
-        
         public void OnKeyDown(object sender, KeyEventArgs e)
         {
+            // handle keyboard input for selecting results
             var parent = Application.Current.MainWindow as LauncherWindow;
             
             if (results.Count > 0) {
-                var inc = 0;
-                if (e.Key == Key.Up) {
-                    inc--;
+                
+                if (e.Key == Key.Enter || e.Key == Key.Return) {
+                    // launch selected item
+                    engine.Launch(results[SelectedIndex]);
                 }
-                else if (e.Key == Key.Down) {
-                    inc++;
-                }
-                if (inc != 0) {
-                    var move = SelectedIndex + inc;
-                    if (move >= 0 && move < results.Count) {
-                        SelectedIndex = move;
+                else {
+                    var inc = 0;
+                    if (e.Key == Key.Up) {
+                        inc--;
+                    }
+                    else if (e.Key == Key.Down) {
+                        inc++;
+                    }
+                    if (inc != 0) {
+                        var move = SelectedIndex + inc;
+                        if (move >= 0 && move < results.Count) {
+                            SelectedIndex = move;
+                        }
                     }
                 }
             }
-            
-            //var a = Resultsx;
-            //var item = Resultsx.ItemContainerGenerator.ContainerFromIndex(selectedIndex) as ListBoxItem;
-            //if (item != null) {
-            //    item.IsSelected = true;
-            //}
-            //else {
-            //    Debug.Print("bad idx: {0}", selectedIndex);
-            //}
-            //var s = (Style)this.Resources["teststyle"];
-            //if (s != null) {
-            //    //item.Style = s;
-            //}
-            //else {
-            //    Debug.Print("no style named teststyle");
-            //}
         }
     }
 }

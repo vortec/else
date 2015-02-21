@@ -14,3 +14,33 @@
 
 
 
+
+
+
+
+
+essentials:
+	- applications
+	- preferences (control panel stuff?)
+	- files (documents, images, contacts)
+web search:
+	- full url
+	- plugins
+		- google
+		- pictures of
+		- maps
+		- translate {}
+		- gmail
+		- gmail {}
+
+calculator
+dictionary
+shell (>)
+system:
+	recycle bin
+	logout
+	sleep
+	lock
+	restart
+	shut down
+default scope
