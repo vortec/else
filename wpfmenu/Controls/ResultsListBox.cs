@@ -14,7 +14,8 @@ namespace wpfmenu.Controls
     
     class ResultsListBox : ListBox
     {
-        public BindingList<Engine.Result> results {get;set;}
+        
+        public BindingList<Plugins.QueryResult> results {get;set;}
         public Engine engine;
         public ResultsListBox() : base()
         {
@@ -32,6 +33,7 @@ namespace wpfmenu.Controls
         }
         void OnResultsUpdated()
         {
+            Debug.Print("nresults2 = {0}", results.Count);
             // ensure first item is selected when new results are added
             SelectedIndex = 0;
         }
@@ -43,7 +45,7 @@ namespace wpfmenu.Controls
             Debug.Print("OnLoaded");
             var parent = Application.Current.MainWindow as LauncherWindow;
             engine = parent.engine;
-            results = engine.results;
+            results = engine.resultsCollection;
             DataContext = this;
             engine.ResultsUpdated += OnResultsUpdated;
         }

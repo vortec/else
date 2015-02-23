@@ -18,26 +18,14 @@ Currently we load and convert each icon to a BitmapSource, this consumed memory.
 It might be better to convert them when needed, and cache MRU style.
 
 */
-namespace wpfmenu
+namespace wpfmenu.Plugins
 {
     
-    abstract class Plugin
+    class Programs : Plugin
     {
-        
-        abstract public void Setup();
-        abstract public List<Engine.Result> Query(string query);
-        abstract public void Launch(Engine.Result result);
-        public List<string> tokens = new List<string>();
-    }
-    class Plugin_Programs : Plugin
-    {
-        
         public override void Setup()
         {
-            tokens = new List<String>(){
-                "asdf",
-                "asdf2"
-            };
+            tokens = new List<string>{"*"};
             Debug.Print("Scanning for programs..");
             if (true) {
                 ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
@@ -45,11 +33,16 @@ namespace wpfmenu
             }
         }
         // launcher gives us a query, we respond with results..
-        public override List<Engine.Result> Query(string query)
+        public override List<QueryResult> Query(Engine.QueryInfo query)
         {
-            var x = tokens.Where(f => f.StartsWith(query));
-            List<Engine.Result> results = new List<Engine.Result>();
-            //var n = 0;
+            
+            List<QueryResult> results = new List<QueryResult>();
+            if (query.tokenmatch == TokenMatch.Exact) {
+                results.Add(new QueryResult{Title="Programs exact match"});
+            }
+            else {
+                results.Add(new QueryResult{Title="Programs partial match"});
+            }
             //foreach (var x in found) {
             //    if (x.label.ToLower().Contains(query.ToLower()) && n < 10) {
             //        var item = new Engine.Result();
@@ -61,9 +54,10 @@ namespace wpfmenu
             //}
             return results;
         }
-        public override void Launch(Engine.Result result)
+        
+        public override LaunchResult Launch(QueryResult result)
         {
-            Debug.Print(ToString());
+            return null;
         }
 
         //////////
@@ -113,15 +107,5 @@ namespace wpfmenu
             }
             found.Add(link);
         }
-        
-        
-
-
-        
-        
-        
-        
-        
-        
     }
 }

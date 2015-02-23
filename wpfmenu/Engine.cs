@@ -9,58 +9,84 @@ using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using System.Windows.Data;
 using System.ComponentModel;
+using System.Windows;
 
 namespace wpfmenu
 {
+    
     public class Engine
     {
-        public class Result
-        {
-            public string Title {get; set;}
-            public BitmapSource Icon {get; set;}
-            public string SubTitle {get; set;}
-        }
         
-        public BindingList<Result> results = new BindingList<Result>();
+        
+        
+        public BindingList<Plugins.QueryResult> resultsCollection = new BindingList<Plugins.QueryResult>();
         public delegate void Handler();
         public event Handler ResultsUpdated;
         
-        List<Plugin> plugins = new List<Plugin>();
+        List<Plugins.Plugin> plugins = new List<Plugins.Plugin>();
 
 
         // constructor
         
         public Engine() {
-            results = new BindingList<Result>();
-            results.RaiseListChangedEvents = false;
-            var p = new Plugin_Programs();
-            p.Setup();
-            plugins.Add(p);
-
-            
+            resultsCollection = new BindingList<Plugins.QueryResult>();
+            //resultsCollection.RaiseListChangedEvents = false;
+            plugins = new List<Plugins.Plugin>{
+                //new Plugins.Programs(),
+                new Plugins.Web()
+            };
+            plugins.ForEach(p => {
+                p.Setup();
+            });
         }
-        public void Launch(Result r)
+        public void Launch(Plugins.QueryResult r)
         {
-            Debug.Print("launching {0}", r);
+            var result = r.source.Launch(r);
+            if (result.close) {
+                var parent = Application.Current.MainWindow as LauncherWindow;
+                parent.Hide();
+            }
         }
+        public class QueryInfo {
+            public string raw;
+            public string[] parts;
+            public string first;
+            public int length;
+            public Plugins.TokenMatch tokenmatch;
+            public QueryInfo(string query)
+            {
+                raw = query;
+                parts = query.Split(' ');
+                length = query.Length;
+                if (length > 0) {
+                    first = parts[0];
+                }
+            }
+        }
+        
         public void QueryChanged(string query)
         {
-            results.Clear();
-            query = query.Trim();
+            var info = new QueryInfo(query);
+            resultsCollection.Clear();
 
-            if (query.Length == 0) {
-                // empty
-            }
-            else {
-                var xa = plugins.Select(obj => obj.Query(query));
-                foreach (var x in xa) {
-                    foreach (var y in x) {
-                        results.Add(y);
+            // not empty
+            if (info.length != 0) {
+                // check plugins for matches
+                foreach (var p in plugins) {
+                    info.tokenmatch = p.CheckToken(info);
+                    // partial or exact match, ignore partial?
+                    if (info.tokenmatch > Plugins.TokenMatch.None) {
+                        var results = p.Query(info);
+                        foreach (var r in results) {
+                            resultsCollection.Add(r);
+                        }
                     }
                 }
-                ResultsUpdated.Invoke();
             }
+            
+
+            Debug.Print("nresults = {0}", resultsCollection.Count());
+            ResultsUpdated.Invoke();
         }
     }
 }
-

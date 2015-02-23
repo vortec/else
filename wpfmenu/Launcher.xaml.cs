@@ -16,7 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Threading;
-using System.Net;
+
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
@@ -143,11 +143,7 @@ namespace wpfmenu
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Escape) {
-                #if DEBUG
-                Application.Current.Shutdown();
-                #else
                 Hide();
-                #endif
             }
         }
         public void Query_onChange(object sender, TextChangedEventArgs e)

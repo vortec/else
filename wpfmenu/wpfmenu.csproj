@@ -64,6 +64,7 @@
     </Compile>
     <Compile Include="Controls\ResultsListBox.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IconTools.cs" />
     <Compile Include="Launcher.xaml.cs">
@@ -83,7 +84,9 @@
     <Compile Include="NotifyIconViewModel.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>
-    <Compile Include="Plugins\Plugin_Programs.cs" />
+    <Compile Include="Plugins\Plugin.cs" />
+    <Compile Include="Plugins\Programs.cs" />
+    <Compile Include="Plugins\Web.cs" />
     <Compile Include="SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
