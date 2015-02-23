@@ -1,4 +1,4 @@
-﻿#define DEBUG
+﻿
 using System;
 using System.Collections.Generic;
 
@@ -64,8 +64,6 @@ namespace wpfmenu
             // hook into escape key
             PreviewKeyDown += new KeyEventHandler(OnKeyDown);
 
-            // bind ResultsList to engine.results
-            //Results.DataContext = engine;
             // bind ResultsList to keyboard input
             PreviewKeyDown += new KeyEventHandler(Results.OnKeyDown);
 
@@ -88,12 +86,7 @@ namespace wpfmenu
 
             // hide window
             Hide();
-
-            var DEBUG = true;
-            if (DEBUG) {
-                Show();
-                //engine.QueryChanged("notepad");
-            }
+            //Show();
         }
 
         /* Hotkeys */
@@ -151,23 +144,7 @@ namespace wpfmenu
             Results.SelectedIndex = 0;
             engine.QueryChanged(QueryInput.Text);
         }
-        private void query_onKeyDown(object sender, KeyEventArgs e)
-        {
-            
-            //if (e.Key == Key.Return) {
-            //    string url = "";
-            //    var query = QueryInput.Text.Trim();
-            //    if (query.StartsWith("http")) {
-            //        url = query;
-            //    }
-            //    else {
-            //        url = "http://google.co.uk/search?q=" + WebUtility.UrlEncode(query);
-            //    }
-            //    Process.Start("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe", url);
-            //    Hide();
-            //}
-        }
-
+        
         private void onDeactivated(object sender, EventArgs e)
         {
             //Close();
@@ -181,14 +158,7 @@ namespace wpfmenu
         private void onActivated(object sender, EventArgs e)
         {
             Debug.Print("Activating");
-            //var x = testResultsList.itemscontrol.ItemContainerGenerator.ContainerFromIndex(1) as Grid;
-            //x.BringIntoView();
-            
-            
-            //var y = LogicalTreeHelper.FindLogicalNode(testResultsList, "itemscontrol");
-            //var items = LogicalTreeHelper.GetChildren(y);
-            
-            // clear text box
+            // clear query
             QueryInput.Text = "";
             QueryInput.Focus();
         }

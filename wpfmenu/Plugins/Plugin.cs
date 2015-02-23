@@ -24,7 +24,9 @@ namespace wpfmenu.Plugins
         public string SubTitle {get; set;}
         public Plugins.Plugin source;
         public string data;
+    
     }
+    // base plugin class
     public abstract class Plugin
     {
         abstract public void Setup();

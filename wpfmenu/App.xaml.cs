@@ -19,10 +19,8 @@ namespace wpfmenu
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            
             notifyIcon = (TaskbarIcon) FindResource("NotifyIcon");
             Current.MainWindow = new LauncherWindow();
-            //Current.MainWindow.Show();
         }
 
         protected override void OnExit(ExitEventArgs e)

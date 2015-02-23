@@ -19,7 +19,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" Name="QueryInput" Text="TextBox" FontSize="24" KeyDown="query_onKeyDown" VerticalAlignment="Top" Padding="6,3" FontFamily="Segoe WP Semibold"/>
+        <TextBox Grid.Row="0" Name="QueryInput" Text="TextBox" FontSize="24" VerticalAlignment="Top" Padding="6,3" FontFamily="Segoe WP Semibold"/>
         
         <Controls:ResultsListBox Grid.Row="1" ItemsSource="{Binding results}" Focusable="False" x:Name="Results" VirtualizingPanel.IsVirtualizing="False">
             <ListBox.ItemContainerStyle>

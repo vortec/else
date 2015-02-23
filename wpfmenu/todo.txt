@@ -8,17 +8,6 @@
 	- mouse click to launch
 	- scrolling?
 
-- keyboard up/down arrow keyboard for program list
-- fix automatic selection of results (currently broken)
-
-
-
-
-
-
-
-
-
 essentials:
 	- applications
 	- preferences (control panel stuff?)
