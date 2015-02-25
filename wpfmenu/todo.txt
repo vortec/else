@@ -1,26 +1,21 @@
-﻿
-- switch from 3rd party NotifyIcon to pure .NET version from the winforms namespace (since we don't use wpf capabilities)
-- hotkey unregistration?
-- setup rawinput, same as c++
-	- make escape global key to close the launcher, even if it's not currently focused
-- program list
-	- keyboard up/down arrow and enter key to launch
-	- mouse click to launch
-	- scrolling?
+﻿switch from 3rd party NotifyIcon to pure .NET version from the winforms namespace
+hotkey unregistration?
+setup rawinput, same as c++
+	make escape global key to close the launcher, even if it's not currently focused
 
 essentials:
-	- applications
-	- preferences (control panel stuff?)
-	- files (documents, images, contacts)
+	applications
+	preferences (control panel stuff?)
+	files (documents, images, contacts)
 web search:
-	- full url
-	- plugins
-		- google
-		- pictures of
-		- maps
-		- translate {}
-		- gmail
-		- gmail {}
+	full url
+	plugins
+		google
+		pictures of
+		maps
+		translate {}
+		gmail
+		gmail {}
 
 calculator
 dictionary
@@ -32,4 +27,3 @@ system:
 	lock
 	restart
 	shut down
-default scope

@@ -21,6 +21,7 @@ using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
 
+using GalaSoft.MvvmLight.Messaging;
 
 static class User32
 {
@@ -30,11 +31,17 @@ static class User32
 
     [DllImport("user32.dll")]
     internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+    
+    
 }
 
 namespace wpfmenu
 {
+    
     using KeyCombo = Tuple<Modifier, Key>;
+    
+    
+    
     [Flags]
     public enum Modifier
     {
@@ -57,17 +64,16 @@ namespace wpfmenu
             
             // setup window
             Topmost = true;
-            
+
             // callback when query changes
             QueryInput.TextChanged += Query_onChange;
 
             // hook into escape key
             PreviewKeyDown += new KeyEventHandler(OnKeyDown);
-
             // bind ResultsList to keyboard input
             PreviewKeyDown += new KeyEventHandler(Results.OnKeyDown);
 
-            // tmeporarily show window (we can only bind to a window that has been shown once.
+            // temporarily show window (we can only bind to a window that has been shown once.
             Show();
             
             // register message pump
@@ -86,7 +92,18 @@ namespace wpfmenu
 
             // hide window
             Hide();
-            //Show();
+
+            // listen for messages
+            Messenger.Default.Register<NotificationMessage>(this, "launcher", message => {
+                switch (message.Notification) {
+                    case "do something":
+                        Debug.Print("do something");
+                        break;
+                }
+
+                var method = message.Notification;
+                Debug.WriteLine("Launcher method.. {0}", method);
+            });
         }
 
         /* Hotkeys */
@@ -145,17 +162,17 @@ namespace wpfmenu
             engine.QueryChanged(QueryInput.Text);
         }
         
-        private void onDeactivated(object sender, EventArgs e)
+        private void OnDeactivated(object sender, EventArgs e)
         {
             //Close();
         }
 
-        private void onLostFocus(object sender, RoutedEventArgs e)
+        private void OnLostFocus(object sender, RoutedEventArgs e)
         {
             //Debug.Print("LOST FOCUS");
         }
 
-        private void onActivated(object sender, EventArgs e)
+        private void OnActivated(object sender, EventArgs e)
         {
             Debug.Print("Activating");
             // clear query

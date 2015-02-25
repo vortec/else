@@ -15,7 +15,7 @@ namespace wpfmenu.Controls
     class ResultsListBox : ListBox
     {
         
-        public BindingList<Plugins.QueryResult> results {get;set;}
+        public BindingList<Plugins.ResultData> results {get;set;}
         public Engine engine;
         public ResultsListBox() : base()
         {

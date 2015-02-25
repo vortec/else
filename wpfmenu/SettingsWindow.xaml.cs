@@ -23,7 +23,6 @@ namespace wpfmenu
     {
         public SettingsWindow()
         {
-            
             InitializeComponent();
         }
     }

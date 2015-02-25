@@ -33,16 +33,11 @@ namespace wpfmenu.Plugins
             }
         }
         // launcher gives us a query, we respond with results..
-        public override List<QueryResult> Query(Engine.QueryInfo query)
+        public override List<ResultData> Query(Engine.QueryInfo query)
         {
             
-            List<QueryResult> results = new List<QueryResult>();
-            if (query.tokenmatch == TokenMatch.Exact) {
-                results.Add(new QueryResult{Title="Programs exact match"});
-            }
-            else {
-                results.Add(new QueryResult{Title="Programs partial match"});
-            }
+            List<ResultData> results = new List<ResultData>();
+            
             //foreach (var x in found) {
             //    if (x.label.ToLower().Contains(query.ToLower()) && n < 10) {
             //        var item = new Engine.Result();
@@ -55,7 +50,7 @@ namespace wpfmenu.Plugins
             return results;
         }
         
-        public override LaunchResult Launch(QueryResult result)
+        public override LaunchResult Launch(Engine.QueryInfo query, ResultData result)
         {
             return null;
         }

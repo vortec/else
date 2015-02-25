@@ -12,5 +12,9 @@ namespace wpfmenu
         {
             return "'" + str + "'";
         }
+        public static bool IsEmpty(this String str)
+        {
+            return str == null || str.Length == 0;
+        }
     }
 }
