@@ -100,6 +100,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Messages.cs" />
     <Compile Include="NotifyIconViewModel.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>

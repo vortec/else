@@ -33,10 +33,10 @@ namespace wpfmenu.Plugins
             }
         }
         // launcher gives us a query, we respond with results..
-        public override List<ResultData> Query(Engine.QueryInfo query)
+        public override List<Result> Query(Engine.QueryInfo query)
         {
             
-            List<ResultData> results = new List<ResultData>();
+            List<Result> results = new List<Result>();
             
             //foreach (var x in found) {
             //    if (x.label.ToLower().Contains(query.ToLower()) && n < 10) {
@@ -49,13 +49,6 @@ namespace wpfmenu.Plugins
             //}
             return results;
         }
-        
-        public override LaunchResult Launch(Engine.QueryInfo query, ResultData result)
-        {
-            return null;
-        }
-
-        //////////
 
         public struct ProgramMetaData {
             //public string iconLocation;

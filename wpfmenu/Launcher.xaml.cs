@@ -25,22 +25,15 @@ using GalaSoft.MvvmLight.Messaging;
 
 static class User32
 {
-    
     [DllImport("user32.dll")]
     internal static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
-
     [DllImport("user32.dll")]
     internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-    
-    
 }
 
 namespace wpfmenu
 {
-    
     using KeyCombo = Tuple<Modifier, Key>;
-    
-    
     
     [Flags]
     public enum Modifier
@@ -73,7 +66,7 @@ namespace wpfmenu
             // bind ResultsList to keyboard input
             PreviewKeyDown += new KeyEventHandler(Results.OnKeyDown);
 
-            // temporarily show window (we can only bind to a window that has been shown once.
+            // temporarily show window (we can only bind to a window that has been shown once).
             Show();
             
             // register message pump
@@ -94,15 +87,12 @@ namespace wpfmenu
             Hide();
 
             // listen for messages
-            Messenger.Default.Register<NotificationMessage>(this, "launcher", message => {
-                switch (message.Notification) {
-                    case "do something":
-                        Debug.Print("do something");
-                        break;
-                }
-
-                var method = message.Notification;
-                Debug.WriteLine("Launcher method.. {0}", method);
+            Messenger.Default.Register<Messages.RewriteQuery>(this, message => {
+                QueryInput.Text = message.data;
+                QueryInput.CaretIndex = QueryInput.Text.Length;
+            });
+            Messenger.Default.Register<Messages.HideLauncher>(this, message => {
+                Hide();
             });
         }
 
@@ -148,7 +138,7 @@ namespace wpfmenu
             }
             return IntPtr.Zero;
         }
-
+        
         // callbacks...
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
@@ -161,17 +151,14 @@ namespace wpfmenu
             Results.SelectedIndex = 0;
             engine.QueryChanged(QueryInput.Text);
         }
-        
         private void OnDeactivated(object sender, EventArgs e)
         {
             //Close();
         }
-
         private void OnLostFocus(object sender, RoutedEventArgs e)
         {
             //Debug.Print("LOST FOCUS");
         }
-
         private void OnActivated(object sender, EventArgs e)
         {
             Debug.Print("Activating");

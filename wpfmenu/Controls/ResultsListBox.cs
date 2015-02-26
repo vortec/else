@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows;
-
+using GalaSoft.MvvmLight.Messaging;
 
 namespace wpfmenu.Controls
 {
@@ -15,12 +15,15 @@ namespace wpfmenu.Controls
     class ResultsListBox : ListBox
     {
         
-        public BindingList<Plugins.ResultData> results {get;set;}
+        public BindingList<Plugins.Result> results {get;set;}
         public Engine engine;
         public ResultsListBox() : base()
         {
             SelectionChanged += new SelectionChangedEventHandler(OnSelectionChanged);
             Loaded += new RoutedEventHandler(OnLoaded);
+            Messenger.Default.Register<NotificationMessage>(this, "results_updated", message => {
+                SelectedIndex = 0;
+            });
         }
         // todo: wire this up properly.
         public void OnResultsChange()
@@ -30,12 +33,6 @@ namespace wpfmenu.Controls
         {
             // ensure selected item is scrolled into view
             ScrollIntoView(SelectedItem);
-        }
-        void OnResultsUpdated()
-        {
-            Debug.Print("nresults2 = {0}", results.Count);
-            // ensure first item is selected when new results are added
-            SelectedIndex = 0;
         }
         void OnLoaded(object sender, RoutedEventArgs e)
         {
@@ -47,7 +44,10 @@ namespace wpfmenu.Controls
             engine = parent.engine;
             results = engine.resultsCollection;
             DataContext = this;
-            engine.ResultsUpdated += OnResultsUpdated;
+            // ensure first result is selected when new results are loaded
+            Messenger.Default.Register<Messages.ResultsUpdated>(this, message => {
+                SelectedIndex = 0;
+            });
         }
         public void OnKeyDown(object sender, KeyEventArgs e)
         {
