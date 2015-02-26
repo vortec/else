@@ -28,7 +28,7 @@ namespace wpfmenu.Plugins
             public string keywords;
             public override void Launch(Engine.QueryInfo info)
             {
-                if (info.tokenComplete && !info.arguments.IsEmpty()) {
+                if (info.wildcard || (info.tokenComplete && !info.arguments.IsEmpty())) {
                     // launch query
                     var url = String.Format(provider.url, WebUtility.UrlEncode(keywords));
                     Process.Start("chrome.exe", url);
@@ -46,6 +46,7 @@ namespace wpfmenu.Plugins
             new Provider("kat", "Search kickasstorrents for '{0}'", "http://kickass.to/usearch/{0}/"),
             new Provider("youtube", "Search youtube for '{0}'", "https://www.youtube.com/results?search_query={0}"),
             new Provider("images", "Search google images for '{0}'", "http://google.co.uk/search?tbm=isch&q={0}"),
+            new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}")
         };
         
         public override void Setup()
@@ -54,30 +55,47 @@ namespace wpfmenu.Plugins
             foreach (var p in providers) {
                 tokens.Add(p.token);
             }
+            tokens.Add("*");
+
         }
-        Provider FindProvider(Engine.QueryInfo query)
+        Provider FindProvider(string token)
         {
-            return providers.Where(p => p.token.StartsWith(query.token)).First();
+            return providers.Where(p => p.token.StartsWith(token)).First();
         }
-        public override List<Result> Query(Engine.QueryInfo query)
+        public override List<Result> Query(Engine.QueryInfo info)
         {
             var results = new List<Result>();
-            var provider = FindProvider(query);
-            var keywords = "";
-
-            if (query.arguments.IsEmpty()) {
-                keywords = "...";
+            if (info.wildcard) {
+                var wildcardProviders = new List<string>{"wiki", "google"};
+                foreach (var p in providers) {
+                    if (wildcardProviders.Contains(p.token)) {
+                        var s = String.Format(p.displayText, info.token.SingleQuote());
+                        results.Add(new WebResult{
+                            Title = s,
+                            provider = p,
+                            keywords = info.token
+                        });
+                    }
+                }
             }
             else {
-                keywords = String.Join(" ", query.arguments);
-            }
+                var provider = FindProvider(info.token);
+                var keywords = "";
+
+                if (info.arguments.IsEmpty()) {
+                    keywords = "...";
+                }
+                else {
+                    keywords = String.Join(" ", info.arguments);
+                }
             
-            var s = String.Format(provider.displayText, keywords.SingleQuote());
-            results.Add(new WebResult{
-                Title = s,
-                provider = provider,
-                keywords = keywords
-            });
+                var s = String.Format(provider.displayText, keywords.SingleQuote());
+                results.Add(new WebResult{
+                    Title = s,
+                    provider = provider,
+                    keywords = keywords
+                });
+            }
             return results;
         }
     }

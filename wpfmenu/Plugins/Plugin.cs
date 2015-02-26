@@ -10,6 +10,7 @@ namespace wpfmenu.Plugins
 {
     public enum TokenMatch {
         None,
+        WildCard,
         Partial,
         Exact
     };
@@ -32,15 +33,17 @@ namespace wpfmenu.Plugins
     {
         abstract public void Setup();
         abstract public List<Result> Query(Engine.QueryInfo query);
-        
         public List<string> tokens;
         public virtual TokenMatch CheckToken(Engine.QueryInfo info)
         {
-            if (tokens.Contains(info.token) || tokens.Contains("*")) {
+            if (tokens.Contains(info.token)) {
                 return TokenMatch.Exact;
             }
             else if (!info.tokenComplete && tokens.Any(token => token.StartsWith(info.token))) {
                  return TokenMatch.Partial;
+            }
+            else if (tokens.Contains("*")) {
+                return TokenMatch.WildCard;
             }
             return TokenMatch.None;
         }

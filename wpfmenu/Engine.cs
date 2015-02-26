@@ -62,10 +62,12 @@ namespace wpfmenu
             public string arguments;
             public bool empty;
             public bool tokenComplete;
+            public bool wildcard;
             
             
             public void parse(string query)
             {
+                wildcard = false;
                 raw = query;
                 
                 
@@ -96,10 +98,29 @@ namespace wpfmenu
             
             if (!info.empty) {
                 // query is not empty, check plugins for results
+                bool foundPlugin = false;
+                var wildcards = new List<Plugins.Plugin>();
                 foreach (var p in plugins) {
                     var match = p.CheckToken(info);
                     
+                    
                     if (match > Plugins.TokenMatch.None) {
+                        if (match == Plugins.TokenMatch.WildCard) {
+                            wildcards.Add(p);
+                        }
+                        else {
+                            foundPlugin = true;
+                            var results = p.Query(info);
+                            foreach (var r in results) {
+                                resultsCollection.Add(r);
+                            }
+                        }
+                    }
+                }
+                if (!foundPlugin) {
+                    // no plugin found, show wildcard results
+                    info.wildcard = true;
+                    foreach (var p in wildcards) {
                         var results = p.Query(info);
                         foreach (var r in results) {
                             resultsCollection.Add(r);

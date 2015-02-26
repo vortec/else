@@ -27,3 +27,8 @@ system:
 	lock
 	restart
 	shut down
+
+
+
+	1. add wildcard support (e.g. search google with only the token)
+	2. reinstate Programs plugin
