@@ -69,11 +69,11 @@ namespace wpfmenu.Plugins
                 var wildcardProviders = new List<string>{"wiki", "google"};
                 foreach (var p in providers) {
                     if (wildcardProviders.Contains(p.token)) {
-                        var s = String.Format(p.displayText, info.token.SingleQuote());
+                        var s = String.Format(p.displayText, info.raw.SingleQuote());
                         results.Add(new WebResult{
                             Title = s,
                             provider = p,
-                            keywords = info.token
+                            keywords = info.raw
                         });
                     }
                 }
