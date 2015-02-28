@@ -11,7 +11,6 @@ namespace wpfmenu.Plugins
 {
     class Web : Plugin
     {
-        
         public class Provider {
             public string token;
             public string displayText;
@@ -23,24 +22,6 @@ namespace wpfmenu.Plugins
                 this.url = url;
             }
         }
-        public class WebResult : Result {
-            public Provider provider;
-            public string keywords;
-            public override void Launch(Engine.QueryInfo info)
-            {
-                if (info.wildcard || (info.tokenComplete && !info.arguments.IsEmpty())) {
-                    // launch query
-                    var url = String.Format(provider.url, WebUtility.UrlEncode(keywords));
-                    Process.Start("chrome.exe", url);
-                    Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
-                }
-                else {
-                    // rewrite query
-                    Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=provider.token + ' '});
-                }
-            }
-        }
-
         List<Provider> providers = new List<Provider>{
             new Provider("google", "Search google for '{0}'", "http://google.co.uk/search?q={0}"),
             new Provider("kat", "Search kickasstorrents for '{0}'", "http://kickass.to/usearch/{0}/"),
@@ -48,7 +29,10 @@ namespace wpfmenu.Plugins
             new Provider("images", "Search google images for '{0}'", "http://google.co.uk/search?tbm=isch&q={0}"),
             new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}")
         };
-        
+        class ResultData {
+            public Provider provider;
+            public string keywords;
+        }
         public override void Setup()
         {
             tokens = new List<string>();
@@ -56,44 +40,58 @@ namespace wpfmenu.Plugins
                 tokens.Add(p.token);
             }
             tokens.Add("*");
-
         }
-        Provider FindProvider(string token)
+        public void Launch(Engine.QueryInfo info, Result result)
         {
-            return providers.Where(p => p.token.StartsWith(token)).First();
+            var data = result.data as ResultData;
+            
+            if (info.wildcard || (info.tokenComplete && !info.arguments.IsEmpty())) {
+                // hide launcher
+                Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
+                // start chrome with url
+                var url = String.Format(data.provider.url, Uri.EscapeDataString(data.keywords));
+                Process.Start("chrome.exe", url);
+            }
+            else {
+                // rewrite query
+                Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=data.provider.token + ' '});
+            }
         }
         public override List<Result> Query(Engine.QueryInfo info)
         {
             var results = new List<Result>();
             if (info.wildcard) {
                 var wildcardProviders = new List<string>{"wiki", "google"};
-                foreach (var p in providers) {
-                    if (wildcardProviders.Contains(p.token)) {
-                        var s = String.Format(p.displayText, info.raw.SingleQuote());
-                        results.Add(new WebResult{
+                foreach (var provider in providers) {
+                    if (wildcardProviders.Contains(provider.token)) {
+                        var s = String.Format(provider.displayText, info.raw.SingleQuote());
+                        results.Add(new Result{
                             Title = s,
-                            provider = p,
-                            keywords = info.raw
+                            data = new ResultData {
+                                keywords = info.raw,
+                                provider = provider
+                            },
+                            Launch = Launch
                         });
                     }
                 }
             }
             else {
-                var provider = FindProvider(info.token);
-                var keywords = "";
+                var data = new ResultData();
+                data.provider = providers.Where(p => p.token.StartsWith(info.token)).First();
 
                 if (info.arguments.IsEmpty()) {
-                    keywords = "...";
+                    data.keywords = "...";
                 }
                 else {
-                    keywords = String.Join(" ", info.arguments);
+                    data.keywords = String.Join(" ", info.arguments);
                 }
             
-                var s = String.Format(provider.displayText, keywords.SingleQuote());
-                results.Add(new WebResult{
+                var s = String.Format(data.provider.displayText, data.keywords.SingleQuote());
+                results.Add(new Result{
                     Title = s,
-                    provider = provider,
-                    keywords = keywords
+                    data = data,
+                    Launch = Launch
                 });
             }
             return results;

@@ -161,12 +161,9 @@ namespace wpfmenu
         }
         private void OnActivated(object sender, EventArgs e)
         {
-            Debug.Print("Activating");
             // clear query
             QueryInput.Text = "";
             QueryInput.Focus();
         }
-
-        
     }
 }

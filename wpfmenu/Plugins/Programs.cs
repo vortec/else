@@ -12,6 +12,7 @@ using System.Windows.Interop;
 //using System.Windows.Media;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using GalaSoft.MvvmLight.Messaging;
 
 /*
 Currently we load and convert each icon to a BitmapSource, this consumed memory.
@@ -32,21 +33,34 @@ namespace wpfmenu.Plugins
                 ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
             }
         }
-        // launcher gives us a query, we respond with results..
+        class ResultData {
+
+        }
+        public void Launch(Engine.QueryInfo info, Result result)
+        {
+            // hide launcher
+            Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
+            // start program
+            Process.Start((string)result.data);
+        }
         public override List<Result> Query(Engine.QueryInfo query)
         {
-            
             List<Result> results = new List<Result>();
+            int n = 0;
             
-            //foreach (var x in found) {
-            //    if (x.label.ToLower().Contains(query.ToLower()) && n < 10) {
-            //        var item = new Engine.Result();
-            //        item.Title = x.label;
-            //        item.Icon = x.icon;
-            //        n += 1;
-            //        results.Add(item);
-            //    }
-            //}
+            foreach (var program in allPrograms) {
+                if (program.label.ToLower().Contains(query.raw.ToLower()) && n < 10) {
+                    var item = new Result{
+                        Title = program.label,
+                        Icon = program.icon,
+                        SubTitle = program.exePath,
+                        data = program.exePath,
+                        Launch = Launch
+                    };
+                    n += 1;
+                    results.Add(item);
+                }
+            }
             return results;
         }
 
@@ -60,7 +74,7 @@ namespace wpfmenu.Plugins
         }
         
         // scan directory for .lnk files
-        List<ProgramMetaData> found = new List<ProgramMetaData>();
+        List<ProgramMetaData> allPrograms = new List<ProgramMetaData>();
         void ProcessDirectory(string dir)
         {
             DirectoryInfo dirInfo = new DirectoryInfo(dir);
@@ -93,7 +107,7 @@ namespace wpfmenu.Plugins
             catch {
                 //Debug.Print("icon FAIL: {0}", shortcut.TargetPath);
             }
-            found.Add(link);
+            allPrograms.Add(link);
         }
     }
 }

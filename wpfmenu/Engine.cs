@@ -32,7 +32,8 @@ namespace wpfmenu
             // load plugins
             plugins = new List<Plugins.Plugin>{
                 //new Plugins.Programs(),
-                new Plugins.Web()
+                new Plugins.Web(),
+                new Plugins.Programs()
             };
             // setup plugins
             plugins.ForEach(p => {
@@ -41,18 +42,7 @@ namespace wpfmenu
         }
         public void Launch(Plugins.Result r)
         {
-            r.Launch(info);
-            // a result was clicked, or return was pressed, launch the result
-            //var result = r.source.Launch(info, r);
-            
-            //if (result.close) {
-            //    var parent = Application.Current.MainWindow as LauncherWindow;
-            //    parent.Hide();
-            //    return;
-            //}
-            //if (!result.rewrite_query.IsEmpty()) {
-            //    Messenger.Default.Send<NotificationMessage>(new NotificationMessage("rewrite_query", result.rewrite_query), "launcher");
-            //}
+            r.Launch(info, r);
         }
 
         // when a query is entered by the user, it is parsed with this class
@@ -64,12 +54,10 @@ namespace wpfmenu
             public bool tokenComplete;
             public bool wildcard;
             
-            
             public void parse(string query)
             {
                 wildcard = false;
                 raw = query;
-                
                 
                 int index = query.IndexOf(' ');
                 if (index != -1) {
@@ -85,7 +73,6 @@ namespace wpfmenu
                     tokenComplete = false;
                 }
                 empty = raw.IsEmpty();
-                
                 raw = query;
             }
         }
@@ -94,7 +81,6 @@ namespace wpfmenu
         {
             info.parse(query);
             resultsCollection.Clear();
-
             
             if (!info.empty) {
                 // query is not empty, check plugins for results
@@ -102,8 +88,6 @@ namespace wpfmenu
                 var wildcards = new List<Plugins.Plugin>();
                 foreach (var p in plugins) {
                     var match = p.CheckToken(info);
-                    
-                    
                     if (match > Plugins.TokenMatch.None) {
                         if (match == Plugins.TokenMatch.WildCard) {
                             wildcards.Add(p);

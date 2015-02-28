@@ -14,19 +14,15 @@ namespace wpfmenu.Plugins
         Partial,
         Exact
     };
-    public class LaunchResult {
-        public string rewrite_query = null;
-        public bool close = false;
-    };
-    public abstract class Result
+    
+    public class Result
     {
         public string Title {get; set;}
         public BitmapSource Icon {get; set;}
         public string SubTitle {get; set;}
-        public virtual void Launch(Engine.QueryInfo info)
-        {
-            Debug.Print("Launch not implemented");
-        }
+        // overridden by subclass
+        public Action<Engine.QueryInfo, Plugins.Result> Launch;
+        public object data;
     }
     // base plugin class
     public abstract class Plugin
