@@ -50,6 +50,7 @@ namespace wpfmenu
     {
         public Engine engine = new Engine();
         HwndSource hwndSource;
+        Dictionary<KeyCombo, Action> hotkeyCallbacks = new Dictionary<KeyCombo,Action>();
         
         public LauncherWindow()
         {
@@ -76,15 +77,16 @@ namespace wpfmenu
             }
             hwndSource.AddHook(WndProc);
 
+            // hide window
+            Hide();
+
             // bind hotkeys (WM_HOTKEY)
             RegisterHotkey(Modifier.Ctrl, Key.Space, 1, () => {
                 if (Visibility != Visibility.Visible) {
                     Show();
+                    Activate();
                 }
             });
-
-            // hide window
-            Hide();
 
             // listen for messages
             Messenger.Default.Register<Messages.RewriteQuery>(this, message => {
@@ -95,20 +97,19 @@ namespace wpfmenu
                 Hide();
             });
         }
-
-        /* Hotkeys */
-        Dictionary<KeyCombo, Action> callbacks = new Dictionary<KeyCombo,Action>();
+        // register a hotkey and define a callback
         public bool RegisterHotkey(Modifier modifier, Key key, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(key);
             if (User32.RegisterHotKey(hwndSource.Handle, id, (int)modifier, KeyInterop.VirtualKeyFromKey(key))) {
-                callbacks[new KeyCombo(modifier, key)] = action;
+                hotkeyCallbacks[new KeyCombo(modifier, key)] = action;
                 return true;
             }
             else {
                 return false;
             }
         }
+        // listen for OS window messages
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             //Debug.Print("msg={0} wParam={1} lParam={2} handled={3}", msg, wParam, lParam, handled);
@@ -131,17 +132,16 @@ namespace wpfmenu
 
                 // find the callback provided when this hotkey was registered
                 var tup = new KeyCombo(modifier, key);
-                if (callbacks.ContainsKey(tup)) {
+                if (hotkeyCallbacks.ContainsKey(tup)) {
                     // call the callback
-                    callbacks[tup]();
+                    hotkeyCallbacks[tup]();
                 }
             }
             return IntPtr.Zero;
         }
-        
-        // callbacks...
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
+            // if escape key is pressed, close the launcher
             if (e.Key == Key.Escape) {
                 Hide();
             }
@@ -151,19 +151,18 @@ namespace wpfmenu
             Results.SelectedIndex = 0;
             engine.QueryChanged(QueryInput.Text);
         }
-        private void OnDeactivated(object sender, EventArgs e)
-        {
-            //Close();
-        }
-        private void OnLostFocus(object sender, RoutedEventArgs e)
-        {
-            //Debug.Print("LOST FOCUS");
-        }
         private void OnActivated(object sender, EventArgs e)
         {
-            // clear query
+            // when the launcher is displayed, reset the state
             QueryInput.Text = "";
             QueryInput.Focus();
+        }
+        
+        private void OnDeactivated(object sender, EventArgs e)
+        {
+            // when launcher focus is lost (e.g. user clicks on another window), close the launcher
+            Debug.Print("on deactivated");
+            Hide();
         }
     }
 }

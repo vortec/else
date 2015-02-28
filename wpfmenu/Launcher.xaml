@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:wpfmenu.Controls"
         
-        Title="MainWindow" Height="350" Width="555" WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" BorderThickness="6" SnapsToDevicePixels="True" UseLayoutRounding="False" Deactivated="OnDeactivated" LostFocus="OnLostFocus" Activated="OnActivated" BorderBrush="#FF363636">
+        Title="MainWindow" Height="350" Width="555" WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" BorderThickness="6" SnapsToDevicePixels="True" UseLayoutRounding="False" Deactivated="OnDeactivated" Activated="OnActivated" BorderBrush="#FF363636">
     <Window.Resources>
         <Style TargetType="Grid" x:Key="focusedResult">
             <Setter Property="Background" Value="#ff336699" />
