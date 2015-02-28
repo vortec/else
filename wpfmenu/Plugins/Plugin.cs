@@ -10,9 +10,11 @@ namespace wpfmenu.Plugins
 {
     public enum TokenMatch {
         None,
-        WildCard,
+        Generic,
+        Wildcard,
         Partial,
-        Exact
+        Exact,
+        
     };
     
     public class Result
@@ -30,6 +32,7 @@ namespace wpfmenu.Plugins
         abstract public void Setup();
         abstract public List<Result> Query(Engine.QueryInfo query);
         public List<string> tokens;
+        public bool generic = false;
         public virtual TokenMatch CheckToken(Engine.QueryInfo info)
         {
             if (tokens.Contains(info.token)) {
@@ -39,7 +42,10 @@ namespace wpfmenu.Plugins
                  return TokenMatch.Partial;
             }
             else if (tokens.Contains("*")) {
-                return TokenMatch.WildCard;
+                return TokenMatch.Wildcard;
+            }
+            else if (generic) {
+                return TokenMatch.Generic;
             }
             return TokenMatch.None;
         }

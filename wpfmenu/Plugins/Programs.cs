@@ -49,7 +49,7 @@ namespace wpfmenu.Plugins
             int n = 0;
             
             foreach (var program in allPrograms) {
-                if (program.label.ToLower().Contains(query.raw.ToLower()) && n < 10) {
+                if (program.label.ToLower().StartsWith(query.raw.ToLower()) && n < 10) {
                     var item = new Result{
                         Title = program.label,
                         Icon = program.icon,

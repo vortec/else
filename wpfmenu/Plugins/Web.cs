@@ -35,11 +35,12 @@ namespace wpfmenu.Plugins
         }
         public override void Setup()
         {
+            generic = true;
             tokens = new List<string>();
             foreach (var p in providers) {
                 tokens.Add(p.token);
             }
-            tokens.Add("*");
+            //tokens.Add("*");
         }
         public void Launch(Engine.QueryInfo info, Result result)
         {
@@ -78,21 +79,26 @@ namespace wpfmenu.Plugins
             }
             else {
                 var data = new ResultData();
-                data.provider = providers.Where(p => p.token.StartsWith(info.token)).First();
+                var match = providers.Where(p => p.token.StartsWith(info.token));
+                
+                
+                if (match.Count() > 0) {
+                    data.provider = match.First();
 
-                if (info.arguments.IsEmpty()) {
-                    data.keywords = "...";
-                }
-                else {
-                    data.keywords = String.Join(" ", info.arguments);
-                }
+                    if (info.arguments.IsEmpty()) {
+                        data.keywords = "...";
+                    }
+                    else {
+                        data.keywords = String.Join(" ", info.arguments);
+                    }
             
-                var s = String.Format(data.provider.displayText, data.keywords.SingleQuote());
-                results.Add(new Result{
-                    Title = s,
-                    data = data,
-                    Launch = Launch
-                });
+                    var s = String.Format(data.provider.displayText, data.keywords.SingleQuote());
+                    results.Add(new Result{
+                        Title = s,
+                        data = data,
+                        Launch = Launch
+                    });
+                }
             }
             return results;
         }

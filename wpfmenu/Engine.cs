@@ -84,27 +84,28 @@ namespace wpfmenu
             
             if (!info.empty) {
                 // query is not empty, check plugins for results
-                bool foundPlugin = false;
-                var wildcards = new List<Plugins.Plugin>();
+                bool showDefaultResults = true;
+                var defaults = new List<Plugins.Plugin>();
                 foreach (var p in plugins) {
                     var match = p.CheckToken(info);
-                    if (match > Plugins.TokenMatch.None) {
-                        if (match == Plugins.TokenMatch.WildCard) {
-                            wildcards.Add(p);
-                        }
-                        else {
-                            foundPlugin = true;
-                            var results = p.Query(info);
+                    if (match == Plugins.TokenMatch.Generic) {
+                        defaults.Add(p);
+                    }
+                    else {
+                        var results = p.Query(info);
+                        if (results.Count() > 0) {
                             foreach (var r in results) {
                                 resultsCollection.Add(r);
                             }
+                            showDefaultResults = false;
                         }
                     }
                 }
-                if (!foundPlugin) {
+                if (showDefaultResults) {
+                    Debug.Print("showDefaultResults = {0}, defaults={1}", showDefaultResults, defaults.Count());
                     // no plugin found, show wildcard results
                     info.wildcard = true;
-                    foreach (var p in wildcards) {
+                    foreach (var p in defaults) {
                         var results = p.Query(info);
                         foreach (var r in results) {
                             resultsCollection.Add(r);
