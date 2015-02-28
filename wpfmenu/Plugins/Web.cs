@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Net;
 using GalaSoft.MvvmLight.Messaging;
+using System.Windows.Media.Imaging;
 
 namespace wpfmenu.Plugins
 {
@@ -15,19 +16,21 @@ namespace wpfmenu.Plugins
             public string token;
             public string displayText;
             public string url;
-            public Provider(string token, string displayText, string url)
+            public string iconName;
+            public Provider(string token, string displayText, string url, string iconName)
             {
                 this.token = token;
                 this.displayText = displayText;
                 this.url = url;
+                this.iconName = iconName;
             }
         }
         List<Provider> providers = new List<Provider>{
-            new Provider("google", "Search google for '{0}'", "http://google.co.uk/search?q={0}"),
-            new Provider("kat", "Search kickasstorrents for '{0}'", "http://kickass.to/usearch/{0}/"),
-            new Provider("youtube", "Search youtube for '{0}'", "https://www.youtube.com/results?search_query={0}"),
-            new Provider("images", "Search google images for '{0}'", "http://google.co.uk/search?tbm=isch&q={0}"),
-            new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}")
+            new Provider("google", "Search google for '{0}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png"),
+            new Provider("kat", "Search kickasstorrents for '{0}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
+            new Provider("youtube", "Search youtube for '{0}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
+            new Provider("images", "Search google images for '{0}'", "http://google.co.uk/search?tbm=isch&q={0}", "/Resources/Icons/google.png"),
+            new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png")
         };
         class ResultData {
             public Provider provider;
@@ -72,7 +75,8 @@ namespace wpfmenu.Plugins
                                 keywords = info.raw,
                                 provider = provider
                             },
-                            Launch = Launch
+                            Launch = Launch,
+                            Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.iconName))
                         });
                     }
                 }

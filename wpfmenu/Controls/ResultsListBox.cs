@@ -28,6 +28,7 @@ namespace wpfmenu.Controls
         // todo: wire this up properly.
         public void OnResultsChange()
         {
+            
         }
         void OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -73,6 +74,7 @@ namespace wpfmenu.Controls
                         if (move >= 0 && move < results.Count) {
                             SelectedIndex = move;
                         }
+
                     }
                 }
             }

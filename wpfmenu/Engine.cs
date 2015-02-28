@@ -102,7 +102,7 @@ namespace wpfmenu
                     }
                 }
                 if (showDefaultResults) {
-                    Debug.Print("showDefaultResults = {0}, defaults={1}", showDefaultResults, defaults.Count());
+                    
                     // no plugin found, show wildcard results
                     info.wildcard = true;
                     foreach (var p in defaults) {
