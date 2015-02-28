@@ -2,53 +2,66 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:wpfmenu.Controls"
+        Title="MainWindow"
+        Height="350" Width="555"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        ShowInTaskbar="True"
+        WindowStartupLocation="CenterScreen"
         
-        Title="MainWindow" Height="350" Width="555" WindowStyle="None" ResizeMode="NoResize" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" BorderThickness="6" SnapsToDevicePixels="True" UseLayoutRounding="False" Deactivated="OnDeactivated" Activated="OnActivated" BorderBrush="#FF363636">
-    <Window.Resources>
-        <Style TargetType="Grid" x:Key="focusedResult">
-            <Setter Property="Background" Value="#ff336699" />
-        </Style>
-        
-        
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="False"
+        Deactivated="OnDeactivated"
+        Activated="OnActivated"
+        AllowsTransparency="True"
+        Background="#7F363636"
+        >
+    <!--BorderThickness="10"
+        BorderBrush="#66363636"-->
+    <Border BorderBrush="#7F363636" BorderThickness="8" CornerRadius="2">
+    <!--<Window.Resources>
     </Window.Resources>
-    <!--<Window.Effect>
+    <Window.Effect>
         <DropShadowEffect/>
     </Window.Effect>-->
-    <Grid Margin="10">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <TextBox Grid.Row="0" Name="QueryInput" Text="TextBox" FontSize="24" VerticalAlignment="Top" Padding="6,3" FontFamily="Segoe WP Semibold"/>
+        <Border CornerRadius="2" BorderThickness="2" BorderBrush="White" >
+            <Grid Background="White">
+                <Grid  Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBox Grid.Row="0" Name="QueryInput" Text="TextBox" FontSize="24" VerticalAlignment="Top" Padding="6,3" FontFamily="Segoe WP Semibold"/>
         
-        <Controls:ResultsListBox Grid.Row="1" ItemsSource="{Binding results}" Focusable="False" x:Name="Results" VirtualizingPanel.IsVirtualizing="False">
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="Control">
-                    <Setter Property="Focusable" Value="False" />
-                </Style>
-            </ListBox.ItemContainerStyle>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="0 2 0 0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="40"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}" />
-                        <StackPanel Grid.Column="1" >
-                            <TextBlock FontSize="17" Margin="0"  Text="{Binding Title}"  x:Name="testing3" />
-                            <TextBlock FontSize="10" Margin="0" Foreground="#FFA1A0A2" Text="{Binding SubTitle}" />
-                        </StackPanel>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
+                    <Controls:ResultsListBox Grid.Row="1" ItemsSource="{Binding results}" Focusable="False" x:Name="Results" VirtualizingPanel.IsVirtualizing="False">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="Control">
+                                <Setter Property="Focusable" Value="False" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0 2 0 0">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="40"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="50" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}" />
+                                    <StackPanel Grid.Column="1" >
+                                        <TextBlock FontSize="17" Margin="0"  Text="{Binding Title}"  x:Name="testing3" />
+                                        <TextBlock FontSize="10" Margin="0" Foreground="#FFA1A0A2" Text="{Binding SubTitle}" />
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
             
-        </Controls:ResultsListBox>
-        
-        
-    </Grid>
+                    </Controls:ResultsListBox>
+                </Grid>
+            </Grid>
+        </Border>
+    </Border>
 </Window>
  

@@ -59,6 +59,10 @@ namespace wpfmenu
             // setup window
             Topmost = true;
 
+            //var border = new Border();
+            //border.Background = new SolidColorBrush(Color.FromArgb(20,255,0,0));
+            //this.border = border;
+
             // callback when query changes
             QueryInput.TextChanged += Query_onChange;
 
@@ -109,6 +113,7 @@ namespace wpfmenu
                 return false;
             }
         }
+        
         // listen for OS window messages
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
