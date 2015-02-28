@@ -9,6 +9,7 @@ using System.Runtime.Remoting;
 using System.Reflection;
 using System.Drawing;
 using System.Windows.Interop;
+using System.Text.RegularExpressions;
 //using System.Windows.Media;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -49,7 +50,9 @@ namespace wpfmenu.Plugins
             int n = 0;
             
             foreach (var program in allPrograms) {
-                if (program.label.ToLower().StartsWith(query.raw.ToLower()) && n < 10) {
+                // check if program name matches query
+                string pattern = @"(?i)\b" + Regex.Escape(query.raw);
+                if (Regex.IsMatch(program.label, pattern) && n < 10) {
                     var item = new Result{
                         Title = program.label,
                         Icon = program.icon,
