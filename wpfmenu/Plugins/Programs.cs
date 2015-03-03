@@ -37,23 +37,23 @@ namespace wpfmenu.Plugins
         class ResultData {
 
         }
-        public void Launch(Engine.QueryInfo info, Result result)
+        public void Launch(Model.QueryInfo info, Model.Result result)
         {
             // hide launcher
             Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
             // start program
             Process.Start((string)result.data);
         }
-        public override List<Result> Query(Engine.QueryInfo query)
+        public override List<Model.Result> Query(Model.QueryInfo query)
         {
-            List<Result> results = new List<Result>();
+            List<Model.Result> results = new List<Model.Result>();
             int n = 0;
             
             foreach (var program in allPrograms) {
                 // check if program name matches query
                 string pattern = @"(?i)\b" + Regex.Escape(query.raw);
                 if (Regex.IsMatch(program.label, pattern) && n < 10) {
-                    var item = new Result{
+                    var item = new Model.Result{
                         Title = program.label,
                         Icon = program.icon,
                         SubTitle = program.exePath,

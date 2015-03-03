@@ -67,9 +67,9 @@ namespace wpfmenu
             QueryInput.TextChanged += Query_onChange;
 
             // hook into escape key
-            PreviewKeyDown += new KeyEventHandler(OnKeyDown);
+            PreviewKeyDown += OnKeyDown;
             // bind ResultsList to keyboard input
-            PreviewKeyDown += new KeyEventHandler(Results.OnKeyDown);
+            PreviewKeyDown += Results.OnKeyDown;
 
             // temporarily show window (we can only bind to a window that has been shown once).
             Show();
@@ -100,6 +100,11 @@ namespace wpfmenu
             Messenger.Default.Register<Messages.HideLauncher>(this, message => {
                 Hide();
             });
+
+            Results.Items = engine.resultsList;
+            
+
+            
         }
         // register a hotkey and define a callback
         public bool RegisterHotkey(Modifier modifier, Key key, int id, Action action)
@@ -153,21 +158,20 @@ namespace wpfmenu
         }
         public void Query_onChange(object sender, TextChangedEventArgs e)
         {
-            Results.SelectedIndex = 0;
             engine.QueryChanged(QueryInput.Text);
         }
-        private void OnActivated(object sender, EventArgs e)
+        private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            // when the launcher is displayed, reset the state
-            QueryInput.Text = "";
-            QueryInput.Focus();
+            if ((bool)e.NewValue) {
+                // launcher is shown, reset form
+                QueryInput.Text = "";
+                QueryInput.Focus();
+            }
         }
-        
         private void OnDeactivated(object sender, EventArgs e)
         {
             // when launcher focus is lost (e.g. user clicks on another window), close the launcher
-            Debug.Print("on deactivated");
-            Hide();
+            //Hide();
         }
     }
 }

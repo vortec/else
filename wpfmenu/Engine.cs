@@ -15,20 +15,17 @@ using GalaSoft.MvvmLight.Messaging;
 namespace wpfmenu
 {
     
+    
     public class Engine
     {
         // this list is displayed in teh launcher
-        public BindingList<Plugins.Result> resultsCollection = new BindingList<Plugins.Result>();
-
+        public Types.BindingResultsList resultsList = new Types.BindingResultsList();
         
         // loaded plugins
         List<Plugins.Plugin> plugins = new List<Plugins.Plugin>();
-        QueryInfo info = new QueryInfo();
+        Model.QueryInfo info = new Model.QueryInfo();
         
         public Engine() {
-            resultsCollection = new BindingList<Plugins.Result>();
-            //resultsCollection.RaiseListChangedEvents = false;
-
             // load plugins
             plugins = new List<Plugins.Plugin>{
                 //new Plugins.Programs(),
@@ -39,48 +36,20 @@ namespace wpfmenu
             plugins.ForEach(p => {
                 p.Setup();
             });
-        }
-        public void Launch(Plugins.Result r)
-        {
-            r.Launch(info, r);
+
+            Messenger.Default.Register<Messages.Launch>(this, Launch);
         }
 
-        // when a query is entered by the user, it is parsed with this class
-        public class QueryInfo {
-            public string raw;
-            public string token;
-            public string arguments;
-            public bool empty;
-            public bool tokenComplete;
-            public bool wildcard;
-            
-            public void parse(string query)
-            {
-                wildcard = false;
-                raw = query;
-                
-                int index = query.IndexOf(' ');
-                if (index != -1) {
-                    // space found, get first word
-                    token = query.Substring(0, index);
-                    arguments = query.Substring(index+1);
-                    tokenComplete = true;
-                }
-                else {
-                    // no spaces
-                    token = query;
-                    arguments = "";
-                    tokenComplete = false;
-                }
-                empty = raw.IsEmpty();
-                raw = query;
-            }
+        public void Launch(Messages.Launch message)
+        {
+            message.result.Launch(info, message.result);
         }
+        
         // process the query when it changes
         public void QueryChanged(string query)
         {
             info.parse(query);
-            resultsCollection.Clear();
+            resultsList.Clear();
             
             if (!info.empty) {
                 // query is not empty, check plugins for results
@@ -95,7 +64,7 @@ namespace wpfmenu
                         var results = p.Query(info);
                         if (results.Count() > 0) {
                             foreach (var r in results) {
-                                resultsCollection.Add(r);
+                                resultsList.Add(r);
                             }
                             showDefaultResults = false;
                         }
@@ -108,7 +77,7 @@ namespace wpfmenu
                     foreach (var p in defaults) {
                         var results = p.Query(info);
                         foreach (var r in results) {
-                            resultsCollection.Add(r);
+                            resultsList.Add(r);
                         }
                     }
                 }

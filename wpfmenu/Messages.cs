@@ -16,5 +16,7 @@ namespace wpfmenu.Messages
     }
     public class HideLauncher: Message {
     }
-
+    public class Launch : Message {
+        public Model.Result result;
+    }
 }

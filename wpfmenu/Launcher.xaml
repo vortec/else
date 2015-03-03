@@ -8,11 +8,10 @@
         ResizeMode="NoResize"
         ShowInTaskbar="True"
         WindowStartupLocation="CenterScreen"
-        
         SnapsToDevicePixels="True"
         UseLayoutRounding="False"
         Deactivated="OnDeactivated"
-        Activated="OnActivated"
+        IsVisibleChanged="OnVisibleChanged"
         AllowsTransparency="True"
         Background="#7F363636">
     <Window.Resources>
@@ -28,7 +27,13 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <TextBox Grid.Row="0" Name="QueryInput" Text="TextBox" FontSize="24" VerticalContentAlignment="Center" Padding="6,3" FontFamily="Segoe WP Semibold" BorderThickness="0" Background="#FFD1D1D1" BorderBrush="{x:Null}" Height="48"/>
-                    <Controls:ResultsListBox  BorderThickness="0" Grid.Row="1" ItemsSource="{Binding results}" Focusable="False" x:Name="Results" VirtualizingPanel.IsVirtualizing="False" Background="#FFF8F8F8" Margin="0 10 0 0" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                    <Controls:ResultsList BorderThickness="0" Grid.Row="1" Focusable="False" x:Name="Results" Margin="0 10 0 0 " ScrollViewer.VerticalScrollBarVisibility="Hidden" />
+                    <!--<Controls:ResultsListBox BorderThickness="0" Grid.Row="1" ItemsSource="{Binding results}" Focusable="False" x:Name="Results" VirtualizingPanel.IsVirtualizing="False" Background="#FFF8F8F8" Margin="0 10 0 0" ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="Control">
+                                <Setter Property="Focusable" Value="False" />
+                            </Style>
+                        </ListBox.ItemContainerStyle>
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <DataTemplate.Resources>
@@ -49,7 +54,7 @@
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
-                    </Controls:ResultsListBox>
+                    </Controls:ResultsListBox>-->
                 </Grid>
             </Grid>
         </Border>

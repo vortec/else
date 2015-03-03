@@ -73,6 +73,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Types\BindingResultsList.cs" />
+    <Page Include="Controls\ResultsList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Launcher.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -81,7 +86,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ResultsListBox.cs" />
+    <Compile Include="Controls\ResultsList.xaml.cs">
+      <DependentUpon>ResultsList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converter\EqualsConverter.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Helpers.cs" />
@@ -101,6 +109,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messages.cs" />
+    <Compile Include="Model\QueryInfo.cs" />
+    <Compile Include="Model\Result.cs" />
     <Compile Include="NotifyIconViewModel.cs">
       <Generator>MSBuild:Compile</Generator>
     </Compile>

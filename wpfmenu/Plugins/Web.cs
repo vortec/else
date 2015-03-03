@@ -45,7 +45,7 @@ namespace wpfmenu.Plugins
             }
             //tokens.Add("*");
         }
-        public void Launch(Engine.QueryInfo info, Result result)
+        public void Launch(Model.QueryInfo info, Model.Result result)
         {
             var data = result.data as ResultData;
             
@@ -61,15 +61,15 @@ namespace wpfmenu.Plugins
                 Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=data.provider.token + ' '});
             }
         }
-        public override List<Result> Query(Engine.QueryInfo info)
+        public override List<Model.Result> Query(Model.QueryInfo info)
         {
-            var results = new List<Result>();
+            var results = new List<Model.Result>();
             if (info.wildcard) {
                 var wildcardProviders = new List<string>{"wiki", "google"};
                 foreach (var provider in providers) {
                     if (wildcardProviders.Contains(provider.token)) {
                         var s = String.Format(provider.displayText, info.raw.SingleQuote());
-                        results.Add(new Result{
+                        results.Add(new Model.Result{
                             Title = s,
                             data = new ResultData {
                                 keywords = info.raw,
@@ -97,7 +97,7 @@ namespace wpfmenu.Plugins
                     }
             
                     var s = String.Format(data.provider.displayText, data.keywords.SingleQuote());
-                    results.Add(new Result{
+                    results.Add(new Model.Result{
                         Title = s,
                         data = data,
                         Launch = Launch

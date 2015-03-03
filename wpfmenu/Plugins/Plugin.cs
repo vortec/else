@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+
 using System.Diagnostics;
 
 namespace wpfmenu.Plugins
@@ -17,23 +17,16 @@ namespace wpfmenu.Plugins
         
     };
     
-    public class Result
-    {
-        public string Title {get; set;}
-        public BitmapSource Icon {get; set;}
-        public string SubTitle {get; set;}
-        // overridden by subclass
-        public Action<Engine.QueryInfo, Plugins.Result> Launch;
-        public object data;
-    }
+    
     // base plugin class
     public abstract class Plugin
     {
+        
         abstract public void Setup();
-        abstract public List<Result> Query(Engine.QueryInfo query);
+        abstract public List<Model.Result> Query(Model.QueryInfo query);
         public List<string> tokens;
         public bool generic = false;
-        public virtual TokenMatch CheckToken(Engine.QueryInfo info)
+        public virtual TokenMatch CheckToken(Model.QueryInfo info)
         {
             if (tokens.Contains(info.token)) {
                 return TokenMatch.Exact;
