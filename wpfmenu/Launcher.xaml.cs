@@ -55,19 +55,16 @@ namespace wpfmenu
         public LauncherWindow()
         {
             InitializeComponent();
-            
+
             // setup window
             Topmost = true;
 
-            //var border = new Border();
-            //border.Background = new SolidColorBrush(Color.FromArgb(20,255,0,0));
-            //this.border = border;
-
             // callback when query changes
-            QueryInput.TextChanged += Query_onChange;
+            QueryInput.TextChanged += engine.QueryChanged;
 
             // hook into escape key
             PreviewKeyDown += OnKeyDown;
+            
             // bind ResultsList to keyboard input
             PreviewKeyDown += Results.OnKeyDown;
 
@@ -102,9 +99,6 @@ namespace wpfmenu
             });
 
             Results.Items = engine.resultsList;
-            
-
-            
         }
         // register a hotkey and define a callback
         public bool RegisterHotkey(Modifier modifier, Key key, int id, Action action)
@@ -156,14 +150,11 @@ namespace wpfmenu
                 Hide();
             }
         }
-        public void Query_onChange(object sender, TextChangedEventArgs e)
-        {
-            engine.QueryChanged(QueryInput.Text);
-        }
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue) {
                 // launcher is shown, reset form
+                //engine.Clear();
                 QueryInput.Text = "";
                 QueryInput.Focus();
             }
@@ -171,7 +162,7 @@ namespace wpfmenu
         private void OnDeactivated(object sender, EventArgs e)
         {
             // when launcher focus is lost (e.g. user clicks on another window), close the launcher
-            //Hide();
+            Hide();
         }
     }
 }

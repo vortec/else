@@ -15,5 +15,11 @@ namespace wpfmenu.Model
         public Action<Model.QueryInfo, Result> Launch;
         public object data;
         public int Index {get;set;}
+        public bool IsSingular {
+            get {
+                return SubTitle.IsEmpty();
+            }
+            
+        }
     }
 }

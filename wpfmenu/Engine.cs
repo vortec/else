@@ -46,10 +46,13 @@ namespace wpfmenu
         }
         
         // process the query when it changes
-        public void QueryChanged(string query)
+        public void QueryChanged(object sender, TextChangedEventArgs e)
         {
-            info.parse(query);
+            var textbox = sender as TextBox;
+            var query = textbox.Text;
+            
             resultsList.Clear();
+            info.parse(query);
             
             if (!info.empty) {
                 // query is not empty, check plugins for results

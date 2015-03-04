@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Diagnostics;
 using System.ComponentModel;
 using GalaSoft.MvvmLight.Messaging;
+using System.Runtime.CompilerServices;
 
 namespace wpfmenu.Controls
 {
@@ -31,8 +32,10 @@ namespace wpfmenu.Controls
                 return _SelectedIndex;
             }
             set {
-                _SelectedIndex = value;
-                PropertyChanged(this, new PropertyChangedEventArgs("SelectedIndex"));
+                if (_SelectedIndex != value) {
+                    _SelectedIndex = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
         
@@ -42,10 +45,17 @@ namespace wpfmenu.Controls
                 return _Items;
             }
             set {
-                _Items = value;
-                if (PropertyChanged != null) {
-                    PropertyChanged(this, new PropertyChangedEventArgs("Items"));
+                if (_Items != value) {
+                    _Items = value;
+                    NotifyPropertyChanged();
                 }
+            }
+        }
+
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
         
@@ -53,7 +63,10 @@ namespace wpfmenu.Controls
         {
             _SelectedIndex = 0;
             InitializeComponent();
-            resultslistbox.DataContext = this;
+            itemscontrol.DataContext = this;
+            Messenger.Default.Register<Messages.ResultsUpdated>(this, (message) => {
+                SelectedIndex = 0;
+            });
         }
         void SelectIndex(int idx)
         {
@@ -64,7 +77,7 @@ namespace wpfmenu.Controls
         }
         void ScrollIntoView(int idx)
         {
-            var container = resultslistbox.ItemContainerGenerator.ContainerFromIndex(idx) as FrameworkElement;
+            var container = itemscontrol.ItemContainerGenerator.ContainerFromIndex(idx) as FrameworkElement;
             if (container != null) {
                 container.BringIntoView();
             }

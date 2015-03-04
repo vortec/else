@@ -12,7 +12,7 @@
         <Converter:EqualsConverter x:Key="EqualsConverter"/>
     </UserControl.Resources>
     
-    <ItemsControl x:Name="resultslistbox" ItemsSource="{Binding Items}">
+    <ItemsControl x:Name="itemscontrol" ItemsSource="{Binding Items}">
         <ItemsControl.Style>
             <Style TargetType="Control">
                 <Setter Property="Focusable" Value="False" />
@@ -27,7 +27,7 @@
         </ItemsControl.Template>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Grid Margin="0 2 0 0" x:Name="__GRID">
+                <Grid Margin="0 2 0 0" x:Name="__GRID" RenderOptions.ClearTypeHint="Enabled" Background="White">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="40"/>
                     </Grid.RowDefinitions>
@@ -37,8 +37,8 @@
                     </Grid.ColumnDefinitions>
                     <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}"/>
                     <StackPanel Grid.Column="1">
-                        <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="testing3" />
-                        <TextBlock FontSize="10" Margin="0" Foreground="#FFA1A0A2" Text="{Binding SubTitle}" />
+                        <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="Title" />
+                        <TextBlock FontSize="10" Margin="0" Foreground="#FF777777" Text="{Binding SubTitle}" x:Name="SubTitle" />
                     </StackPanel>
                 </Grid>
                 <DataTemplate.Triggers>
@@ -49,7 +49,12 @@
                                 <Binding Path="Index" />
                             </MultiBinding>
                         </DataTrigger.Binding>
-                        <Setter TargetName="__GRID" Property="Background" Value="Yellow" />
+                        <Setter TargetName="__GRID" Property="Background" Value="#FFdfdfdf" />
+                    </DataTrigger>
+                    <!--  is hack, and doesn't really work.  we probably want to use datatemplateselector instead? -->
+                    <DataTrigger Binding="{Binding Path=IsSingular}" Value="True">
+                        <Setter TargetName="SubTitle" Property="Visibility" Value="Hidden" />
+                        <Setter TargetName="Title" Property="VerticalAlignment" Value="Center" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
