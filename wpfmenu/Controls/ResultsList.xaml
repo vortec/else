@@ -36,7 +36,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}"/>
-                    <StackPanel Grid.Column="1">
+                    <StackPanel Grid.Column="1" x:Name="TitleContainer">
                         <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="Title" />
                         <TextBlock FontSize="10" Margin="0" Foreground="#FF777777" Text="{Binding SubTitle}" x:Name="SubTitle" />
                     </StackPanel>
@@ -51,10 +51,10 @@
                         </DataTrigger.Binding>
                         <Setter TargetName="__GRID" Property="Background" Value="#FFdfdfdf" />
                     </DataTrigger>
-                    <!--  is hack, and doesn't really work.  we probably want to use datatemplateselector instead? -->
+                    <!-- if Subtitle is not provided, make the Title consume available space and center vertically. -->
                     <DataTrigger Binding="{Binding Path=IsSingular}" Value="True">
-                        <Setter TargetName="SubTitle" Property="Visibility" Value="Hidden" />
-                        <Setter TargetName="Title" Property="VerticalAlignment" Value="Center" />
+                        <Setter TargetName="SubTitle" Property="Visibility" Value="Collapsed" />
+                        <Setter TargetName="TitleContainer" Property="VerticalAlignment" Value="Center" />
                     </DataTrigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
