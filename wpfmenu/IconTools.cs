@@ -97,11 +97,12 @@ public static class IconTools {
 	/// <returns>An icon that represents the file.</returns>
 	public static Icon GetIconForFile(string filename, ShellIconSize size) {
 		SHFILEINFO shinfo = new SHFILEINFO();
-		SHGetFileInfo(filename, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), size);
-		return Icon.FromHandle(shinfo.hIcon);
+		IntPtr HR = SHGetFileInfo(filename, 0, ref shinfo, (uint)Marshal.SizeOf(shinfo), size);
+        if (HR == IntPtr.Zero) {
+		    return null;
+        }
+        return Icon.FromHandle(shinfo.hIcon);
 	}
-
-
 	/// <summary>
 	/// Returns the default icon representation for files with the specified extension.
 	/// </summary>

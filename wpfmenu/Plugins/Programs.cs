@@ -16,8 +16,9 @@ using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight.Messaging;
 
 /*
-Currently we load and convert each icon to a BitmapSource, this consumed memory.
-It might be better to convert them when needed, and cache MRU style.
+todo:
+    check memory consumption and possible leakage with icon usage.
+    use displayName from shgetfileinfo?
 
 */
 namespace wpfmenu.Plugins
@@ -33,9 +34,8 @@ namespace wpfmenu.Plugins
                 ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
                 ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
             }
-        }
-        class ResultData {
-
+            
+            Debug.Print("done");
         }
         public void Launch(Model.QueryInfo info, Model.Result result)
         {
@@ -87,9 +87,11 @@ namespace wpfmenu.Plugins
                 }
             }
         }
+        
         // inspect a .lnk (windows shortcut) and store data for later searching
         void ResolveShortcut(FileInfo file)
         {
+            
             IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
             IWshRuntimeLibrary.IWshShortcut shortcut = shell.CreateShortcut(file.FullName);
             
@@ -99,16 +101,30 @@ namespace wpfmenu.Plugins
                 lnkPath = shortcut.FullName,
                 label = Path.GetFileNameWithoutExtension(file.Name)
             };
-            //shortcut.TargetPath = "c:\\windows\\system32\\notepad.exe";
-            // load icon
+            
+            // skip shortcuts that have no target (e.g. "run.lnk")
+            if (shortcut.TargetPath.IsEmpty()) {
+                return;
+            }
+            
+
             try {
-                using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
-                    link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
-                    //Debug.Print("icon success: {0}", shortcut.TargetPath);
+                if (true) {
+                    // using shgetfile from IconTools:
+                    Icon largeIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.LargeIcon);
+                    //Icon smallIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.SmallIcon);
+                    if (largeIcon != null) {
+                        link.icon = Imaging.CreateBitmapSourceFromHIcon(largeIcon.Handle, new Int32Rect(0, 0, largeIcon.Width, largeIcon.Height), BitmapSizeOptions.FromEmptyOptions());
+                    }
+                }
+                else {
+                    using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
+                        link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+                    }
                 }
             }
-            catch {
-                //Debug.Print("icon FAIL: {0}", shortcut.TargetPath);
+            catch (Exception e) {
+                Debug.Print("icon FAIL: {0}", shortcut.TargetPath);
             }
             allPrograms.Add(link);
         }
