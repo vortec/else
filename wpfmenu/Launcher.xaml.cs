@@ -1,27 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Diagnostics;
-using System.Threading;
-
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
-
-
 using GalaSoft.MvvmLight.Messaging;
+
 
 static class User32
 {
@@ -48,19 +32,19 @@ namespace wpfmenu
     
     public partial class LauncherWindow : Window
     {
-        public Engine engine = new Engine();
+        public Engine Engine = new Engine();
         HwndSource hwndSource;
         Dictionary<KeyCombo, Action> hotkeyCallbacks = new Dictionary<KeyCombo,Action>();
         
         public LauncherWindow()
         {
             InitializeComponent();
-
+            
             // setup window
             Topmost = true;
 
             // callback when query changes
-            QueryInput.TextChanged += engine.QueryChanged;
+            QueryInput.TextChanged += Engine.OnQueryChanged;
 
             // hook into escape key
             PreviewKeyDown += OnKeyDown;
@@ -98,9 +82,15 @@ namespace wpfmenu
                 Hide();
             });
 
-            Results.Items = engine.resultsList;
+            Results.Items = Engine.ResultsList;
         }
-        // register a hotkey and define a callback
+        /// <summary>
+        /// Register a hotkey and define a callback.
+        /// </summary>
+        /// <param name="modifier">The modifier.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="id">The identifier.</param>
+        /// <param name="action">The callback.</param>
         public bool RegisterHotkey(Modifier modifier, Key key, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(key);
@@ -112,8 +102,10 @@ namespace wpfmenu
                 return false;
             }
         }
-        
-        // listen for OS window messages
+
+        /// <summary>
+        /// Handle win32 message proc.
+        /// </summary>
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             //Debug.Print("msg={0} wParam={1} lParam={2} handled={3}", msg, wParam, lParam, handled);
@@ -129,15 +121,15 @@ namespace wpfmenu
                 int high = lpInt >> 16;
                 
                 // get virtual key code from high
-                Key key = KeyInterop.KeyFromVirtualKey(high);
+                var key = KeyInterop.KeyFromVirtualKey(high);
 
                 // get modifier from low
-                Modifier modifier = (Modifier)(low);
+                var modifier = (Modifier)(low);
 
                 // find the callback provided when this hotkey was registered
                 var tup = new KeyCombo(modifier, key);
                 if (hotkeyCallbacks.ContainsKey(tup)) {
-                    // call the callback
+                    // invoke callback
                     hotkeyCallbacks[tup]();
                 }
             }
@@ -150,6 +142,9 @@ namespace wpfmenu
                 Hide();
             }
         }
+        /// <summary>
+        /// When the window is opened or hidden, clear QueryText.
+        /// </summary>
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue) {
@@ -159,9 +154,12 @@ namespace wpfmenu
                 QueryInput.Focus();
             }
         }
+
+        /// <summary>
+        /// Hide the launcher when the window loses focus (e.g. clicks on another window)
+        /// </summary>
         private void OnDeactivated(object sender, EventArgs e)
         {
-            // when launcher focus is lost (e.g. user clicks on another window), close the launcher
             Hide();
         }
     }

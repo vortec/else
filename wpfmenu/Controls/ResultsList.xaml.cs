@@ -1,57 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Linq;
 using GalaSoft.MvvmLight.Messaging;
 using System.Runtime.CompilerServices;
 
 namespace wpfmenu.Controls
 {
     /// <summary>
-    /// Interaction logic for ResultsList.xaml
+    /// Provides ItemsControl functionality, with additional support for up+down key handling, and launching Result.
     /// </summary>
-    
-    public partial class ResultsList : UserControl, INotifyPropertyChanged
+    public partial class ResultsList : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
-        int _SelectedIndex;
+
+        private int _selectedIndex;
         public int SelectedIndex {
             get {
-                return _SelectedIndex;
+                return _selectedIndex;
             }
             set {
-                if (_SelectedIndex != value) {
-                    _SelectedIndex = value;
+                if (_selectedIndex != value) {
+                    _selectedIndex = value;
                     NotifyPropertyChanged();
                 }
             }
         }
-        
-        private Types.BindingResultsList _Items;
+        private Types.BindingResultsList _items;
         public Types.BindingResultsList Items {
             get {
-                return _Items;
+                return _items;
             }
             set {
-                if (_Items != value) {
-                    _Items = value;
+                if (_items != value) {
+                    _items = value;
                     NotifyPropertyChanged();
                 }
             }
         }
-
+        public ResultsList()
+        {
+            _selectedIndex = 0;
+            InitializeComponent();
+            ItemsControl.DataContext = this;
+            Messenger.Default.Register<Messages.ResultsUpdated>(this, (message) => {
+                SelectedIndex = 0;
+            });
+        }
+        /// <summary>
+        /// Notifies the property changed.
+        /// </summary>
+        /// <param name="propertyName">Name of the property.</param>
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanged != null) {
@@ -59,34 +60,28 @@ namespace wpfmenu.Controls
             }
         }
         
-        public ResultsList()
+        void SelectIndex(int index)
         {
-            _SelectedIndex = 0;
-            InitializeComponent();
-            itemscontrol.DataContext = this;
-            Messenger.Default.Register<Messages.ResultsUpdated>(this, (message) => {
-                SelectedIndex = 0;
-            });
-        }
-        void SelectIndex(int idx)
-        {
-            if (idx >= 0 && idx < Items.Count) {
-                SelectedIndex = idx;
-                ScrollIntoView(idx);
+            if (index >= 0 && index < Items.Count) {
+                SelectedIndex = index;
+                ScrollIntoView(index);
             }
         }
-        void ScrollIntoView(int idx)
+        void ScrollIntoView(int index)
         {
-            var container = itemscontrol.ItemContainerGenerator.ContainerFromIndex(idx) as FrameworkElement;
+            var container = ItemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
             if (container != null) {
                 container.BringIntoView();
             }
         }
+        /// <summary>
+        /// Process keyboard input for navigating and launching a Result.
+        /// </summary>
         public void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (Items.Count > 0) {
+            if (Items.Any()) {
                 if (e.Key == Key.Enter || e.Key == Key.Return) {
-                    Messenger.Default.Send<Messages.Launch>(new Messages.Launch{result=Items[SelectedIndex]});
+                    Items[SelectedIndex].Launch();
                 }
                 else {
                     var inc = 0;

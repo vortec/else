@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace wpfmenu.Messages
 {
+    /// <summary>
+    /// Messages that are passed around.
+    /// todo: remove or replace this implementation of messages.
+    /// </summary>
     public class Message
     {
         public string data;

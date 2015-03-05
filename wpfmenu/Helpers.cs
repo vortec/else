@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Windows;
 using System.Diagnostics;
 
 namespace wpfmenu
 {
-    class Helpers
+    /// <summary>
+    /// Helper methods for UI
+    /// </summary>
+    public static class Helpers
     {
         public static bool IsWindowOpen<T>(string name = "") where T : Window
         {

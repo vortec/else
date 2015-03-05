@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
-using System.Net;
 using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Media.Imaging;
 
@@ -12,22 +9,26 @@ namespace wpfmenu.Plugins
 {
     class Web : Plugin
     {
+        /// <summary>
+        /// Data for a web provider (e.g. google)
+        /// </summary>
         public class Provider {
-            public string token;
-            public string displayText;
-            public string url;
-            public string iconName;
-            public bool isDefault;
+            public string Token;
+            public string DisplayText;
+            public string Url;
+            public string IconName;
+            public bool IsDefault;
             public Provider(string token, string displayText, string url, string iconName, bool isDefault=false)
             {
-                this.token = token;
-                this.displayText = displayText;
-                this.url = url;
-                this.iconName = iconName;
-                this.isDefault = isDefault;
+                Token = token;
+                DisplayText = displayText;
+                Url = url;
+                IconName = iconName;
+                IsDefault = isDefault;
             }
         }
-        List<Provider> providers = new List<Provider>{
+
+        List<Provider> _providers = new List<Provider>{
             new Provider("google", "Search google for '{0}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png", true),
             new Provider("kat", "Search kickasstorrents for '{0}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
             new Provider("youtube", "Search youtube for '{0}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
@@ -35,22 +36,30 @@ namespace wpfmenu.Plugins
             new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png", true)
         };
         
-
         public override void Setup()
         {
-            generic = true;
-            tokens = new List<string>();
-            foreach (var p in providers) {
-                tokens.Add(p.token);
-            }
+            MatchAll = true;
+            Tokens = new List<string>();
+            // add provider tokens to plugin tokens
+            var tokens = _providers.Select(p => p.Token);
+            Tokens.AddRange(tokens);
         }
-        // helper methods for launching chrome
-        private void OpenBrowser(string url)
+
+        /// <summary>
+        /// Opens the browser.
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        private static void OpenBrowser(string url)
         {
             Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
             Process.Start("chrome.exe", url);
         }
-        private void OpenProviderSearch(string providerUrl, string keywords)
+        /// <summary>
+        /// Opens the browser at the search page of a search provider.
+        /// </summary>
+        /// <param name="providerUrl">The provider URL.</param>
+        /// <param name="keywords">The search keywords.</param>
+        private static void OpenProviderSearch(string providerUrl, string keywords)
         {
             var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
             OpenBrowser(url);
@@ -59,51 +68,52 @@ namespace wpfmenu.Plugins
         public override List<Model.Result> Query(Model.QueryInfo info)
         {
             var results = new List<Model.Result>();
-            // generic match (e.g. "<query>")
-            if (info.generic) {
+            
+            if (info.NoPartialMatches) {
                 // handle absolute urls
-                if (info.raw.StartsWith("http://")) {
+                if (info.Raw.StartsWith("http://")) {
                     results.Add(new Model.Result{
-                        Title = info.raw,
+                        Title = info.Raw,
                         SubTitle = "Open in browser",
                         Launch = () => {
-                            OpenBrowser(info.raw);
+                            OpenBrowser(info.Raw);
                         }
                     });
                 }
                 else {
-                    // handle wildcards
-                    foreach (var provider in providers.Where(o => o.isDefault == true)) {
+                    // handle IsDefault providers
+                    foreach (var provider in _providers.Where(o => o.IsDefault == true)) {
                         results.Add(new Model.Result{
-                            Title = String.Format(provider.displayText, info.raw.SingleQuote()),
+                            Title = String.Format(provider.DisplayText, info.Raw.SingleQuote()),
                             Launch = () => {
-                                OpenProviderSearch(provider.url, info.raw);
+                                OpenProviderSearch(provider.Url, info.Raw);
                             },
-                            Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.iconName)),
+                            Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.IconName)),
                         });
                     }
                 }
             }
-            // token match (e.g. "google <query>" or "wiki <query>")
+            
             else {
-                var match = providers.Where(p => p.token.StartsWith(info.token));
-                var provider = match.First();
-
-                var keywords = info.arguments.IsEmpty() ? "..." : info.arguments;
-
-                results.Add(new Model.Result{
-                    Title = String.Format(provider.displayText, keywords.SingleQuote()),
-                    Launch = () => {
-                        if (info.tokenComplete && !info.arguments.IsEmpty()) {
-                            OpenProviderSearch(provider.url, info.arguments);
-                        }
-                        else {
-                            // first token is incomplete (e.g. 'goo'), so we autocomplete with 'google '
-                            Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=provider.token + ' '});
-                        }
-                    },
-                    Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.iconName))
-                });
+                // we have token match (e.g. "google <query>")
+                var match = _providers.Where(p => p.Token.StartsWith(info.Token));
+                if (match.Any()) {
+                    var provider = match.First();
+                    var keywords = info.Arguments.IsEmpty() ? "..." : info.Arguments;
+                    results.Add(new Model.Result{
+                        Title = String.Format(provider.DisplayText, keywords.SingleQuote()),
+                        Launch = () => {
+                            if (info.TokenComplete && !info.Arguments.IsEmpty()) {
+                                OpenProviderSearch(provider.Url, info.Arguments);
+                            }
+                            else {
+                                // first token is incomplete (e.g. 'goo'), so we autocomplete with 'google '
+                                Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=provider.Token + ' '});
+                            }
+                        },
+                        Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.IconName))
+                    });
+                }
             }
             return results;
         }

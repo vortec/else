@@ -7,11 +7,9 @@ namespace wpfmenu.Converter
     {
         public object Convert(object[] values, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if ((int)values[0] == (int)values[1]) {
-                return true;
-            }
-            return false;
+            return (int)values[0] == (int)values[1];
         }
+
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();

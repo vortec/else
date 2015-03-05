@@ -1,5 +1,4 @@
-﻿switch from 3rd party NotifyIcon to pure .NET version from the winforms namespace
-hotkey unregistration?
+﻿
 
 essentials:
 	applications
@@ -28,5 +27,38 @@ system:
 
 
 
-	1. add wildcard support (e.g. search google with only the token)
-	2. reinstate Programs plugin
+
+done
+----
+3. resultslist wrap around (when pressing down key on the last result)
+
+fabio feedback:
+--------------
+
+4. rename wildcard to AlwaysDisplay
+5. document and fix tokenmatch
+6. remove TokenMatch.Wildcard
+7. rename issingular
+8 rename tokenComplete, token
+9. enforce method,variable naming convention (uppercase, see parse())
+10. Plugin.AlwaysDisplay 
+11. change event system?
+
+
+
+naming convention:
+- Types use PascalCase
+- properties and methods always use PascalCase
+- public members (fields, consts) use PascalCase
+- local variables use camelCase
+- parameters use camelCase
+- private fields use camelCase
+- private fields that back a property prefix a _
+
+
+
+
+check these:
+------------
+switch from 3rd party NotifyIcon to pure .NET version from the winforms namespace
+hotkey unregistration?

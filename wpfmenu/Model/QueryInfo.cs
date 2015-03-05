@@ -1,40 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace wpfmenu.Model
+﻿namespace wpfmenu.Model
 {
-    // when a query is entered by the user, it is parsed with this class
+    /// <summary>
+    /// Parses of the query string into more useful fields.
+    /// </summary>
     public class QueryInfo {
-        public string raw;
-        public string token;
-        public string arguments;
-        public bool empty;
-        public bool tokenComplete;
-        public bool generic;
-            
-        public void parse(string query)
+        public string Raw;
+        public string Token;
+        public string Arguments;
+        public bool Empty;
+        public bool TokenComplete;
+        public bool NoPartialMatches;
+        /// <summary>
+        /// Parses the specified query.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        public void Parse(string query)
         {
-            generic = false;
-            raw = query;
+            NoPartialMatches = false;
+            Raw = query;
                 
             int index = query.IndexOf(' ');
             if (index != -1) {
                 // space found, get first word
-                token = query.Substring(0, index);
-                arguments = query.Substring(index+1);
-                tokenComplete = true;
+                Token = query.Substring(0, index);
+                Arguments = query.Substring(index+1);
+                TokenComplete = true;
             }
             else {
                 // no spaces
-                token = query;
-                arguments = "";
-                tokenComplete = false;
+                Token = query;
+                Arguments = "";
+                TokenComplete = false;
             }
-            empty = raw.IsEmpty();
-            raw = query;
+            Empty = Raw.IsEmpty();
+            Raw = query;
         }
     }
 }

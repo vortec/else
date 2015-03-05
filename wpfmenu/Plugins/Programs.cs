@@ -1,108 +1,111 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Diagnostics;
 using System.IO;
-using System.Runtime.Remoting;
-using System.Reflection;
-using System.Drawing;
 using System.Windows.Interop;
 using System.Text.RegularExpressions;
-//using System.Windows.Media;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight.Messaging;
 
 /*
-todo:
-    check memory consumption and possible leakage with icon usage.
-    use displayName from shgetfileinfo?
-    make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
-
+ * todo: check memory consumption and possible leakage with icon usage.
+ * todo: use displayName from shgetfileinfo?
+ * todo: make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
 */
 namespace wpfmenu.Plugins
 {
-    
+    /// <summary>
+    /// Provides ability to launch installed programs.
+    /// </summary>
     class Programs : Plugin
     {
+        /// <summary>
+        /// Storage for details of a found program
+        /// </summary>
+        class ProgramInfo {
+            public string ExePath;
+            public string LinkPath;
+            public string Label;
+            //public string iconLocation;
+            //public Icon icon;
+            public BitmapSource Icon;
+        }
+
+        private const int NumResults = 10;
+        private List<ProgramInfo> _foundPrograms = new List<ProgramInfo>();
+
+        /// <summary>
+        /// Initialize and scan disk for programs.
+        /// </summary>
         public override void Setup()
         {
-            tokens = new List<string>{"*"};
+            MatchAll = true;
             Debug.Print("Scanning for programs..");
-            if (true) {
-                ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
-                ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
-            }
-            
+            ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
+            ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
             Debug.Print("done");
         }
-        public void Launch(Model.QueryInfo info, Model.Result result)
-        {
-            
-        }
+
+        /// <summary>
+        /// Search available programs and return them as results.
+        /// </summary>
         public override List<Model.Result> Query(Model.QueryInfo query)
         {
-            List<Model.Result> results = new List<Model.Result>();
-            int n = 0;
+            var results = new List<Model.Result>();
             
-            foreach (var program in allPrograms) {
+            foreach (var program in _foundPrograms) {
                 // check if program name matches query
-                string pattern = @"(?i)\b" + Regex.Escape(query.raw);
-                if (Regex.IsMatch(program.label, pattern) && n < 10) {
-                    var item = new Model.Result{
-                        Title = program.label,
-                        Icon = program.icon,
-                        SubTitle = program.exePath,
-                        
+                var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
+                var regex = new Regex(pattern, RegexOptions.Compiled);
+
+                if (regex.IsMatch(program.Label) && results.Count < NumResults) {
+                    results.Add(new Model.Result{
+                        Title = program.Label,
+                        Icon = program.Icon,
+                        SubTitle = program.ExePath,
                         Launch = () => {
                             // hide launcher
-                            Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
+                            Messenger.Default.Send(new Messages.HideLauncher());
                             // start program
-                            Process.Start(program.exePath);
+                            Process.Start(program.ExePath);
                         }
-                    };
-                    n += 1;
-                    results.Add(item);
+                    });
                 }
             }
             return results;
         }
 
-        public struct ProgramMetaData {
-            //public string iconLocation;
-            public string exePath;
-            public string lnkPath;
-            public string label;
-            //public Icon icon;
-            public BitmapSource icon;
-        }
         
-        // scan directory for .lnk files
-        List<ProgramMetaData> allPrograms = new List<ProgramMetaData>();
-        void ProcessDirectory(string dir)
+        
+        /// <summary>
+        /// Recursively scans a directory for .lnk files
+        /// </summary>
+        /// <param name="dir">The directory to scan.</param>
+        private void ProcessDirectory(string dir)
         {
-            DirectoryInfo dirInfo = new DirectoryInfo(dir);
+            var dirInfo = new DirectoryInfo(dir);
             foreach (var fi in dirInfo.EnumerateFiles("*", SearchOption.AllDirectories)) {
                 if (fi.Extension == ".lnk") {
-                    ResolveShortcut(fi);
+                    ProcessShortcut(fi);
                 }
             }
         }
-        
-        // inspect a .lnk (windows shortcut) and store data for later searching
-        void ResolveShortcut(FileInfo file)
+
+        /// <summary>
+        /// Resolves the shortcut and adds to _foundPrograms.
+        /// </summary>
+        /// <param name="file">The .lnk file.</param>
+        void ProcessShortcut(FileInfo file)
         {
-            
             IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
             IWshRuntimeLibrary.IWshShortcut shortcut = shell.CreateShortcut(file.FullName);
             
-            var link = new ProgramMetaData{
+            var app = new ProgramInfo{
+                ExePath = shortcut.TargetPath,
+                LinkPath = shortcut.FullName,
+                Label = Path.GetFileNameWithoutExtension(file.Name)
                 //iconLocation = shortcut.IconLocation,
-                exePath = shortcut.TargetPath,
-                lnkPath = shortcut.FullName,
-                label = Path.GetFileNameWithoutExtension(file.Name)
             };
             
             // skip shortcuts that have no target (e.g. "run.lnk")
@@ -110,26 +113,22 @@ namespace wpfmenu.Plugins
                 return;
             }
             
+            // try to fetch the icon
+            var largeIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.LargeIcon);
+            //Icon smallIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.SmallIcon);
 
-            try {
-                if (true) {
-                    // using shgetfile from IconTools:
-                    Icon largeIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.LargeIcon);
-                    //Icon smallIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.SmallIcon);
-                    if (largeIcon != null) {
-                        link.icon = Imaging.CreateBitmapSourceFromHIcon(largeIcon.Handle, new Int32Rect(0, 0, largeIcon.Width, largeIcon.Height), BitmapSizeOptions.FromEmptyOptions());
-                    }
-                }
-                else {
-                    //using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
-                    //    link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
-                    //}
-                }
+            if (largeIcon != null) {
+                // hurrah, icon found.
+                app.Icon = Imaging.CreateBitmapSourceFromHIcon(largeIcon.Handle, new Int32Rect(0, 0, largeIcon.Width, largeIcon.Height), BitmapSizeOptions.FromEmptyOptions());
             }
-            catch {
-                Debug.Print("icon FAIL: {0}", shortcut.TargetPath);
-            }
-            allPrograms.Add(link);
+
+            /* alternative method:
+                //using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
+                //    link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+                //}
+            */
+
+            _foundPrograms.Add(app);
         }
     }
 }

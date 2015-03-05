@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.ComponentModel;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace wpfmenu.Types
 {
+    /// <summary>
+    /// BindingList of <see cref="Model.Result"/>, but automatically increments Model.Result.Index (for xaml usage).
+    /// </summary>
     public class BindingResultsList : BindingList<Model.Result>
     {
         public new void Add(Model.Result value)
