@@ -17,25 +17,25 @@ namespace wpfmenu.Plugins
             public string displayText;
             public string url;
             public string iconName;
-            public Provider(string token, string displayText, string url, string iconName)
+            public bool isDefault;
+            public Provider(string token, string displayText, string url, string iconName, bool isDefault=false)
             {
                 this.token = token;
                 this.displayText = displayText;
                 this.url = url;
                 this.iconName = iconName;
+                this.isDefault = isDefault;
             }
         }
         List<Provider> providers = new List<Provider>{
-            new Provider("google", "Search google for '{0}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png"),
+            new Provider("google", "Search google for '{0}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png", true),
             new Provider("kat", "Search kickasstorrents for '{0}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
             new Provider("youtube", "Search youtube for '{0}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
             new Provider("images", "Search google images for '{0}'", "http://google.co.uk/search?tbm=isch&q={0}", "/Resources/Icons/google.png"),
-            new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png")
+            new Provider("wiki", "Search wikipedia for '{0}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png", true)
         };
-        class ResultData {
-            public Provider provider;
-            public string keywords;
-        }
+        
+
         public override void Setup()
         {
             generic = true;
@@ -43,66 +43,67 @@ namespace wpfmenu.Plugins
             foreach (var p in providers) {
                 tokens.Add(p.token);
             }
-            //tokens.Add("*");
         }
-        public void Launch(Model.QueryInfo info, Model.Result result)
+        // helper methods for launching chrome
+        private void OpenBrowser(string url)
         {
-            var data = result.data as ResultData;
-            
-            if (info.wildcard || (info.tokenComplete && !info.arguments.IsEmpty())) {
-                // hide launcher
-                Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
-                // start chrome with url
-                var url = String.Format(data.provider.url, Uri.EscapeDataString(data.keywords));
-                Process.Start("chrome.exe", url);
-            }
-            else {
-                // rewrite query
-                Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=data.provider.token + ' '});
-            }
+            Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
+            Process.Start("chrome.exe", url);
         }
+        private void OpenProviderSearch(string providerUrl, string keywords)
+        {
+            var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
+            OpenBrowser(url);
+        }
+
         public override List<Model.Result> Query(Model.QueryInfo info)
         {
             var results = new List<Model.Result>();
-            if (info.wildcard) {
-                var wildcardProviders = new List<string>{"wiki", "google"};
-                foreach (var provider in providers) {
-                    if (wildcardProviders.Contains(provider.token)) {
-                        var s = String.Format(provider.displayText, info.raw.SingleQuote());
+            // generic match (e.g. "<query>")
+            if (info.generic) {
+                // handle absolute urls
+                if (info.raw.StartsWith("http://")) {
+                    results.Add(new Model.Result{
+                        Title = info.raw,
+                        SubTitle = "Open in browser",
+                        Launch = () => {
+                            OpenBrowser(info.raw);
+                        }
+                    });
+                }
+                else {
+                    // handle wildcards
+                    foreach (var provider in providers.Where(o => o.isDefault == true)) {
                         results.Add(new Model.Result{
-                            Title = s,
-                            data = new ResultData {
-                                keywords = info.raw,
-                                provider = provider
+                            Title = String.Format(provider.displayText, info.raw.SingleQuote()),
+                            Launch = () => {
+                                OpenProviderSearch(provider.url, info.raw);
                             },
-                            Launch = Launch,
-                            Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.iconName))
+                            Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.iconName)),
                         });
                     }
                 }
             }
+            // token match (e.g. "google <query>" or "wiki <query>")
             else {
-                var data = new ResultData();
                 var match = providers.Where(p => p.token.StartsWith(info.token));
-                
-                
-                if (match.Count() > 0) {
-                    data.provider = match.First();
+                var provider = match.First();
 
-                    if (info.arguments.IsEmpty()) {
-                        data.keywords = "...";
-                    }
-                    else {
-                        data.keywords = String.Join(" ", info.arguments);
-                    }
-            
-                    var s = String.Format(data.provider.displayText, data.keywords.SingleQuote());
-                    results.Add(new Model.Result{
-                        Title = s,
-                        data = data,
-                        Launch = Launch
-                    });
-                }
+                var keywords = info.arguments.IsEmpty() ? "..." : info.arguments;
+
+                results.Add(new Model.Result{
+                    Title = String.Format(provider.displayText, keywords.SingleQuote()),
+                    Launch = () => {
+                        if (info.tokenComplete && !info.arguments.IsEmpty()) {
+                            OpenProviderSearch(provider.url, info.arguments);
+                        }
+                        else {
+                            // first token is incomplete (e.g. 'goo'), so we autocomplete with 'google '
+                            Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=provider.token + ' '});
+                        }
+                    },
+                    Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.iconName))
+                });
             }
             return results;
         }

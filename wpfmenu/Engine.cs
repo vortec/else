@@ -42,7 +42,10 @@ namespace wpfmenu
 
         public void Launch(Messages.Launch message)
         {
-            message.result.Launch(info, message.result);
+            //message.result.Launch(info, message.result);
+            if (message.result.Launch != null) {
+                message.result.Launch();
+            }
         }
         
         // process the query when it changes
@@ -74,9 +77,8 @@ namespace wpfmenu
                     }
                 }
                 if (showDefaultResults) {
-                    
                     // no plugin found, show wildcard results
-                    info.wildcard = true;
+                    info.generic = true;
                     foreach (var p in defaults) {
                         var results = p.Query(info);
                         foreach (var r in results) {

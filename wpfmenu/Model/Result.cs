@@ -10,17 +10,14 @@ namespace wpfmenu.Model
     public class Result
     {
         public string Title {get; set;}
-        public BitmapSource Icon {get; set;}
         public string SubTitle {get; set;}
-        // overridden by subclass
-        public Action<Model.QueryInfo, Result> Launch;
-        public object data;
+        public BitmapSource Icon {get; set;}
+        public Action Launch;
         public int Index {get;set;}
         public bool IsSingular {
             get {
                 return SubTitle.IsEmpty();
             }
-            
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿switch from 3rd party NotifyIcon to pure .NET version from the winforms namespace
 hotkey unregistration?
-setup rawinput, same as c++
-	make escape global key to close the launcher, even if it's not currently focused
 
 essentials:
 	applications

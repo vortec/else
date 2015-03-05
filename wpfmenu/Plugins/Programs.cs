@@ -19,6 +19,7 @@ using GalaSoft.MvvmLight.Messaging;
 todo:
     check memory consumption and possible leakage with icon usage.
     use displayName from shgetfileinfo?
+    make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
 
 */
 namespace wpfmenu.Plugins
@@ -39,10 +40,7 @@ namespace wpfmenu.Plugins
         }
         public void Launch(Model.QueryInfo info, Model.Result result)
         {
-            // hide launcher
-            Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
-            // start program
-            Process.Start((string)result.data);
+            
         }
         public override List<Model.Result> Query(Model.QueryInfo query)
         {
@@ -57,8 +55,13 @@ namespace wpfmenu.Plugins
                         Title = program.label,
                         Icon = program.icon,
                         SubTitle = program.exePath,
-                        data = program.exePath,
-                        Launch = Launch
+                        
+                        Launch = () => {
+                            // hide launcher
+                            Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
+                            // start program
+                            Process.Start(program.exePath);
+                        }
                     };
                     n += 1;
                     results.Add(item);
@@ -118,12 +121,12 @@ namespace wpfmenu.Plugins
                     }
                 }
                 else {
-                    using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
-                        link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
-                    }
+                    //using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
+                    //    link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+                    //}
                 }
             }
-            catch (Exception e) {
+            catch {
                 Debug.Print("icon FAIL: {0}", shortcut.TargetPath);
             }
             allPrograms.Add(link);

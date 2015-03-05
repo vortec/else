@@ -13,11 +13,11 @@ namespace wpfmenu.Model
         public string arguments;
         public bool empty;
         public bool tokenComplete;
-        public bool wildcard;
+        public bool generic;
             
         public void parse(string query)
         {
-            wildcard = false;
+            generic = false;
             raw = query;
                 
             int index = query.IndexOf(' ');
