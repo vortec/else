@@ -97,10 +97,16 @@ namespace wpfmenu.Controls
                         inc++;
                     }
                     if (inc != 0) {
-                        var move = SelectedIndex + inc;
-                        if (move >= 0 && move < Items.Count) {
-                            SelectIndex(move);
+                        var newIndex = SelectedIndex + inc;
+                        if (newIndex < 0) {
+                            // wrap to bottom
+                            newIndex = Items.Count - 1;
                         }
+                        else if (newIndex >= Items.Count) {
+                            // wrap to top
+                            newIndex = 0;
+                        }
+                        SelectIndex(newIndex);
                     }
                 }
             }
