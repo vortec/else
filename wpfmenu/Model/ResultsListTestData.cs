@@ -9,7 +9,7 @@ namespace wpfmenu.Model
     /// </summary>
     public class ResultsListTestData
     {
-        public BindingResultsList Items
+        static public BindingResultsList Items
         {
             get {
                 return new BindingResultsList() {

@@ -11,7 +11,9 @@
              Focusable="False">
     <UserControl.Resources>
         <converter:EqualsConverter x:Key="EqualsConverter"/>
+        <converter:LastItemInContainerConverter x:Key="LastItemInContainerConverter"></converter:LastItemInContainerConverter>
         <model:ResultsListTestData x:Key="ResultsListTestData" />
+        <SolidColorBrush Color="#FFdfdfdf" x:Key="SeperatorBrush" />
     </UserControl.Resources>
     
     <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{StaticResource ResultsListTestData}">
@@ -29,21 +31,25 @@
         </ItemsControl.Template>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <Grid Margin="0 2 0 0" x:Name="__GRID" RenderOptions.ClearTypeHint="Enabled" Background="White">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="40"/>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
+                <StackPanel x:Name="__container" Background="White">
+                    <Separator Margin="0" Background="{StaticResource SeperatorBrush}" />
+                    <Grid Margin="0 0 0 0" RenderOptions.ClearTypeHint="Enabled">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                     
-                    <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}"/>
-                    <StackPanel Grid.Column="1" x:Name="TitleContainer">
-                        <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="Title" />
-                        <TextBlock FontSize="10" Margin="0" Foreground="#FF777777" Text="{Binding SubTitle}" x:Name="SubTitle" />
-                    </StackPanel>
-                </Grid>
+                        <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}"/>
+                        <StackPanel Grid.Column="1" x:Name="TitleContainer">
+                            <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="Title" />
+                            <TextBlock FontSize="10" Margin="0" Foreground="#FF777777" Text="{Binding SubTitle}" x:Name="SubTitle" />
+                        </StackPanel>
+                    </Grid>
+                    <Separator Margin="0" Background="{StaticResource SeperatorBrush}" x:Name="lastSeperator" Visibility="Collapsed" />
+                </StackPanel>
                 <DataTemplate.Triggers>
                     <DataTrigger Value="True">
                         <DataTrigger.Binding>
@@ -52,7 +58,11 @@
                                 <Binding Path="Index" />
                             </MultiBinding>
                         </DataTrigger.Binding>
-                        <Setter TargetName="__GRID" Property="Background" Value="#FFdfdfdf" />
+                        <Setter TargetName="__container" Property="Background" Value="#FFdfdfdf" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource LastItemInContainerConverter}}" Value="True">
+                        
+                        <Setter TargetName="lastSeperator" Property="Visibility" Value="Visible" />
                     </DataTrigger>
                     <!-- if Subtitle is not provided, make the Title consume available space and center vertically. -->
                     <DataTrigger Binding="{Binding Path=HasSubTitle}" Value="True">

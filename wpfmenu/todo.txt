@@ -28,6 +28,10 @@ system:
 
 
 
+fabio feedback:
+--------------
+8 rename tokenComplete, token WF
+
 done
 ----
 3. resultslist wrap around (when pressing down key on the last result)
@@ -38,13 +42,7 @@ done
 10. Plugin.AlwaysDisplay 
 11. change event system?
 12. fix performance problem (since 9824297 and 14eee5d)
-
-fabio feedback:
---------------
-
 5. document and fix tokenmatch
-8 rename tokenComplete, token WF
-
 
 
 naming convention:

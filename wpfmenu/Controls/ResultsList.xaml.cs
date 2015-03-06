@@ -2,8 +2,10 @@
 using System.Windows;
 using System.Windows.Input;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 
 namespace wpfmenu.Controls
 {
@@ -41,7 +43,6 @@ namespace wpfmenu.Controls
         }
         public ResultsList()
         {
-            _selectedIndex = 0;
             InitializeComponent();
             ItemsControl.DataContext = this;
         }
