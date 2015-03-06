@@ -5,6 +5,9 @@
     /// </summary>
     public class QueryInfo {
         public string Raw;
+        /// <summary>
+        /// The token is the first word of the query,  e.g. if query was 'google bbc', Token is 'google'
+        /// </summary>
         public string Token;
         public string Arguments;
         public bool Empty;
