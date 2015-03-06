@@ -5,7 +5,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 
-
+#region DLL imports
 static class User32
 {
     [DllImport("user32.dll")]
@@ -13,6 +13,7 @@ static class User32
     [DllImport("user32.dll")]
     internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 }
+#endregion
 
 namespace wpfmenu
 {
@@ -51,7 +52,7 @@ namespace wpfmenu
             PreviewKeyDown += OnKeyDown;
             
             // bind ResultsList to keyboard input
-            PreviewKeyDown += Results.OnKeyDown;
+            PreviewKeyDown += ResultsList.OnKeyDown;
 
             // temporarily show window (we can only bind to a window that has been shown once).
             Show();
@@ -73,11 +74,12 @@ namespace wpfmenu
                     Activate();
                 }
             });
-
             
-
-            Results.Items = Engine.ResultsList;
+            ResultsList.Items = Engine.ResultsList;
         }
+
+
+        #region Hotkey Code
         /// <summary>
         /// Register a hotkey and define a callback.
         /// </summary>
@@ -129,6 +131,8 @@ namespace wpfmenu
             }
             return IntPtr.Zero;
         }
+        #endregion
+
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             // if escape key is pressed, close the launcher
@@ -156,9 +160,9 @@ namespace wpfmenu
         {
             Hide();
         }
+
         
-        /* The following methods are intended for usage by Plugins */
-        
+
         /// <summary>
         /// Allows a plugin to rewrite the current query.
         /// </summary>
@@ -168,6 +172,6 @@ namespace wpfmenu
             QueryInput.Text = newQuery;
             QueryInput.CaretIndex = QueryInput.Text.Length;
         }
-        
+
     }
 }

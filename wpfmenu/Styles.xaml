@@ -1,9 +1,15 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="clr-namespace:wpfmenu.Controls"
+    xmlns:converter="clr-namespace:wpfmenu.Converter">
+    <!--Colors-->
     <SolidColorBrush Color="#FFF8F8F8" x:Key="BackgroundBrush" />
     <SolidColorBrush Color="#7F363636" x:Key="AlphaBackgroundBrush" />
     <SolidColorBrush Color="#FFD1D1D1" x:Key="TextBoxBackgroundBrush" />
     <SolidColorBrush Color="White" x:Key="WindowBackgroundBrush" />
     
+    <!--Launcher Window Styles-->
     <Style TargetType="TextBox" x:Key="QueryInput">
         <Setter Property="Height" Value="48" />
         <Setter Property="FontSize" Value="24" />
@@ -30,5 +36,25 @@
     <Style TargetType="Grid" x:Key="Container">
         <Setter Property="Background" Value="{StaticResource WindowBackgroundBrush}" />
     </Style>
+    
+    <!--Launcher Window Results List Styles-->
+    <SolidColorBrush Color="#FFdfdfdf" x:Key="ResultsListSeperatorBrush" />
+    <Style TargetType="Separator" x:Key="ResultsListSeperator">
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="Background" Value="{StaticResource ResultsListSeperatorBrush}" />
+    </Style>
+    <Style TargetType="StackPanel" x:Key="ResultsListItemsContainer">
+        <Setter Property="Background" Value="White" />
+    </Style>
+    <Style TargetType="ScrollViewer" x:Key="ResultsListScrollViewer">
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+    
+    <!--Converters-->
+    <converter:EqualsConverter x:Key="EqualsConverter2"/>
+    <converter:LastItemInContainerConverter x:Key="LastItemInContainerConverter"/>
+    
     
 </ResourceDictionary> 

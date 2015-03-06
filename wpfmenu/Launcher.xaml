@@ -43,7 +43,7 @@
                             </Style>
                         </TextBox.Resources>
                     </TextBox>
-                    <controls:ResultsList BorderThickness="0" Grid.Row="1" Focusable="False" x:Name="Results" Margin="0 10 0 0 " ScrollViewer.VerticalScrollBarVisibility="Hidden" />
+                    <controls:ResultsList x:Name="ResultsList" Grid.Row="1" Focusable="False" Margin="0 10 0 0" />
                 </Grid>
             </Grid>
         </Border>
