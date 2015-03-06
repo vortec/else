@@ -11,6 +11,7 @@ using System.Windows.Media.Imaging;
  * todo: check memory consumption and possible leakage with icon usage.
  * todo: use displayName from shgetfileinfo?
  * todo: make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
+ * todo: check performance of the regex used to search programs.
 */
 namespace wpfmenu.Plugins
 {
@@ -51,15 +52,12 @@ namespace wpfmenu.Plugins
         /// </summary>
         public override List<Model.Result> Query(Model.QueryInfo query)
         {
-            
             var results = new List<Model.Result>();
             if (!query.NoPartialMatches) {
-                Debug.Print("searching");
+                var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
+                var regex = new Regex(pattern, RegexOptions.Compiled);
                 foreach (var program in _foundPrograms) {
                     // check if program name matches query
-                    var pattern = @"(?i)\b" + Regex.Escape(query.Raw); // todo: fix this regex, its fucking slow
-                    var regex = new Regex(pattern, RegexOptions.Compiled);
-
                     if (regex.IsMatch(program.Label) && results.Count < NumResults) {
                         results.Add(new Model.Result{
                             Title = program.Label,
@@ -77,8 +75,6 @@ namespace wpfmenu.Plugins
             }
             return results;
         }
-
-        
         
         /// <summary>
         /// Recursively scans a directory for .lnk files
