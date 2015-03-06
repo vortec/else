@@ -1,10 +1,8 @@
-﻿using System.Windows;
-using System.Windows.Controls;
+﻿using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Input;
-using System.Diagnostics;
 using System.ComponentModel;
 using System.Linq;
-using GalaSoft.MvvmLight.Messaging;
 using System.Runtime.CompilerServices;
 
 namespace wpfmenu.Controls
@@ -36,6 +34,7 @@ namespace wpfmenu.Controls
             set {
                 if (_items != value) {
                     _items = value;
+                    _items.CollectionChanged += OnCollectionChanged;
                     NotifyPropertyChanged();
                 }
             }
@@ -45,10 +44,8 @@ namespace wpfmenu.Controls
             _selectedIndex = 0;
             InitializeComponent();
             ItemsControl.DataContext = this;
-            Messenger.Default.Register<Messages.ResultsUpdated>(this, (message) => {
-                SelectedIndex = 0;
-            });
         }
+
         /// <summary>
         /// Notifies the property changed.
         /// </summary>
@@ -60,19 +57,27 @@ namespace wpfmenu.Controls
             }
         }
         
-        void SelectIndex(int index)
+        private void SelectIndex(int index)
         {
             if (index >= 0 && index < Items.Count) {
                 SelectedIndex = index;
                 ScrollIntoView(index);
             }
         }
-        void ScrollIntoView(int index)
+        private void ScrollIntoView(int index)
         {
             var container = ItemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
             if (container != null) {
                 container.BringIntoView();
             }
+        }
+
+        /// <summary>
+        /// Called when the results collection has changed, we must select the first result
+        /// </summary>
+        private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            SelectIndex(0);
         }
         /// <summary>
         /// Process keyboard input for navigating and launching a Result.

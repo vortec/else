@@ -6,7 +6,6 @@ using System.Windows.Interop;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using GalaSoft.MvvmLight.Messaging;
 
 /*
  * todo: check memory consumption and possible leakage with icon usage.
@@ -66,7 +65,7 @@ namespace wpfmenu.Plugins
                         SubTitle = program.ExePath,
                         Launch = () => {
                             // hide launcher
-                            Messenger.Default.Send(new Messages.HideLauncher());
+                            Engine.LauncherWindow.Hide();
                             // start program
                             Process.Start(program.ExePath);
                         }

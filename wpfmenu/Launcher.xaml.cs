@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
-using GalaSoft.MvvmLight.Messaging;
 
 
 static class User32
@@ -32,17 +31,19 @@ namespace wpfmenu
     
     public partial class LauncherWindow : Window
     {
-        public Engine Engine = new Engine();
+        public readonly Engine Engine;
         HwndSource hwndSource;
         Dictionary<KeyCombo, Action> hotkeyCallbacks = new Dictionary<KeyCombo,Action>();
         
         public LauncherWindow()
         {
             InitializeComponent();
+
+            Engine = new Engine(this);
             
             // setup window
             Topmost = true;
-
+            
             // callback when query changes
             QueryInput.TextChanged += Engine.OnQueryChanged;
 
@@ -73,14 +74,7 @@ namespace wpfmenu
                 }
             });
 
-            // listen for messages
-            Messenger.Default.Register<Messages.RewriteQuery>(this, message => {
-                QueryInput.Text = message.data;
-                QueryInput.CaretIndex = QueryInput.Text.Length;
-            });
-            Messenger.Default.Register<Messages.HideLauncher>(this, message => {
-                Hide();
-            });
+            
 
             Results.Items = Engine.ResultsList;
         }
@@ -162,5 +156,18 @@ namespace wpfmenu
         {
             Hide();
         }
+        
+        /* The following methods are intended for usage by Plugins */
+        
+        /// <summary>
+        /// Allows a plugin to rewrite the current query.
+        /// </summary>
+        /// <param name="newQuery">The new query.</param>
+        public void RewriteQuery(string newQuery)
+        {
+            QueryInput.Text = newQuery;
+            QueryInput.CaretIndex = QueryInput.Text.Length;
+        }
+        
     }
 }

@@ -28,7 +28,7 @@ namespace wpfmenu.Types
         }
         public void AddRange(List<Model.Result> collection)
         {
-            int i = 0;
+            var i = 0;
             foreach (var r in collection) {
                 r.Index = Count + i++;
             }

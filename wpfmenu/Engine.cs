@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using GalaSoft.MvvmLight.Messaging;
 using wpfmenu.Plugins;
 
 namespace wpfmenu
@@ -21,13 +18,16 @@ namespace wpfmenu
         /// <summary>
         /// Activated plugins.
         /// </summary>
-        List<Plugins.Plugin> _plugins = new List<Plugins.Plugin>();
+        List<Plugins.Plugin> _plugins;
         /// <summary>
         /// Parsed version of the current query.
         /// </summary>
         Model.QueryInfo _info = new Model.QueryInfo();
 
-        public Engine() {
+        public LauncherWindow LauncherWindow;
+
+        public Engine(LauncherWindow launcherWindow) {
+            LauncherWindow = launcherWindow;
             // load plugins
             _plugins = new List<Plugins.Plugin>{
                 //new Plugins.Programs(),
@@ -36,6 +36,7 @@ namespace wpfmenu
             };
             // setup plugins
             foreach (var p in _plugins) {
+                p.Init(this);
                 p.Setup();
             }
         }
@@ -65,12 +66,7 @@ namespace wpfmenu
                 foreach (var p in _plugins) {
                     var match = p.CheckToken(_info);
                     if (match > TokenMatch.None) {
-                        var results = p.Query(_info);
-                        if (results.Any()) {
-                            foreach (var r in results) {
-                                ResultsList.Add(r);
-                            }
-                        }
+                        ResultsList.AddRange(p.Query(_info));
                     }
                 }
                 
@@ -78,15 +74,10 @@ namespace wpfmenu
                 if (!ResultsList.Any()) {
                     _info.NoPartialMatches = true;
                     foreach (var p in _plugins.Where(p => p.MatchAll)) {
-                        var results = p.Query(_info);
-                        foreach (var r in results) {
-                            ResultsList.Add(r);
-                        }
+                        ResultsList.AddRange(p.Query(_info));
                     }
                 }
             }
-
-            Messenger.Default.Send(new Messages.ResultsUpdated());
         }
     }
 }

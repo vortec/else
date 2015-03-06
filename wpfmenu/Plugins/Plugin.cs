@@ -3,6 +3,7 @@ using System.Linq;
 
 namespace wpfmenu.Plugins
 {
+
     /// <summary>
     /// The type of match, determined from the query and the plugin tokens.
     /// </summary>
@@ -31,10 +32,6 @@ namespace wpfmenu.Plugins
     public abstract class Plugin
     {
         /// <summary>
-        /// Plugin initialization
-        /// </summary>
-        abstract public void Setup();
-        /// <summary>
         /// Queries the plugin for results.
         /// </summary>
         /// <param name="query">The query.</param>
@@ -48,6 +45,20 @@ namespace wpfmenu.Plugins
         /// Whether this plugin provides results regardless of token match
         /// </summary>
         public bool MatchAll;
+        public Engine Engine;
+        
+        /// <summary>
+        /// Initializes this instance with dependancies.
+        /// </summary>
+        public void Init(Engine engine)
+        {
+            Engine = engine;
+        }
+        
+        /// <summary>
+        /// Plugin setup
+        /// </summary>
+        abstract public void Setup();
 
         /// <summary>
         /// Checks the plugin token against the <see cref="Model.QueryInfo"/> and returns the match type.

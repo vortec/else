@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
-using GalaSoft.MvvmLight.Messaging;
 using System.Windows.Media.Imaging;
 
 namespace wpfmenu.Plugins
@@ -49,9 +48,9 @@ namespace wpfmenu.Plugins
         /// Opens the browser.
         /// </summary>
         /// <param name="url">The URL.</param>
-        private static void OpenBrowser(string url)
+        private void OpenBrowser(string url)
         {
-            Messenger.Default.Send<Messages.HideLauncher>(new Messages.HideLauncher());
+            Engine.LauncherWindow.Hide();
             Process.Start("chrome.exe", url);
         }
         /// <summary>
@@ -59,7 +58,7 @@ namespace wpfmenu.Plugins
         /// </summary>
         /// <param name="providerUrl">The provider URL.</param>
         /// <param name="keywords">The search keywords.</param>
-        private static void OpenProviderSearch(string providerUrl, string keywords)
+        private void OpenProviderSearch(string providerUrl, string keywords)
         {
             var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
             OpenBrowser(url);
@@ -82,7 +81,7 @@ namespace wpfmenu.Plugins
                 }
                 else {
                     // handle IsDefault providers
-                    foreach (var provider in _providers.Where(o => o.IsDefault == true)) {
+                    foreach (var provider in _providers.Where(o => o.IsDefault)) {
                         results.Add(new Model.Result{
                             Title = String.Format(provider.DisplayText, info.Raw.SingleQuote()),
                             Launch = () => {
@@ -108,7 +107,7 @@ namespace wpfmenu.Plugins
                             }
                             else {
                                 // first token is incomplete (e.g. 'goo'), so we autocomplete with 'google '
-                                Messenger.Default.Send<Messages.RewriteQuery>(new Messages.RewriteQuery{data=provider.Token + ' '});
+                                Engine.LauncherWindow.RewriteQuery(provider.Token + ' ');
                             }
                         },
                         Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.IconName))
