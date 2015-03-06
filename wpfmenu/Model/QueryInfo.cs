@@ -14,7 +14,7 @@
         public bool TokenComplete;
         public bool NoPartialMatches;
         /// <summary>
-        /// Parses the specified query.
+        /// Parses the specified query into different fields.
         /// </summary>
         /// <param name="query">The query.</param>
         public void Parse(string query)
