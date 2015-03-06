@@ -6,7 +6,6 @@ namespace wpfmenu.Types
 {
     /// <summary>
     /// BindingList of <see cref="Model.Result" />, but automatically increments Model.Result.Index (for xaml usage).
-    // todo: add support for Add()
     /// </summary>
     public class BindingResultsList : List<Model.Result>, INotifyCollectionChanged
     {
@@ -14,17 +13,9 @@ namespace wpfmenu.Types
 
         public new void Add(Model.Result value)
         {
-            throw new NotImplementedException();
-            //value.Index = Count;
-            //base.Add(value);
-        }
-        public void NotifyChanged(NotifyCollectionChangedEventArgs e)
-        {
-            
-            if (CollectionChanged != null) {
-                var alternate = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-                CollectionChanged(this, alternate);
-            }
+            value.Index = Count;
+            base.Add(value);
+            NotifyChanged();
         }
         public void AddRange(List<Model.Result> collection)
         {
@@ -33,7 +24,22 @@ namespace wpfmenu.Types
                 r.Index = Count + i++;
             }
             base.AddRange(collection);
-            NotifyChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, collection));
+            NotifyChanged();
+        }
+        public new void Clear()
+        {
+            base.Clear();
+            NotifyChanged();
+        }
+        /// <summary>
+        /// trigger reset always, since we don't need support for partial changes or such.
+        /// </summary>
+        private void NotifyChanged()
+        {
+            if (CollectionChanged != null) {
+                var notification = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+                CollectionChanged(this, notification);
+            }
         }
     }
 }
