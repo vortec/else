@@ -4,15 +4,17 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:converter="clr-namespace:wpfmenu.Converter"
+             xmlns:model="clr-namespace:wpfmenu.Model"
              x:Name="Root"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300"
+             d:DesignHeight="350" d:DesignWidth="555"
              Focusable="False">
     <UserControl.Resources>
         <converter:EqualsConverter x:Key="EqualsConverter"/>
+        <model:ResultsListTestData x:Key="ResultsListTestData" />
     </UserControl.Resources>
     
-    <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}">
+    <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{StaticResource ResultsListTestData}">
         <ItemsControl.Style>
             <Style TargetType="Control">
                 <Setter Property="Focusable" Value="False" />
@@ -35,6 +37,7 @@
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    
                     <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}"/>
                     <StackPanel Grid.Column="1" x:Name="TitleContainer">
                         <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="Title" />

@@ -73,6 +73,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\ResultsListTestData.cs" />
     <Compile Include="Types\BindingResultsList.cs" />
     <Page Include="Controls\ResultsList.xaml">
       <SubType>Designer</SubType>
