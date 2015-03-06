@@ -43,7 +43,7 @@ namespace wpfmenu.Plugins
             Debug.Print("Scanning for programs..");
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
-            Debug.Print("done");
+            Debug.Print("done ({0} results)", _foundPrograms.Count);
         }
 
         /// <summary>
@@ -51,25 +51,28 @@ namespace wpfmenu.Plugins
         /// </summary>
         public override List<Model.Result> Query(Model.QueryInfo query)
         {
-            var results = new List<Model.Result>();
             
-            foreach (var program in _foundPrograms) {
-                // check if program name matches query
-                var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
-                var regex = new Regex(pattern, RegexOptions.Compiled);
+            var results = new List<Model.Result>();
+            if (!query.NoPartialMatches) {
+                Debug.Print("searching");
+                foreach (var program in _foundPrograms) {
+                    // check if program name matches query
+                    var pattern = @"(?i)\b" + Regex.Escape(query.Raw); // todo: fix this regex, its fucking slow
+                    var regex = new Regex(pattern, RegexOptions.Compiled);
 
-                if (regex.IsMatch(program.Label) && results.Count < NumResults) {
-                    results.Add(new Model.Result{
-                        Title = program.Label,
-                        Icon = program.Icon,
-                        SubTitle = program.ExePath,
-                        Launch = () => {
-                            // hide launcher
-                            Engine.LauncherWindow.Hide();
-                            // start program
-                            Process.Start(program.ExePath);
-                        }
-                    });
+                    if (regex.IsMatch(program.Label) && results.Count < NumResults) {
+                        results.Add(new Model.Result{
+                            Title = program.Label,
+                            Icon = program.Icon,
+                            SubTitle = program.ExePath,
+                            Launch = () => {
+                                // hide launcher
+                                Engine.LauncherWindow.Hide();
+                                // start program
+                                Process.Start(program.ExePath);
+                            }
+                        });
+                    }
                 }
             }
             return results;
