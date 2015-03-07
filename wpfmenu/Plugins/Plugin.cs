@@ -57,20 +57,17 @@ namespace wpfmenu.Plugins
         /// </summary>
         abstract public void Setup();
 
-        
-
-
         /// <summary>
         /// Default method to determine if the plugin is interested in a query.
         /// </summary>
-        /// <param name="info">The query information.</param>
+        /// <param name="query">The query information.</param>
         /// <returns></returns>
-        public virtual PluginInterest IsPluginInterested(Model.QueryInfo info)
+        public virtual PluginInterest IsPluginInterested(Model.QueryInfo query)
         {
-            if (info.TokenComplete && Tokens.Contains(info.Token)) {
+            if (query.TokenComplete && Tokens.Contains(query.Token)) {
                 return PluginInterest.Exclusive;
             }
-            if (!info.TokenComplete && Tokens.Any(token => token.StartsWith(info.Token))) {
+            if (!query.TokenComplete && Tokens.Any(token => token.StartsWith(query.Token))) {
                 return PluginInterest.Shared;
             }
             if (MatchAll) {

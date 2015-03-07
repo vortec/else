@@ -66,7 +66,7 @@ TASKS
 =====
 	- switch from 3rd party NotifyIcon to pure .NET version
 	- replace scrollbar (default windows scroll bar is ugly)
-
+	- if Result.Title is too big to display, uses elipsis (...) to shorten it
 
 DONE
 ====

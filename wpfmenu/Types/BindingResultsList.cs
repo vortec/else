@@ -19,12 +19,14 @@ namespace wpfmenu.Types
         }
         public void AddRange(List<Model.Result> collection)
         {
-            var i = 0;
-            foreach (var r in collection) {
-                r.Index = Count + i++;
+            if (collection != null) {
+                var i = 0;
+                foreach (var r in collection) {
+                    r.Index = Count + i++;
+                }
+                base.AddRange(collection);
+                NotifyChanged();
             }
-            base.AddRange(collection);
-            NotifyChanged();
         }
         public new void Clear()
         {

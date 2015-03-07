@@ -18,7 +18,7 @@ namespace wpfmenu
         /// <summary>
         /// Activated plugins.
         /// </summary>
-        List<Plugins.Plugin> _plugins;
+        List<Plugin> _plugins;
         /// <summary>
         /// Parsed version of the current query.
         /// </summary>
@@ -29,10 +29,11 @@ namespace wpfmenu
         public Engine(LauncherWindow launcherWindow) {
             LauncherWindow = launcherWindow;
             // load plugins
-            _plugins = new List<Plugins.Plugin>{
+            _plugins = new List<Plugin>{
                 //new Plugins.Programs(),
-                new Plugins.Web(),
-                new Plugins.Programs()
+                new Web(),
+                new Programs(),
+                new Math()
             };
             // setup plugins
             foreach (var p in _plugins) {
@@ -61,8 +62,8 @@ namespace wpfmenu
             ResultsList.Clear();
             _info.Parse(query);
 
-            var exclusive = new List<Plugins.Plugin>();
-            var shared = new List<Plugins.Plugin>();
+            var exclusive = new List<Plugin>();
+            var shared = new List<Plugin>();
             
             // scan plugins and find any that are interested in the query
             if (!_info.Empty) {
@@ -83,17 +84,18 @@ namespace wpfmenu
                         ResultsList.AddRange(p.Query(_info));
                     }
                 }
-                else if (shared.Any()) {
-                    foreach (var p in shared) {
-                        ResultsList.AddRange(p.Query(_info));
+                else {
+                    if (shared.Any()) {
+                        foreach (var p in shared) {
+                            ResultsList.AddRange(p.Query(_info));
+                        }
                     }
-                }
-
-                // if no results were provided by the plugins, change query to NoPartialMathces=true and requery plugins with MatchAll=true
-                if (!ResultsList.Any()) {
-                    _info.NoPartialMatches = true;
-                    foreach (var p in _plugins.Where(p => p.MatchAll)) {
-                        ResultsList.AddRange(p.Query(_info));
+                    // if no results were provided by the plugins, change query to NoPartialMathces=true and requery plugins with MatchAll=true
+                    if (!ResultsList.Any()) {
+                        _info.NoPartialMatches = true;
+                        foreach (var p in _plugins.Where(p => p.MatchAll)) {
+                            ResultsList.AddRange(p.Query(_info));
+                        }
                     }
                 }
             }

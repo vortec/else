@@ -64,18 +64,18 @@ namespace wpfmenu.Plugins
             OpenBrowser(url);
         }
 
-        public override List<Model.Result> Query(Model.QueryInfo info)
+        public override List<Model.Result> Query(Model.QueryInfo query)
         {
             var results = new List<Model.Result>();
             
-            if (info.NoPartialMatches) {
+            if (query.NoPartialMatches) {
                 // handle absolute urls
-                if (info.Raw.StartsWith("http://")) {
+                if (query.Raw.StartsWith("http://")) {
                     results.Add(new Model.Result{
-                        Title = info.Raw,
+                        Title = query.Raw,
                         SubTitle = "Open in browser",
                         Launch = () => {
-                            OpenBrowser(info.Raw);
+                            OpenBrowser(query.Raw);
                         }
                     });
                 }
@@ -83,9 +83,9 @@ namespace wpfmenu.Plugins
                     // handle IsDefault providers
                     foreach (var provider in _providers.Where(o => o.IsDefault)) {
                         results.Add(new Model.Result{
-                            Title = String.Format(provider.DisplayText, info.Raw.SingleQuote()),
+                            Title = String.Format(provider.DisplayText, query.Raw.SingleQuote()),
                             Launch = () => {
-                                OpenProviderSearch(provider.Url, info.Raw);
+                                OpenProviderSearch(provider.Url, query.Raw);
                             },
                             Icon = new BitmapImage(new Uri("pack://application:,,," +  provider.IconName)),
                         });
@@ -95,15 +95,15 @@ namespace wpfmenu.Plugins
             
             else {
                 // we have token match (e.g. "google <query>")
-                var match = _providers.Where(p => p.Token.StartsWith(info.Token));
+                var match = _providers.Where(p => p.Token.StartsWith(query.Token));
                 if (match.Any()) {
                     var provider = match.First();
-                    var keywords = info.Arguments.IsEmpty() ? "..." : info.Arguments;
+                    var keywords = query.Arguments.IsEmpty() ? "..." : query.Arguments;
                     results.Add(new Model.Result{
                         Title = String.Format(provider.DisplayText, keywords.SingleQuote()),
                         Launch = () => {
-                            if (info.TokenComplete && !info.Arguments.IsEmpty()) {
-                                OpenProviderSearch(provider.Url, info.Arguments);
+                            if (query.TokenComplete && !query.Arguments.IsEmpty()) {
+                                OpenProviderSearch(provider.Url, query.Arguments);
                             }
                             else {
                                 // first token is incomplete (e.g. 'goo'), so we autocomplete with 'google '
