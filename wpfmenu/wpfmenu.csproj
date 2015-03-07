@@ -65,8 +65,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
+    <Compile Include="Interop\Win32.cs" />
     <Compile Include="Model\ResultsListTestData.cs" />
     <Compile Include="Plugins\Math.cs" />
+    <Compile Include="Plugins\SystemCommands.cs" />
     <Compile Include="Types\BindingResultsList.cs" />
     <Page Include="Controls\ResultsList.xaml">
       <SubType>Designer</SubType>

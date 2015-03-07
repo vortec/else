@@ -29,12 +29,6 @@ namespace wpfmenu.Plugins
     public abstract class Plugin
     {
         /// <summary>
-        /// Queries the plugin for results.
-        /// </summary>
-        /// <param name="query">The query.</param>
-        /// <returns>List of <see cref="Model.Result" /> to be displayed on the launcher</returns>
-        abstract public List<Model.Result> Query(Model.QueryInfo query);
-        /// <summary>
         /// Tokens that are handled by this plugin
         /// </summary>
         public List<string> Tokens = new List<string>();
@@ -56,6 +50,13 @@ namespace wpfmenu.Plugins
         /// Plugin setup
         /// </summary>
         abstract public void Setup();
+
+        /// <summary>
+        /// Queries the plugin for results.
+        /// </summary>
+        /// <param name="query">The query.</param>
+        /// <returns>List of <see cref="Model.Result" /> to be displayed on the launcher</returns>
+        abstract public List<Model.Result> Query(Model.QueryInfo query);
 
         /// <summary>
         /// Default method to determine if the plugin is interested in a query.

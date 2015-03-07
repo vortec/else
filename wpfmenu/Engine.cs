@@ -33,7 +33,8 @@ namespace wpfmenu
                 //new Plugins.Programs(),
                 new Web(),
                 new Programs(),
-                new Math()
+                new Math(),
+                new SystemCommands()
             };
             // setup plugins
             foreach (var p in _plugins) {
