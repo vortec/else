@@ -56,7 +56,7 @@
                         <Setter TargetName="lastSeperator" Property="Visibility" Value="Visible" />
                     </DataTrigger>
                     <!-- if Subtitle is not provided, make the Title consume available space and center vertically. -->
-                    <DataTrigger Binding="{Binding Path=HasSubTitle}" Value="True">
+                    <DataTrigger Binding="{Binding Path=HasSubTitle}" Value="False">
                         <Setter TargetName="SubTitle" Property="Visibility" Value="Collapsed" />
                         <Setter TargetName="TitleContainer" Property="VerticalAlignment" Value="Center" />
                     </DataTrigger>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Media.Imaging;
 
 namespace wpfmenu.Model
@@ -15,7 +16,7 @@ namespace wpfmenu.Model
         public Action Launch;
         public bool HasSubTitle {
             get {
-                return SubTitle.IsEmpty();
+                return !SubTitle.IsEmpty();
             }
         }
     }

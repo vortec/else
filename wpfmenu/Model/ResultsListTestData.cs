@@ -22,7 +22,11 @@ namespace wpfmenu.Model
                         Title = "Wikipedia",
                         SubTitle = "SubTitle Text",
                         Icon = new BitmapImage(new Uri("pack://application:,,,/wpfmenu;component/Resources/Icons/wiki.png"))
-                    }
+                    },
+                    new Result{
+                        Title = "No SubTitle",
+                        Icon = new BitmapImage(new Uri("pack://application:,,,/wpfmenu;component/Resources/Icons/google.png"))
+                    },
                 };
             }
         }
