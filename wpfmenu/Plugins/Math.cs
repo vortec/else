@@ -31,6 +31,7 @@ namespace wpfmenu.Plugins
             // try and execute the query using Jace math library
             try {
                 double mathResult = _calculationEngine.Calculate(query.Raw);
+                // todo: check the string representation is okay for really long numbers
                 var strMathResult = mathResult.ToString("F99").TrimEnd("0".ToCharArray()).TrimEnd(".".ToCharArray());
                 result = new Result{
                     Title = strMathResult,
