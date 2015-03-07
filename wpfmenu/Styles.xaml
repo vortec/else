@@ -17,7 +17,7 @@
         <Setter Property="Padding" Value="6,3" />
         <Setter Property="FontFamily" Value="Segoe WP Semibold" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Background" Value="{StaticResource TextBoxBackgroundBrush}" />
+        <!--<Setter Property="Background" Value="{StaticResource TextBoxBackgroundBrush}" />-->
     </Style>
     
     <Style TargetType="Border" x:Key="WindowBorder">
@@ -38,10 +38,10 @@
     </Style>
     
     <!--Launcher Window Results List Styles-->
-    <SolidColorBrush Color="#FFdfdfdf" x:Key="ResultsListSeperatorBrush" />
+    <SolidColorBrush Color="#EEEDEF" x:Key="ResultsListSelectedBrush" />
     <Style TargetType="Separator" x:Key="ResultsListSeperator">
         <Setter Property="Margin" Value="0" />
-        <Setter Property="Background" Value="{StaticResource ResultsListSeperatorBrush}" />
+        <Setter Property="Background" Value="{StaticResource ResultsListSelectedBrush}" />
     </Style>
     <Style TargetType="StackPanel" x:Key="ResultsListItemsContainer">
         <Setter Property="Background" Value="White" />
@@ -51,6 +51,8 @@
         <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
         <Setter Property="Padding" Value="0"/>
     </Style>
+    
+    
     
     <!--Converters-->
     <converter:EqualsConverter x:Key="EqualsConverter2"/>

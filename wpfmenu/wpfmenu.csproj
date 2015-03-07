@@ -114,7 +114,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Messages.cs" />
     <Compile Include="Model\QueryInfo.cs" />
     <Compile Include="Model\Result.cs" />
     <Compile Include="NotifyIconViewModel.cs">

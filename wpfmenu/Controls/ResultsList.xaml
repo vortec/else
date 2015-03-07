@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:converter="clr-namespace:wpfmenu.Converter"
              xmlns:model="clr-namespace:wpfmenu.Model"
              x:Name="Root"
              mc:Ignorable="d" 
@@ -12,8 +11,7 @@
     <UserControl.Resources>
         <model:ResultsListTestData x:Key="ResultsListTestData" />
     </UserControl.Resources>
-    
-    <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{StaticResource ResultsListTestData}">
+    <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance model:ResultsListTestData, IsDesignTimeCreatable=True}">
         <ItemsControl.Style>
             <Style TargetType="Control">
                 <Setter Property="Focusable" Value="False" />
@@ -54,10 +52,9 @@
                                 <Binding Path="Index" />
                             </MultiBinding>
                         </DataTrigger.Binding>
-                        <Setter TargetName="ItemsContainer" Property="Background" Value="#FFdfdfdf" />
+                        <Setter TargetName="ItemsContainer" Property="Background" Value="{StaticResource ResultsListSelectedBrush}" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource LastItemInContainerConverter}}" Value="True">
-                        
                         <Setter TargetName="lastSeperator" Property="Visibility" Value="Visible" />
                     </DataTrigger>
                     <!-- if Subtitle is not provided, make the Title consume available space and center vertically. -->

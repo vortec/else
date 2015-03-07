@@ -2,10 +2,8 @@
 using System.Windows;
 using System.Windows.Input;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Windows.Controls;
 
 namespace wpfmenu.Controls
 {
