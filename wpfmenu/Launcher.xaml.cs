@@ -4,17 +4,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Runtime.InteropServices;
 
-#region DLL imports
-static class User32
-{
-    [DllImport("user32.dll")]
-    internal static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
-    [DllImport("user32.dll")]
-    internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-}
-#endregion
 
 namespace wpfmenu
 {
@@ -91,7 +81,7 @@ namespace wpfmenu
         public bool RegisterHotkey(Modifier modifier, Key key, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(key);
-            if (User32.RegisterHotKey(hwndSource.Handle, id, (int)modifier, KeyInterop.VirtualKeyFromKey(key))) {
+            if (Interop.Win32.RegisterHotKey(hwndSource.Handle, id, (int)modifier, KeyInterop.VirtualKeyFromKey(key))) {
                 hotkeyCallbacks[new KeyCombo(modifier, key)] = action;
                 return true;
             }
