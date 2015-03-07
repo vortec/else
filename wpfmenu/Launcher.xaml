@@ -11,6 +11,8 @@
         SnapsToDevicePixels="True"
         UseLayoutRounding="False"
         Deactivated="OnDeactivated"
+        Activated="OnActivated"
+        
         IsVisibleChanged="OnVisibleChanged"
         AllowsTransparency="True"
         RenderOptions.ClearTypeHint="Enabled"
@@ -27,7 +29,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     
-                    <TextBox Grid.Row="0" Name="QueryInput" Style="{StaticResource QueryInput}" Text="Query goes here.." >
+                    <TextBox Grid.Row="0" Name="QueryInput" Style="{StaticResource QueryInput}" Text="Query goes here..">
                         <TextBox.Resources>
                             <!-- hack to make cleartype work.. -->
                             <Style TargetType="{x:Type ScrollViewer}">

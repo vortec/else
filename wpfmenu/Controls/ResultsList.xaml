@@ -8,9 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="350" d:DesignWidth="555"
              Focusable="False">
-    <UserControl.Resources>
-        <model:ResultsListTestData x:Key="ResultsListTestData" />
-    </UserControl.Resources>
+    
     <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance model:ResultsListTestData, IsDesignTimeCreatable=True}">
         <ItemsControl.Style>
             <Style TargetType="Control">
@@ -19,7 +17,7 @@
         </ItemsControl.Style>
         <ItemsControl.Template>
             <ControlTemplate>
-                <ScrollViewer Style="{StaticResource ResultsListScrollViewer}">
+                <ScrollViewer Style="{StaticResource ResultsListScrollViewer}" Focusable="False">
                     <ItemsPresenter />
                 </ScrollViewer>
             </ControlTemplate>
