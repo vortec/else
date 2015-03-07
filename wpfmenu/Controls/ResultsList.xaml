@@ -34,10 +34,10 @@
                             <ColumnDefinition Width="50" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <Image Width="32"  Height="32" Grid.Column="0" x:Name="icon" Source="{Binding Icon}"/>
-                        <StackPanel Grid.Column="1" x:Name="TitleContainer">
-                            <TextBlock FontSize="17" Margin="0" Text="{Binding Title}"  x:Name="Title" />
-                            <TextBlock FontSize="10" Margin="0" Foreground="#FF777777" Text="{Binding SubTitle}" x:Name="SubTitle" />
+                        <Image x:Name="icon" Source="{Binding Icon}" Width="32"  Height="32" Grid.Column="0"/>
+                        <StackPanel x:Name="TitleContainer" Grid.Column="1">
+                            <TextBlock x:Name="Title" Text="{Binding Title}" FontSize="17" Margin="0" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock x:Name="SubTitle" Text="{Binding SubTitle}" FontSize="10" Margin="0" Foreground="#FF777777" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                     </Grid>
                     <Separator x:Name="lastSeperator" Visibility="Collapsed" Style="{StaticResource ResultsListSeperator}"/>
@@ -46,7 +46,7 @@
                     <DataTrigger Value="True">
                         <DataTrigger.Binding>
                             <MultiBinding Converter="{StaticResource EqualsConverter2}">
-                                <Binding ElementName="Root" Path="SelectedIndex" />
+                                <Binding Path="SelectedIndex" ElementName="Root" />
                                 <Binding Path="Index" />
                             </MultiBinding>
                         </DataTrigger.Binding>
