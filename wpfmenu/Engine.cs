@@ -60,16 +60,35 @@ namespace wpfmenu
         {
             ResultsList.Clear();
             _info.Parse(query);
+
+            var exclusive = new List<Plugins.Plugin>();
+            var shared = new List<Plugins.Plugin>();
             
+            // scan plugins and find any that are interested in the query
             if (!_info.Empty) {
-                // query plugins
                 foreach (var p in _plugins) {
-                    var match = p.CheckToken(_info);
-                    if (match > TokenMatch.None) {
+                    var interest = p.IsPluginInterested(_info);
+
+                    if (interest == PluginInterest.Exclusive) {
+                        exclusive.Add(p);
+                    }
+                    else if (interest == PluginInterest.Shared) {
+                        shared.Add(p);
+                    }
+                }
+            
+                // exclusive matches require exclusive control
+                if (exclusive.Any()) {
+                    foreach (var p in exclusive) {
                         ResultsList.AddRange(p.Query(_info));
                     }
                 }
-                
+                else if (shared.Any()) {
+                    foreach (var p in shared) {
+                        ResultsList.AddRange(p.Query(_info));
+                    }
+                }
+
                 // if no results were provided by the plugins, change query to NoPartialMathces=true and requery plugins with MatchAll=true
                 if (!ResultsList.Any()) {
                     _info.NoPartialMatches = true;

@@ -1,29 +1,26 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Schema;
 
 namespace wpfmenu.Plugins
 {
 
     /// <summary>
-    /// The type of match, determined from the query and the plugin tokens.
+    /// Plugin interest on the current query.
     /// </summary>
-    public enum TokenMatch {
+    public enum PluginInterest {
         /// <summary>
-        /// No matches
+        /// Plugin has no interest in providing results for the query.
         /// </summary>
         None,
         /// <summary>
-        /// The plugin matches all queries (<see cref="Plugin.MatchAll"/>)
+        /// Plugin shares control over results with other plugins.
         /// </summary>
-        All,
+        Shared,
         /// <summary>
-        /// Partial match, e.g. query "goo" partially matches "google"
+        /// Plugin demands exclusive control over the results for the query.
         /// </summary>
-        Partial,
-        /// <summary>
-        /// Exact match, e.g. query "google" exactly matches "google"
-        /// </summary>
-        Exact,
+        Exclusive,
     };
 
     /// <summary>
@@ -60,21 +57,28 @@ namespace wpfmenu.Plugins
         /// </summary>
         abstract public void Setup();
 
+        
+
+
         /// <summary>
-        /// Checks the plugin token against the <see cref="Model.QueryInfo"/> and returns the match type.
+        /// Default method to determine if the plugin is interested in a query.
         /// </summary>
-        public TokenMatch CheckToken(Model.QueryInfo info)
+        /// <param name="info">The query information.</param>
+        /// <returns></returns>
+        public virtual PluginInterest IsPluginInterested(Model.QueryInfo info)
         {
-            if (Tokens.Contains(info.Token)) {
-                return TokenMatch.Exact;
+            if (info.TokenComplete && Tokens.Contains(info.Token)) {
+                return PluginInterest.Exclusive;
             }
             if (!info.TokenComplete && Tokens.Any(token => token.StartsWith(info.Token))) {
-                return TokenMatch.Partial;
+                return PluginInterest.Shared;
             }
             if (MatchAll) {
-                return TokenMatch.All;
+                return PluginInterest.Shared;
             }
-            return TokenMatch.None;
+            return PluginInterest.None;
         }
+
+        
     }
 }
