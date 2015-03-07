@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Interop;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -106,8 +107,8 @@ namespace wpfmenu.Plugins
                 //iconLocation = shortcut.IconLocation,
             };
             
-            // skip shortcuts that have no target (e.g. "run.lnk")
-            if (shortcut.TargetPath.IsEmpty()) {
+            // skip shortcuts that have no target, or the target exectuable does not exist
+            if (shortcut.TargetPath.IsEmpty() || !File.Exists(shortcut.TargetPath)) {
                 return;
             }
             
@@ -121,7 +122,7 @@ namespace wpfmenu.Plugins
             }
 
             /* alternative method:
-                //using (var icon = System.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
+                //using (var icon = SystemCommands.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
                 //    link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
                 //}
             */
