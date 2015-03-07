@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -147,10 +148,16 @@ namespace wpfmenu
         {
             if ((bool)e.NewValue) {
                 // launcher is shown, reset form
-                //engine.Clear();
                 QueryInput.Text = "";
-                QueryInput.Focus();
             }
+        }
+
+        /// <summary>
+        /// Focus textbox when window is shown
+        /// </summary>
+        private void OnActivated(object sender, EventArgs e)
+        {
+            QueryInput.Focus();
         }
 
         /// <summary>
@@ -161,8 +168,6 @@ namespace wpfmenu
             Hide();
         }
 
-        
-
         /// <summary>
         /// Allows a plugin to rewrite the current query.
         /// </summary>
@@ -172,6 +177,5 @@ namespace wpfmenu
             QueryInput.Text = newQuery;
             QueryInput.CaretIndex = QueryInput.Text.Length;
         }
-
     }
 }
