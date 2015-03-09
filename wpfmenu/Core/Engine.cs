@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using wpfmenu.Plugins;
+using wpfmenu.Core.Plugins;
+using wpfmenu.Views;
 
-namespace wpfmenu
+namespace wpfmenu.Core
 {
-
     /// <summary>
     /// Handles parsing of the query and querying plugins for results.
     /// </summary>
@@ -14,7 +14,7 @@ namespace wpfmenu
         /// <summary>
         /// The results list
         /// </summary>
-        public Types.BindingResultsList ResultsList = new Types.BindingResultsList();
+        public DataTypes.BindingResultsList ResultsList = new DataTypes.BindingResultsList();
         /// <summary>
         /// Activated plugins.
         /// </summary>
@@ -22,7 +22,7 @@ namespace wpfmenu
         /// <summary>
         /// Parsed version of the current query.
         /// </summary>
-        Model.QueryInfo _info = new Model.QueryInfo();
+        public Model.Query Query = new Model.Query();
 
         public LauncherWindow LauncherWindow;
 
@@ -30,7 +30,6 @@ namespace wpfmenu
             LauncherWindow = launcherWindow;
             // load plugins
             _plugins = new List<Plugin>{
-                //new Plugins.Programs(),
                 new Web(),
                 new Programs(),
                 new Math(),
@@ -61,41 +60,34 @@ namespace wpfmenu
         private void ExecuteQuery(string query)
         {
             ResultsList.Clear();
-            _info.Parse(query);
+            Query.Parse(query);
 
-            var exclusive = new List<Plugin>();
-            var shared = new List<Plugin>();
-            
-            // scan plugins and find any that are interested in the query
-            if (!_info.Empty) {
+            var exclusive = new List<ResultProvider>();
+            var shared = new List<ResultProvider>();
+
+            if (!Query.Empty) {
                 foreach (var p in _plugins) {
-                    var interest = p.IsPluginInterested(_info);
-
-                    if (interest == PluginInterest.Exclusive) {
-                        exclusive.Add(p);
-                    }
-                    else if (interest == PluginInterest.Shared) {
-                        shared.Add(p);
+                    foreach (var c in p.Providers) {
+                        if (c.IsInterested != null) {
+                            var x = c.IsInterested(Query);
+                            if (x == ProviderInterest.Exclusive) {
+                                exclusive.Add(c);
+                            }
+                            if (x == ProviderInterest.Shared) {
+                                shared.Add(c);
+                            }
+                        }
                     }
                 }
-            
-                // exclusive matches require exclusive control
                 if (exclusive.Any()) {
-                    foreach (var p in exclusive) {
-                        ResultsList.AddRange(p.Query(_info));
+                    foreach (var c in exclusive) {
+                        ResultsList.AddRange(c.Query(Query));
                     }
                 }
                 else {
                     if (shared.Any()) {
-                        foreach (var p in shared) {
-                            ResultsList.AddRange(p.Query(_info));
-                        }
-                    }
-                    // if no results were provided by the plugins, change query to NoPartialMathces=true and requery plugins with MatchAll=true
-                    if (!ResultsList.Any()) {
-                        _info.NoPartialMatches = true;
-                        foreach (var p in _plugins.Where(p => p.MatchAll)) {
-                            ResultsList.AddRange(p.Query(_info));
+                        foreach (var c in shared) {
+                            ResultsList.AddRange(c.Query(Query));
                         }
                     }
                 }

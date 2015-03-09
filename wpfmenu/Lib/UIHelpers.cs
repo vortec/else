@@ -1,13 +1,9 @@
 ﻿using System.Linq;
 using System.Windows;
-using System.Diagnostics;
 
-namespace wpfmenu
+namespace wpfmenu.Lib
 {
-    /// <summary>
-    /// Helper methods for UI
-    /// </summary>
-    public static class Helpers
+    public static class UIHelpers
     {
         public static bool IsWindowOpen<T>(string name = "") where T : Window
         {
@@ -24,7 +20,6 @@ namespace wpfmenu
         {
             var window = GetWindow<T>(name);
             if (window != null) {
-                Debug.Print("focusing window");
                 window.Focus();
                 return true;
             }

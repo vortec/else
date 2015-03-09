@@ -1,0 +1,15 @@
+Console
+	Token with Argument
+
+Math
+	MatchAll
+
+Programs
+	MatchAll
+
+SystemCommands
+	Token
+
+Web
+	Token with Argument
+	Fallback

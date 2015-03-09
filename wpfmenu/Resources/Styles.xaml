@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:wpfmenu.Controls"
     xmlns:converter="clr-namespace:wpfmenu.Converter">
+    
     <!--Colors-->
     <SolidColorBrush Color="#FFF8F8F8" x:Key="BackgroundBrush" />
     <SolidColorBrush Color="#7F363636" x:Key="AlphaBackgroundBrush" />

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace wpfmenu.Types
+namespace wpfmenu.DataTypes
 {
     /// <summary>
     /// BindingList of <see cref="Model.Result" />, but automatically increments Model.Result.Index (for xaml usage).

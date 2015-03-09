@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Windows.Interop;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media.Imaging;
+using wpfmenu.Lib;
 
 /*
  * todo: check memory consumption and possible leakage with icon usage.
  * todo: use displayName from shgetfileinfo?
  * todo: make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
- * todo: check performance of the regex used to search programs.
 */
-namespace wpfmenu.Plugins
+namespace wpfmenu.Core.Plugins
 {
     /// <summary>
     /// Provides ability to launch installed programs.
@@ -41,42 +40,39 @@ namespace wpfmenu.Plugins
         /// </summary>
         public override void Setup()
         {
-            MatchAll = true;
             Debug.Print("Scanning for programs..");
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
             Debug.Print("done ({0} results)", _foundPrograms.Count);
+
+            Providers.Add(new ResultProvider{
+                Keyword = "launch",
+                Fallback = true,
+                Query = query => {
+                    var results = new List<Model.Result>();
+                    var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
+                    var regex = new Regex(pattern, RegexOptions.Compiled);
+                    foreach (var program in _foundPrograms) {
+                        // check if program name matches query
+                        if (regex.IsMatch(program.Label) && results.Count < NumResults) {
+                            results.Add(new Model.Result{
+                                Title = program.Label,
+                                Icon = program.Icon,
+                                SubTitle = program.ExePath,
+                                Launch = launchQuery => {
+                                    // hide launcher
+                                    Engine.LauncherWindow.Hide();
+                                    // start program
+                                    Process.Start(program.ExePath);
+                                }
+                            });
+                        }
+                    }
+                    return results;
+                }
+            });
         }
 
-        /// <summary>
-        /// Search available programs and return them as results.
-        /// </summary>
-        public override List<Model.Result> Query(Model.QueryInfo query)
-        {
-            var results = new List<Model.Result>();
-            if (!query.NoPartialMatches) {
-                var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
-                var regex = new Regex(pattern, RegexOptions.Compiled);
-                foreach (var program in _foundPrograms) {
-                    // check if program name matches query
-                    if (regex.IsMatch(program.Label) && results.Count < NumResults) {
-                        results.Add(new Model.Result{
-                            Title = program.Label,
-                            Icon = program.Icon,
-                            SubTitle = program.ExePath,
-                            Launch = () => {
-                                // hide launcher
-                                Engine.LauncherWindow.Hide();
-                                // start program
-                                Process.Start(program.ExePath);
-                            }
-                        });
-                    }
-                }
-            }
-            return results;
-        }
-        
         /// <summary>
         /// Recursively scans a directory for .lnk files
         /// </summary>

@@ -1,9 +1,11 @@
 ﻿using System.Collections.Specialized;
-using System.Windows;
-using System.Windows.Input;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Windows.Input;
+using wpfmenu.DataTypes;
+using wpfmenu.Core;
 
 namespace wpfmenu.Controls
 {
@@ -12,6 +14,7 @@ namespace wpfmenu.Controls
     /// </summary>
     public partial class ResultsList : INotifyPropertyChanged
     {
+        public Engine Engine;
         public event PropertyChangedEventHandler PropertyChanged;
 
         private int _selectedIndex;
@@ -26,8 +29,8 @@ namespace wpfmenu.Controls
                 }
             }
         }
-        private Types.BindingResultsList _items;
-        public Types.BindingResultsList Items {
+        private BindingResultsList _items;
+        public BindingResultsList Items {
             get {
                 return _items;
             }
@@ -43,6 +46,12 @@ namespace wpfmenu.Controls
         {
             InitializeComponent();
             ItemsControl.DataContext = this;
+        }
+        public void Init(Engine engine)
+        {
+            Engine = engine;
+            Items = engine.ResultsList;
+
         }
 
         /// <summary>
@@ -78,6 +87,7 @@ namespace wpfmenu.Controls
         {
             SelectIndex(0);
         }
+
         /// <summary>
         /// Process keyboard input for navigating and launching a Result.
         /// </summary>
@@ -87,7 +97,8 @@ namespace wpfmenu.Controls
                 if (e.Key == Key.Enter || e.Key == Key.Return) {
                     var launch = Items[SelectedIndex].Launch;
                     if (launch != null) {
-                        launch();
+                        
+                        launch(Engine.Query);
                     }
                 }
                 else {

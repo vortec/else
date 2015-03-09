@@ -1,4 +1,4 @@
-﻿<Window x:Name="Settings" x:Class="wpfmenu.SettingsWindow"
+﻿<Window x:Name="Settings" x:Class="wpfmenu.Views.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Options" Width="540" Height="400">

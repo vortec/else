@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using System.Diagnostics;
+using wpfmenu.Lib;
 
-namespace wpfmenu
+namespace wpfmenu.Model
 {
     /// <summary>
     /// Provides bindable properties and commands for the NotifyIcon. In this sample, the
@@ -40,14 +41,14 @@ namespace wpfmenu
                     
                     CommandAction = () =>
                     {
-                        if (Helpers.IsWindowOpen<Window>("Settings")) {
+                        if (UIHelpers.IsWindowOpen<Window>("Settings")) {
                             // focus window
                             Debug.Print("HELLO!");
-                            Helpers.FocusWindow<Window>("Settings");
+                            UIHelpers.FocusWindow<Window>("Settings");
                         }
                         else {
                             // show window
-                            var window = new SettingsWindow();
+                            var window = new Views.SettingsWindow();
                             window.Show();
                         }
                     }

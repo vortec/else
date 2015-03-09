@@ -1,5 +1,5 @@
 ﻿using System;
-using wpfmenu.Types;
+using wpfmenu.DataTypes;
 using System.Windows.Media.Imaging;
 
 namespace wpfmenu.Model

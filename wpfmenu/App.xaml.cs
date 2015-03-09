@@ -1,11 +1,11 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
+using wpfmenu.Views;
 using Hardcodet.Wpf.TaskbarNotification;
 
 
 namespace wpfmenu
 {
-    public partial class App : Application
+    public partial class App
     {
         private TaskbarIcon _notifyIcon;
         protected override void OnStartup(StartupEventArgs e)

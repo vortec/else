@@ -1,0 +1,79 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Media.Imaging;
+using wpfmenu.Core.ResultProviders;
+
+namespace wpfmenu.Core.Plugins
+{
+    class Web : Plugin
+    {
+        /// <summary>
+        /// Data for a web provider (e.g. google)
+        /// </summary>
+        public class SearchProvider {
+            public string Token;
+            public string DisplayText;
+            public string Url;
+            public string IconName;
+            public bool IsDefault;
+            public SearchProvider(string token, string displayText, string url, string iconName, bool isDefault=false)
+            {
+                Token = token;
+                DisplayText = displayText;
+                Url = url;
+                IconName = iconName;
+                IsDefault = isDefault;
+            }
+        }
+
+        /// <summary>
+        /// Define search providers
+        /// </summary>
+        List<SearchProvider> _searchProviders = new List<SearchProvider>{
+            new SearchProvider("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png", true),
+            new SearchProvider("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
+            new SearchProvider("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
+            new SearchProvider("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "/Resources/Icons/google.png"),
+            new SearchProvider("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png", true)
+        };
+
+        /// <summary>
+        /// Plugin setup
+        /// </summary>
+        public override void Setup()
+        {
+            // convert searchProviders to Commands
+            foreach (var p in _searchProviders) {
+                Providers.Add(new Command{
+                    Keyword = p.Token,
+                    Title = p.DisplayText,
+                    Icon = new BitmapImage(new Uri("pack://application:,,," +  p.IconName)),
+                    Launch = query => {
+                        OpenProviderSearch("http://google.co.uk/search?q={0}", query.Arguments);
+                    },
+                    RequiresArguments = true
+                });
+            }
+        }
+        /// <summary>
+        /// Opens the browser.
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        private void OpenBrowser(string url)
+        {
+            Engine.LauncherWindow.Hide();
+            Process.Start("chrome.exe", url);
+        }
+        /// <summary>
+        /// Opens the browser at the search page of a search provider.
+        /// </summary>
+        /// <param name="providerUrl">The provider URL.</param>
+        /// <param name="keywords">The search keywords.</param>
+        private void OpenProviderSearch(string providerUrl, string keywords)
+        {
+            var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
+            OpenBrowser(url);
+        }
+    }
+}

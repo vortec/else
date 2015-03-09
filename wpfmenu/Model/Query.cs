@@ -1,9 +1,11 @@
-﻿namespace wpfmenu.Model
+﻿using wpfmenu.Lib;
+
+namespace wpfmenu.Model
 {
     /// <summary>
     /// Parses of the query string into more useful fields.
     /// </summary>
-    public class QueryInfo {
+    public class Query {
         public string Raw;
         /// <summary>
         /// The token is the first word of the query,  e.g. if query was 'google bbc', Token is 'google'

@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows.Media.Imaging;
+using wpfmenu.Lib;
 
 namespace wpfmenu.Model
 {
-    
+    /// <summary>
+    /// Model for the items displayed as results in the launcher.
+    /// </summary>
     public class Result
     {
         public string Title {get; set;}
@@ -13,7 +14,7 @@ namespace wpfmenu.Model
         public int Index {get;set;}
         public BitmapSource Icon {get; set;}
         // anonymous method that is invoked when the result is selected
-        public Action Launch;
+        public Action<Query> Launch;
         public bool HasSubTitle {
             get {
                 return !SubTitle.IsEmpty();

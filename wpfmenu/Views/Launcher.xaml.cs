@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using wpfmenu.Core;
 
 
-namespace wpfmenu
+namespace wpfmenu.Views
 {
     using KeyCombo = Tuple<Modifier, Key>;
     
@@ -21,11 +21,11 @@ namespace wpfmenu
     }
     
     
-    public partial class LauncherWindow : Window
+    public partial class LauncherWindow
     {
         public readonly Engine Engine;
-        HwndSource hwndSource;
-        Dictionary<KeyCombo, Action> hotkeyCallbacks = new Dictionary<KeyCombo,Action>();
+        HwndSource _hwndSource;
+        Dictionary<KeyCombo, Action> _hotkeyCallbacks = new Dictionary<KeyCombo,Action>();
         
         public LauncherWindow()
         {
@@ -49,11 +49,11 @@ namespace wpfmenu
             Show();
             
             // register message pump
-            hwndSource = PresentationSource.FromVisual(this) as HwndSource;
-            if (hwndSource == null) {
+            _hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+            if (_hwndSource == null) {
                 throw new Exception("hotkey failed");
             }
-            hwndSource.AddHook(WndProc);
+            _hwndSource.AddHook(WndProc);
 
             // hide window
             Hide();
@@ -66,7 +66,7 @@ namespace wpfmenu
                 }
             });
             
-            ResultsList.Items = Engine.ResultsList;
+            ResultsList.Init(Engine);
         }
 
 
@@ -81,8 +81,8 @@ namespace wpfmenu
         public bool RegisterHotkey(Modifier modifier, Key key, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(key);
-            if (Interop.Win32.RegisterHotKey(hwndSource.Handle, id, (int)modifier, KeyInterop.VirtualKeyFromKey(key))) {
-                hotkeyCallbacks[new KeyCombo(modifier, key)] = action;
+            if (Interop.Win32.RegisterHotKey(_hwndSource.Handle, id, (int)modifier, KeyInterop.VirtualKeyFromKey(key))) {
+                _hotkeyCallbacks[new KeyCombo(modifier, key)] = action;
                 return true;
             }
             else {
@@ -115,9 +115,9 @@ namespace wpfmenu
 
                 // find the callback provided when this hotkey was registered
                 var tup = new KeyCombo(modifier, key);
-                if (hotkeyCallbacks.ContainsKey(tup)) {
+                if (_hotkeyCallbacks.ContainsKey(tup)) {
                     // invoke callback
-                    hotkeyCallbacks[tup]();
+                    _hotkeyCallbacks[tup]();
                 }
             }
             return IntPtr.Zero;
@@ -155,7 +155,7 @@ namespace wpfmenu
         /// </summary>
         private void OnDeactivated(object sender, EventArgs e)
         {
-            Hide();
+            //Hide();
         }
 
         /// <summary>

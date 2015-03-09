@@ -2,8 +2,8 @@
   <Application.Resources>
     <ResourceDictionary>
       <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="NotifyIconResources.xaml" />
-          <ResourceDictionary Source="Styles.xaml" />
+        <ResourceDictionary Source="Resources/NotifyIconResources.xaml" />
+          <ResourceDictionary Source="Resources/Styles.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>
