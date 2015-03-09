@@ -12,14 +12,14 @@ namespace wpfmenu.Core.Plugins
         /// Data for a web provider (e.g. google)
         /// </summary>
         public class SearchEngine {
-            public string Token;
+            public string Keyword;
             public string DisplayText;
             public string Url;
             public string IconName;
             public bool IsDefault;
-            public SearchEngine(string token, string displayText, string url, string iconName, bool isDefault=false)
+            public SearchEngine(string keyword, string displayText, string url, string iconName, bool isDefault=false)
             {
-                Token = token;
+                Keyword = keyword;
                 DisplayText = displayText;
                 Url = url;
                 IconName = iconName;
@@ -46,7 +46,7 @@ namespace wpfmenu.Core.Plugins
             // convert searchProviders to Commands
             foreach (var p in _searchProviders) {
                 Providers.Add(new Command{
-                    Keyword = p.Token,
+                    Keyword = p.Keyword,
                     Title = p.DisplayText,
                     Icon = new BitmapImage(new Uri("pack://application:,,," +  p.IconName)),
                     Launch = query => {

@@ -6,36 +6,47 @@ namespace wpfmenu.Model
     /// Parses of the query string into more useful fields.
     /// </summary>
     public class Query {
+        /// <summary>
+        /// The entire query string as provided by the user
+        /// </summary>
         public string Raw;
         /// <summary>
-        /// The token is the first word of the query,  e.g. if query was 'google bbc', Token is 'google'
+        /// First word of the query,  e.g. if query was 'google bbc', Keyword is 'google'
         /// </summary>
-        public string Token;
+        public string Keyword;
+        /// <summary>
+        /// The keyword is complete (there is a space)
+        /// </summary>
+        public bool KeywordComplete;
+        /// <summary>
+        /// Everything after the Keyword
+        /// </summary>
         public string Arguments;
+        /// <summary>
+        /// Query is empty
+        /// </summary>
         public bool Empty;
-        public bool TokenComplete;
-        public bool NoPartialMatches;
+        
         /// <summary>
         /// Parses the specified query into different fields.
         /// </summary>
         /// <param name="query">The query.</param>
         public void Parse(string query)
         {
-            NoPartialMatches = false;
             Raw = query;
                 
             int index = query.IndexOf(' ');
             if (index != -1) {
                 // space found, get first word
-                Token = query.Substring(0, index);
+                Keyword = query.Substring(0, index);
                 Arguments = query.Substring(index+1);
-                TokenComplete = true;
+                KeywordComplete = true;
             }
             else {
                 // no spaces
-                Token = query;
+                Keyword = query;
                 Arguments = "";
-                TokenComplete = false;
+                KeywordComplete = false;
             }
             Empty = Raw.IsEmpty();
             Raw = query;

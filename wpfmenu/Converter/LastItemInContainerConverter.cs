@@ -14,7 +14,6 @@ namespace wpfmenu.Converter
             var ic = ItemsControl.ItemsControlFromItemContainer(item);
             return ic.ItemContainerGenerator.IndexFromContainer(item) == ic.Items.Count - 1;
         }
-
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();

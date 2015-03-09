@@ -100,7 +100,7 @@
     <Compile Include="Core\ResultProvider.cs" />
     <Compile Include="Interop\Win32.cs" />
     <Compile Include="Lib\UIHelpers.cs" />
-    <Compile Include="Model\ResultsListTestData.cs" />
+    <Compile Include="DesignerData\ResultsListTestData.cs" />
     <Compile Include="Core\Plugins\Console.cs" />
     <Compile Include="Core\Plugins\Math.cs" />
     <Compile Include="Core\Plugins\SystemCommands.cs" />

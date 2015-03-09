@@ -40,10 +40,10 @@ namespace wpfmenu.Core
         {
             IsInterested = query => {
                 if (!Keyword.IsEmpty()) {
-                    if (query.TokenComplete && Keyword == query.Token) {
+                    if (query.KeywordComplete && Keyword == query.Keyword) {
                         return ProviderInterest.Exclusive;
                     }
-                    if (!query.TokenComplete && Keyword.StartsWith(query.Token)) {
+                    if (!query.KeywordComplete && Keyword.StartsWith(query.Keyword)) {
                         return ProviderInterest.Shared;
                     }
                 }

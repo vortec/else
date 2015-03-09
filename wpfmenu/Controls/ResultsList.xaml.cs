@@ -97,7 +97,6 @@ namespace wpfmenu.Controls
                 if (e.Key == Key.Enter || e.Key == Key.Return) {
                     var launch = Items[SelectedIndex].Launch;
                     if (launch != null) {
-                        
                         launch(Engine.Query);
                     }
                 }

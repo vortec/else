@@ -1,8 +1,9 @@
 ﻿using System;
-using wpfmenu.DataTypes;
 using System.Windows.Media.Imaging;
+using wpfmenu.DataTypes;
+using wpfmenu.Model;
 
-namespace wpfmenu.Model
+namespace wpfmenu.DesignerData
 {
     /// <summary>
     /// Provides test data for xaml Design View.

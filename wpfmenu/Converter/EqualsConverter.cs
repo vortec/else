@@ -12,7 +12,6 @@ namespace wpfmenu.Converter
             }
             return false;
         }
-
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotSupportedException();

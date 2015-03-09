@@ -23,7 +23,7 @@ namespace wpfmenu.Core.ResultProviders
             Query = query => {
                 var results = new List<Result>();
                 
-                if (Keyword.StartsWith(query.Token)) {
+                if (Keyword.StartsWith(query.Keyword)) {
                     var result = new Result{
                         Title = Title,
                         Icon = Icon,
@@ -48,7 +48,7 @@ namespace wpfmenu.Core.ResultProviders
             var launcherWindow = Application.Current.MainWindow as LauncherWindow;
 
             if (RequiresArguments) {
-                if (!query.TokenComplete || query.Arguments.IsEmpty()) {
+                if (!query.KeywordComplete || query.Arguments.IsEmpty()) {
                     // auto complete the query
                     if (launcherWindow != null) launcherWindow.RewriteQuery(Keyword + ' ');
                 }
