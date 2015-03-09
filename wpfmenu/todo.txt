@@ -45,7 +45,12 @@ NAMING CONVENTION
 
 FABIO FEEDBACK
 ==============
-8 rename tokenComplete, token WF
+- rename tokenComplete, token
+- move hotkey register/unregister from launcher.xaml.cs to interop/
+- tidy up directory layout
+	- move .xaml in Views/
+	- move .xaml.cs into Controllers/
+
 
 FABIO FEEDBACK DONE
 ===================
