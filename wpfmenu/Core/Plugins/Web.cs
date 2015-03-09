@@ -11,13 +11,13 @@ namespace wpfmenu.Core.Plugins
         /// <summary>
         /// Data for a web provider (e.g. google)
         /// </summary>
-        public class SearchProvider {
+        public class SearchEngine {
             public string Token;
             public string DisplayText;
             public string Url;
             public string IconName;
             public bool IsDefault;
-            public SearchProvider(string token, string displayText, string url, string iconName, bool isDefault=false)
+            public SearchEngine(string token, string displayText, string url, string iconName, bool isDefault=false)
             {
                 Token = token;
                 DisplayText = displayText;
@@ -30,12 +30,12 @@ namespace wpfmenu.Core.Plugins
         /// <summary>
         /// Define search providers
         /// </summary>
-        List<SearchProvider> _searchProviders = new List<SearchProvider>{
-            new SearchProvider("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png", true),
-            new SearchProvider("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
-            new SearchProvider("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
-            new SearchProvider("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "/Resources/Icons/google.png"),
-            new SearchProvider("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png", true)
+        List<SearchEngine> _searchProviders = new List<SearchEngine>{
+            new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png", true),
+            new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
+            new SearchEngine("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
+            new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "/Resources/Icons/google.png"),
+            new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png", true)
         };
 
         /// <summary>
