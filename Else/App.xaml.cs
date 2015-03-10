@@ -28,9 +28,7 @@ namespace Else
         private bool CreateMutex()
         {
             // get GUID
-            var assembly = Assembly.GetExecutingAssembly();
-            
-            var attribute = (GuidAttribute)assembly.GetCustomAttributes(typeof(GuidAttribute), true)[0];
+            var attribute = (GuidAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), true)[0];
             var guid = attribute.Value;
             
             bool createdNew;
@@ -104,7 +102,8 @@ namespace Else
         private void SetupTrayIcon()
         {
             _trayIcon = new NotifyIcon{
-                Icon = Else.Properties.Resources.TrayIcon
+                Icon = Else.Properties.Resources.TrayIcon,
+                Text = Assembly.GetExecutingAssembly().GetName().Name
             };
             
             // show launcher on double click
@@ -126,7 +125,6 @@ namespace Else
             settings.Click += (sender, args) => {
                 if (UIHelpers.IsWindowOpen<Window>("Settings")) {
                     // focus window
-                    Debug.Print("HELLO!");
                     UIHelpers.FocusWindow<Window>("Settings");
                 }
                 else {
