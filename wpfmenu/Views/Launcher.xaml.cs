@@ -124,6 +124,10 @@ namespace wpfmenu.Views
         }
         #endregion
 
+        public void ShowWindow()
+        {
+
+        }
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
             // if escape key is pressed, close the launcher

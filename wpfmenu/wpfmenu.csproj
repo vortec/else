@@ -64,10 +64,15 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Jace">
       <HintPath>..\packages\Jace.0.8.7\lib\net40\Jace.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
@@ -114,14 +119,15 @@
     <Compile Include="Core\Engine.cs" />
     <Compile Include="Lib\Extensions.cs" />
     <Compile Include="Lib\IconTools.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Views\Launcher.xaml.cs">
       <DependentUpon>Launcher.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\NotifyIconResources.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -134,9 +140,6 @@
   <ItemGroup>
     <Compile Include="Model\Query.cs" />
     <Compile Include="Model\Result.cs" />
-    <Compile Include="Model\NotifyIconViewModel.cs">
-      <Generator>MSBuild:Compile</Generator>
-    </Compile>
     <Compile Include="Core\Plugin.cs" />
     <Compile Include="Core\Plugins\Programs.cs" />
     <Compile Include="Core\Plugins\Web.cs" />
@@ -167,7 +170,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\tray.ico" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="todo.txt" />
@@ -182,12 +188,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\wpf-notifyicon\NotifyIconWpf\NotifyIconWpf.csproj">
-      <Project>{7ac63864-7638-41c4-969c-d3197ef2bed9}</Project>
-      <Name>NotifyIconWpf</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\google.png" />
@@ -215,7 +215,9 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\TrayIcon.ico" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
