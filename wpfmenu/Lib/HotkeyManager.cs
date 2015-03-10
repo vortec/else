@@ -31,11 +31,8 @@ namespace wpfmenu.Lib
         public HotkeyManager(HwndSource hwndSource)
         {
             _hwndSource = hwndSource;
-
-            // move this stuff
-            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, () => {
-                Globals.App.LauncherWindow.ShowWindow();
-            });
+            // register hotkey
+            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, Globals.PluginCommands.ShowWindow);
         }
 
         /// <summary>

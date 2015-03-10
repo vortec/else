@@ -23,7 +23,8 @@ namespace wpfmenu
         {
             base.OnStartup(e);
             InitializeComponent();
-            Globals.App = this;
+
+            Globals.PluginCommands.SetDependancy(this);
 
             SetupTrayIcon();
 

@@ -44,13 +44,10 @@ namespace wpfmenu.Core.ResultProviders
         /// </summary>
         private void HandleLaunch(Query query)
         {
-            // todo: fix this nasty global usage (maybe static handler that is subscribed to by other classes, e.g. launcher)
-            var launcherWindow = Application.Current.MainWindow as LauncherWindow;
-
             if (RequiresArguments) {
                 if (!query.KeywordComplete || query.Arguments.IsEmpty()) {
                     // auto complete the query
-                    if (launcherWindow != null) launcherWindow.RewriteQuery(Keyword + ' ');
+                    Globals.PluginCommands.RewriteQuery(Keyword + ' ');
                 }
                 else {
                     Launch(query);
