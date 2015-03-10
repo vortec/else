@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "wpfmenu", "wpfmenu\wpfmenu.csproj", "{F6E71369-0AC1-4921-BAE6-88BF451155BC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Else", "Else\Else.csproj", "{F6E71369-0AC1-4921-BAE6-88BF451155BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
