@@ -1,10 +1,10 @@
 ﻿
 
-namespace wpfmenu.Interop
+using System;
+using System.Runtime.InteropServices;
+
+namespace Else.Interop
 {
-    using System.Runtime.InteropServices;
-    using System;
-    
     /// <summary>
     /// Win32 API calls
     /// </summary>

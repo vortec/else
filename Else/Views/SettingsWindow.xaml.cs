@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace wpfmenu.Views
+namespace Else.Views
 {
     
     public partial class SettingsWindow : Window

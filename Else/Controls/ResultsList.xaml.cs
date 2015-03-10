@@ -4,10 +4,10 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
-using wpfmenu.DataTypes;
-using wpfmenu.Core;
+using Else.Core;
+using Else.DataTypes;
 
-namespace wpfmenu.Controls
+namespace Else.Controls
 {
     /// <summary>
     /// Provides ItemsControl functionality, with additional support for up+down key handling, and launching Result.

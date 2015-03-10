@@ -4,13 +4,12 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-using wpfmenu.Views;
-using wpfmenu.Lib;
-
+using Else.Lib;
+using Else.Views;
 using Application = System.Windows.Application;
 
 
-namespace wpfmenu
+namespace Else
 {
     public partial class App
     {
@@ -72,7 +71,7 @@ namespace wpfmenu
         private void SetupTrayIcon()
         {
             _trayIcon = new NotifyIcon{
-                Icon = wpfmenu.Properties.Resources.TrayIcon
+                Icon = Else.Properties.Resources.TrayIcon
             };
             
             // show launcher on double click

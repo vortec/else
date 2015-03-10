@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
-
-namespace wpfmenu.Core
+namespace Else.Core
 {
     /// <summary>
     /// Base plugin.  This class is not instantiated directly, rather all plugins derive from it.

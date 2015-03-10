@@ -1,6 +1,6 @@
-﻿using wpfmenu.Lib;
+﻿using Else.Lib;
 
-namespace wpfmenu.Model
+namespace Else.Model
 {
     /// <summary>
     /// Parses of the query string into more useful fields.

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using wpfmenu.Lib;
-using wpfmenu.Model;
+using Else.Lib;
+using Else.Model;
 
-namespace wpfmenu.Core
+namespace Else.Core
 {
     /// <summary>
     /// Provider interest for the current query.

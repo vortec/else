@@ -1,4 +1,4 @@
-﻿namespace wpfmenu.Core.Plugins
+﻿namespace Else.Core.Plugins
 {
     class Console : Plugin
     {

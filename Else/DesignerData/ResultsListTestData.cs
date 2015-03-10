@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
-using wpfmenu.DataTypes;
-using wpfmenu.Model;
+using Else.DataTypes;
+using Else.Model;
 
-namespace wpfmenu.DesignerData
+namespace Else.DesignerData
 {
     /// <summary>
     /// Provides test data for xaml Design View.
@@ -17,16 +17,16 @@ namespace wpfmenu.DesignerData
                     new Result{
                         Title = "Google",
                         SubTitle = "SubTitle Text",
-                        Icon = new BitmapImage(new Uri("pack://application:,,,/wpfmenu;component/Resources/Icons/google.png"))
+                        Icon = new BitmapImage(new Uri("pack://application:,,,/Else;component/Resources/Icons/google.png"))
                     },
                     new Result{
                         Title = "Wikipedia",
                         SubTitle = "SubTitle Text",
-                        Icon = new BitmapImage(new Uri("pack://application:,,,/wpfmenu;component/Resources/Icons/wiki.png"))
+                        Icon = new BitmapImage(new Uri("pack://application:,,,/Else;component/Resources/Icons/wiki.png"))
                     },
                     new Result{
                         Title = "No SubTitle",
-                        Icon = new BitmapImage(new Uri("pack://application:,,,/wpfmenu;component/Resources/Icons/google.png"))
+                        Icon = new BitmapImage(new Uri("pack://application:,,,/Else;component/Resources/Icons/google.png"))
                     },
                 };
             }

@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace wpfmenu.Converter
+namespace Else.Converter
 {
     public class LastItemInContainerConverter : IValueConverter
     {

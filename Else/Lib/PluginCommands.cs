@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace wpfmenu.Lib
+namespace Else.Lib
 {
     /// <summary>
     /// Helpful methods for plugins to invoke.  Avoids dependancy injection in the plugins.

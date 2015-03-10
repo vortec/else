@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
-using wpfmenu.Core.ResultProviders;
+using Else.Core.ResultProviders;
 
-namespace wpfmenu.Core.Plugins
+namespace Else.Core.Plugins
 {
 
     public class SystemCommands : Plugin

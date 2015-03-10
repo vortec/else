@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using wpfmenu.Core.Plugins;
-using wpfmenu.Views;
+using Else.Core.Plugins;
+using Else.Views;
 
-namespace wpfmenu.Core
+namespace Else.Core
 {
     /// <summary>
     /// Handles parsing of the query and querying plugins for results.

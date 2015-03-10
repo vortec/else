@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
-using wpfmenu.Core;
-using wpfmenu.Lib;
+using Else.Core;
 
-
-namespace wpfmenu.Views
+namespace Else.Views
 {
     public partial class LauncherWindow
     {

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
-using wpfmenu.Lib;
+using Else.Lib;
 
-namespace wpfmenu.Model
+namespace Else.Model
 {
     /// <summary>
     /// Model for the items displayed as results in the launcher.

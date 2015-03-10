@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace wpfmenu.Converter
+namespace Else.Converter
 {
     public class EqualsConverter : IMultiValueConverter
     {

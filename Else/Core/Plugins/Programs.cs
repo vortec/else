@@ -6,14 +6,14 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
-using wpfmenu.Lib;
+using Else.Lib;
 
 /*
  * todo: check memory consumption and possible leakage with icon usage.
  * todo: use displayName from shgetfileinfo?
  * todo: make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
 */
-namespace wpfmenu.Core.Plugins
+namespace Else.Core.Plugins
 {
     /// <summary>
     /// Provides ability to launch installed programs.

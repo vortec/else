@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Else.Model;
 using Jace;
-using wpfmenu.Model;
 
-namespace wpfmenu.Core.Plugins
+namespace Else.Core.Plugins
 {
     class Math : Plugin
     {

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
-using wpfmenu.Core.ResultProviders;
+using Else.Core.ResultProviders;
 
-namespace wpfmenu.Core.Plugins
+namespace Else.Core.Plugins
 {
     class Web : Plugin
     {

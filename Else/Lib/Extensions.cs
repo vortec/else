@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace wpfmenu.Lib
+namespace Else.Lib
 {
     /// <summary>
     /// helpers methods added to base type String

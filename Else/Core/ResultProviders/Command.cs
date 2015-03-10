@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Media.Imaging;
-using wpfmenu.Lib;
-using wpfmenu.Model;
-using wpfmenu.Views;
+using Else.Lib;
+using Else.Model;
 
-namespace wpfmenu.Core.ResultProviders
+namespace Else.Core.ResultProviders
 {
     /// <summary>
     /// Helper class for providing results for a single command, with optional arguments support.
