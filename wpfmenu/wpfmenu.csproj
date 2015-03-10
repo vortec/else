@@ -93,7 +93,7 @@
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
     <Compile Include="Core\ResultProviders\Command.cs" />
     <Compile Include="Core\ResultProvider.cs" />
-    <Compile Include="Lib\Globals.cs" />
+    <Compile Include="Lib\PluginCommands.cs" />
     <Compile Include="Interop\Win32.cs" />
     <Compile Include="Lib\HotkeyManager.cs" />
     <Compile Include="Lib\UIHelpers.cs" />

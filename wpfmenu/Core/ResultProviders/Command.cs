@@ -47,7 +47,7 @@ namespace wpfmenu.Core.ResultProviders
             if (RequiresArguments) {
                 if (!query.KeywordComplete || query.Arguments.IsEmpty()) {
                     // auto complete the query
-                    Globals.PluginCommands.RewriteQuery(Keyword + ' ');
+                    PluginCommands.RewriteQuery(Keyword + ' ');
                 }
                 else {
                     Launch(query);

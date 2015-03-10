@@ -32,7 +32,7 @@ namespace wpfmenu.Lib
         {
             _hwndSource = hwndSource;
             // register hotkey
-            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, Globals.PluginCommands.ShowWindow);
+            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, PluginCommands.ShowWindow);
         }
 
         /// <summary>
