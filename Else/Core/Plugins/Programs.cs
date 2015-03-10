@@ -47,7 +47,7 @@ namespace Else.Core.Plugins
 
             Providers.Add(new ResultProvider{
                 Keyword = "launch",
-                Fallback = true,
+                MatchAll = true,
                 Query = query => {
                     var results = new List<Model.Result>();
                     var pattern = @"(?i)\b" + Regex.Escape(query.Raw);

@@ -18,6 +18,10 @@ namespace Else.Core
         /// </summary>
         Shared,
         /// <summary>
+        /// The fallback
+        /// </summary>
+        Fallback,
+        /// <summary>
         /// Plugin demands exclusive control over the results for the query.
         /// </summary>
         Exclusive,
@@ -30,7 +34,11 @@ namespace Else.Core
     {
         public string Keyword;
         /// <summary>
-        /// todo: move this to the Engine level
+        /// Provides results with and without a token.
+        /// </summary>
+        public bool MatchAll;
+        /// <summary>
+        /// todo: Provides results when no other plugins provide results. This may become configurable in the settings UI.
         /// </summary>
         public bool Fallback;
         public Func<Query, ProviderInterest> IsInterested;
@@ -48,6 +56,9 @@ namespace Else.Core
                     }
                 }
                 if (Fallback) {
+                    return ProviderInterest.Fallback;
+                }
+                if (MatchAll) {
                     return ProviderInterest.Shared;
                 }
                 return ProviderInterest.None;

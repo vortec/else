@@ -21,18 +21,27 @@ namespace Else.Core.ResultProviders
             Query = query => {
                 var results = new List<Result>();
                 
-                if (Keyword.StartsWith(query.Keyword)) {
-                    var result = new Result{
-                        Title = Title,
-                        Icon = Icon,
-                        Launch = HandleLaunch
-                    };
-                    if (RequiresArguments) {
-                        var argSub = query.Arguments.IsEmpty() ? "..." : query.Arguments;
-                        result.Title = result.Title.Replace("{arguments}", argSub);
+                var result = new Result{
+                    Title = Title,
+                    Icon = Icon,
+                    Launch = HandleLaunch
+                };
+
+                // attempt to replace tokens in result Title..
+                if (RequiresArguments) {
+                    string arguments = "";
+                    // check if keyword was matched
+                    if (Keyword.StartsWith(query.Keyword)) {
+                        arguments = query.Arguments;
                     }
-                    results.Add(result);
+                    else if (Fallback) {
+                        arguments = query.Raw;
+                    }
+                    var argSub = arguments.IsEmpty() ? "..." : arguments;
+                    result.Title = result.Title.Replace("{arguments}", argSub);
                 }
+
+                results.Add(result);
                 return results;
             };
         }

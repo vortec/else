@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using Else.Core.Plugins;
 using Else.Views;
+using TextBox = System.Windows.Controls.TextBox;
 
 namespace Else.Core
 {
@@ -53,6 +57,8 @@ namespace Else.Core
                 ExecuteQuery(query);
             }
         }
+
+
         /// <summary>
         /// Update ResultsList by querying plugins.
         /// </summary>
@@ -61,34 +67,49 @@ namespace Else.Core
         {
             ResultsList.Clear();
             Query.Parse(query);
-
+            
             var exclusive = new List<ResultProvider>();
             var shared = new List<ResultProvider>();
+            var fallback = new List<ResultProvider>();
 
             if (!Query.Empty) {
+                // determine which providers are able to respond to this query
                 foreach (var p in _plugins) {
                     foreach (var c in p.Providers) {
                         if (c.IsInterested != null) {
+                            // sort them into groups
                             var x = c.IsInterested(Query);
                             if (x == ProviderInterest.Exclusive) {
                                 exclusive.Add(c);
                             }
-                            if (x == ProviderInterest.Shared) {
+                            else if (x == ProviderInterest.Shared) {
                                 shared.Add(c);
+                            }
+                            else if (x == ProviderInterest.Fallback) {
+                                fallback.Add(c);
                             }
                         }
                     }
                 }
+                // if we have any exclusive providers, we ignore all other providers
                 if (exclusive.Any()) {
                     foreach (var c in exclusive) {
                         ResultsList.AddRange(c.Query(Query));
                     }
                 }
                 else {
+                    // show shared providers
                     if (shared.Any()) {
                         foreach (var c in shared) {
                             ResultsList.AddRange(c.Query(Query));
                         }
+                    }
+                }
+
+                // if there are no results at all, show the fallback providers
+                if (!ResultsList.Any()) {
+                    foreach (var c in fallback) {
+                        ResultsList.AddRange(c.Query(Query));
                     }
                 }
             }

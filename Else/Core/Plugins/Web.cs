@@ -16,14 +16,14 @@ namespace Else.Core.Plugins
             public string DisplayText;
             public string Url;
             public string IconName;
-            public bool IsDefault;
-            public SearchEngine(string keyword, string displayText, string url, string iconName, bool isDefault=false)
+            public bool Fallback;
+            public SearchEngine(string keyword, string displayText, string url, string iconName, bool fallback=false)
             {
                 Keyword = keyword;
                 DisplayText = displayText;
                 Url = url;
                 IconName = iconName;
-                IsDefault = isDefault;
+                Fallback = fallback;
             }
         }
 
@@ -52,7 +52,8 @@ namespace Else.Core.Plugins
                     Launch = query => {
                         OpenProviderSearch("http://google.co.uk/search?q={0}", query.Arguments);
                     },
-                    RequiresArguments = true
+                    RequiresArguments = true,
+                    Fallback = p.Fallback
                 });
             }
         }
