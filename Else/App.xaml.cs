@@ -1,28 +1,59 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Else.Lib;
 using Else.Views;
-using Application = System.Windows.Application;
 
 
 namespace Else
 {
     public partial class App
     {
-        HwndSource _hwndSource;
-        private NotifyIcon _trayIcon;
         public HotkeyManager HotkeyManager;
         public LauncherWindow LauncherWindow;
+        private HwndSource _hwndSource;
+        private NotifyIcon _trayIcon;
+        private Mutex _instanceMutex = null;
 
+        /// <summary>
+        /// Creates a mutex with the Assembly GUID attribute.  We use GUID in the mutex name so we don't risk colliding with other apps.
+        /// </summary>
+        /// <returns>true if mutex creation was successful</returns>
+        private bool CreateMutex()
+        {
+            // get GUID
+            var assembly = Assembly.GetExecutingAssembly();
+            
+            var attribute = (GuidAttribute)assembly.GetCustomAttributes(typeof(GuidAttribute), true)[0];
+            var guid = attribute.Value;
+            
+            bool createdNew;
+            var mutexName = @"Global\" + guid;
+            _instanceMutex = new Mutex(true, mutexName, out createdNew);
+            if (!createdNew) {
+                _instanceMutex = null;
+                return false;
+            }
+            return true;
+        }
         protected override void OnStartup(StartupEventArgs e)
         {
+            // shutdown the app if we could not create the mutex.
+            if (!CreateMutex()) {
+                Current.Shutdown();
+                return;
+            }
+
             base.OnStartup(e);
             InitializeComponent();
-
+            
+            // give PluginCommands (static class) reference to this
             PluginCommands.SetDependancy(this);
 
             SetupTrayIcon();
@@ -35,7 +66,6 @@ namespace Else
             Current.MainWindow.Hide();
 
             SetupWndProc();
-
             
             HotkeyManager = new HotkeyManager(_hwndSource);
         }
@@ -49,7 +79,7 @@ namespace Else
             if (_hwndSource == null) {
                 throw new Exception("Failed to acquire window handle");
             }
-            _hwndSource.AddHook(WndProc);
+            _hwndSource.AddHook(HandleMessages);
         }
         /// <summary>
         /// When the Application is closed.
@@ -61,9 +91,12 @@ namespace Else
             if (_trayIcon != null) {
                 _trayIcon.Visible = false;
             }
+            // release mutex
+            if (_instanceMutex != null) {
+                _instanceMutex.ReleaseMutex();
+            }
             base.OnExit(e);
         }
-
 
         /// <summary>
         /// Setup tray icon.
@@ -85,7 +118,7 @@ namespace Else
             // context menu item 'Exit'
             var exit = new ToolStripMenuItem("Exit");
             exit.Click += (sender, args) => {
-                Application.Current.Shutdown();
+                Current.Shutdown();
             };
             
             // context menu item 'Settings'
@@ -98,7 +131,7 @@ namespace Else
                 }
                 else {
                     // show window
-                    var window = new Views.SettingsWindow();
+                    var window = new SettingsWindow();
                     window.Show();
                 }
             };
@@ -114,7 +147,7 @@ namespace Else
         /// <summary>
         /// Handle win32 window message proc.
         /// </summary>
-        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        private IntPtr HandleMessages(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             //Debug.Print("msg={0} wParam={1} lParam={2} handled={3}", msg, wParam, lParam, handled);
             
