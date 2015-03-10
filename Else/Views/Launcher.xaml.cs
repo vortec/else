@@ -74,7 +74,9 @@ namespace Else.Views
         /// </summary>
         private void OnDeactivated(object sender, EventArgs e)
         {
-            //Hide();
+            if (Properties.Settings.Default.AutoHideLauncher) {
+                Hide();
+            }
         }
 
         /// <summary>
