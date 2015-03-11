@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Animation;
 using Else.Core;
 
 namespace Else.Views
@@ -27,19 +29,47 @@ namespace Else.Views
             // bind ResultsList to keyboard input
             PreviewKeyDown += ResultsList.OnKeyDown;
 
-            // temporarily show window (we can only bind to a window that has been shown once).
-            Show();
-            
-            // hide window
-            Hide();
-            
             ResultsList.Init(Engine);
         }
+
+        /// <summary>
+        /// Shows the window (wrapper for Show() ), using optional animation dependant on app settings.
+        /// </summary>
         public void ShowWindow()
         {
             if (Visibility != Visibility.Visible) {
-                Show();
-                Activate();
+                // check if we should do fade
+                if (Properties.Settings.Default.FadeInWindow) {
+                    Opacity = 0;
+                    Show();
+                    Activate();
+                    // begin animation
+                    var da = new DoubleAnimation(0.0, 1.0, new Duration(TimeSpan.FromMilliseconds(400)));
+                    da.FillBehavior = FillBehavior.HoldEnd;
+                    //da.EasingFunction = new BackEase{
+                    //    EasingMode = EasingMode.EaseOut,
+                    //};
+                    da.EasingFunction = new CubicEase{
+                        EasingMode = EasingMode.EaseOut,
+                    };
+                    // todo: this animation is still buggy when opening and closing the window fast, cancelling the animation didn't work.
+                    BeginAnimation(OpacityProperty, da);
+                }
+                else {
+                    Opacity = 1;
+                    Show();
+                    Activate();
+                }
+            }
+        }
+        /// <summary>
+        /// Hide the window (wrapper for Hide() )
+        /// </summary>
+        public void HideWindow()
+        {
+            if (Visibility != Visibility.Hidden) {
+                Opacity = 0;
+                Hide();
             }
         }
 
@@ -47,7 +77,7 @@ namespace Else.Views
         {
             // if escape key is pressed, close the launcher
             if (e.Key == Key.Escape) {
-                Hide();
+                HideWindow();
             }
         }
         /// <summary>
@@ -57,6 +87,11 @@ namespace Else.Views
         {
             if ((bool)e.NewValue) {
                 // launcher is shown, reset form
+                //var storyboard = (Storyboard)TryFindResource("TestFade");
+                //if (storyboard != null) {
+                //    storyboard.Begin(this);
+                //}
+                
                 QueryInput.Text = "";
             }
         }
@@ -75,7 +110,7 @@ namespace Else.Views
         private void OnDeactivated(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.AutoHideLauncher) {
-                Hide();
+                //HideWindow();
             }
         }
 

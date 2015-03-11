@@ -106,7 +106,7 @@ namespace Else
             
             // show launcher on double click
             _trayIcon.DoubleClick += (sender, args) => {
-                LauncherWindow.Show();
+                LauncherWindow.ShowWindow();
             };
             
             // setup context menu
