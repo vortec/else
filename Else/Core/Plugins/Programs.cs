@@ -61,7 +61,7 @@ namespace Else.Core.Plugins
                                 SubTitle = program.ExePath,
                                 Launch = launchQuery => {
                                     // hide launcher
-                                    Engine.LauncherWindow.Hide();
+                                    PluginCommands.HideWindow();
                                     // start program
                                     Process.Start(program.ExePath);
                                 }

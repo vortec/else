@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Else.Core.ResultProviders;
+using Else.Lib;
 
 namespace Else.Core.Plugins
 {
@@ -17,7 +18,7 @@ namespace Else.Core.Plugins
                     Keyword = "shutdown",
                     Title = "Shut down",
                     Launch = query => {
-                        Engine.LauncherWindow.Hide();
+                        PluginCommands.HideWindow();
                         Process.Start(MakeProcessStartInfo("shutdown", "/s /t 0"));
                     },
                     //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
@@ -26,7 +27,7 @@ namespace Else.Core.Plugins
                     Keyword = "restart",
                     Title = "Restart",
                     Launch = query => {
-                        Engine.LauncherWindow.Hide();
+                        PluginCommands.HideWindow();
                         Process.Start(MakeProcessStartInfo("shutdown", "/r /t 0"));
                     },
                     //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
@@ -35,7 +36,7 @@ namespace Else.Core.Plugins
                     Keyword = "sleep",
                     Title = "Sleep",
                     Launch = query => {
-                        Engine.LauncherWindow.Hide();
+                        PluginCommands.HideWindow();
                         Interop.Win32.SetSuspendState(false, true, true);
                     },
                     //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
@@ -44,7 +45,7 @@ namespace Else.Core.Plugins
                     Keyword = "hibernate",
                     Title = "Hibernate",
                     Launch = query => {
-                        Engine.LauncherWindow.Hide();
+                        PluginCommands.HideWindow();
                         Interop.Win32.SetSuspendState(true, true, true);
                     },
                     //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
@@ -53,7 +54,7 @@ namespace Else.Core.Plugins
                     Keyword = "lock",
                     Title = "Lock",
                     Launch = query => {
-                        Engine.LauncherWindow.Hide();
+                        PluginCommands.HideWindow();
                         Interop.Win32.LockWorkStation();
                         // alternative (maybe requires permissions):
                         // Process.Start(@"C:\WINDOWS\system32\rundll32.exe", "user32.dll,LockWorkStation");
@@ -64,7 +65,7 @@ namespace Else.Core.Plugins
                     Keyword = "recyclebin",
                     Title = "Recycle Bin",
                     Launch = query => {
-                        Engine.LauncherWindow.Hide();
+                        PluginCommands.HideWindow();
                         Process.Start("explorer.exe", "shell:RecycleBinFolder");
                     },
                     //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Media.Imaging;
 using Else.Core.ResultProviders;
+using Else.Lib;
 
 namespace Else.Core.Plugins
 {
@@ -63,7 +64,7 @@ namespace Else.Core.Plugins
         /// <param name="url">The URL.</param>
         private void OpenBrowser(string url)
         {
-            Engine.LauncherWindow.Hide();
+            PluginCommands.HideWindow();
             Process.Start("chrome.exe", url);
         }
         /// <summary>

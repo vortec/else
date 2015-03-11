@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Else.Lib;
 using Else.Model;
 using Jace;
 
@@ -38,7 +39,7 @@ namespace Else.Core.Plugins
                             Title = strMathResult,
                             SubTitle = "Launch this item to copy this number to the clipboard",
                             Launch = info => {
-                                Engine.LauncherWindow.Hide();
+                                PluginCommands.HideWindow();
                                 Clipboard.SetText(strMathResult);
                             }
                         };

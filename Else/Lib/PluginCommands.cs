@@ -26,6 +26,11 @@ namespace Else.Lib
             CheckDependancy();
             _app.LauncherWindow.ShowWindow();
         }
+        public static void HideWindow()
+        {
+            CheckDependancy();
+            _app.LauncherWindow.HideWindow();
+        }
         public static void RewriteQuery(string query)
         {
             CheckDependancy();
