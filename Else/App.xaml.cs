@@ -57,11 +57,9 @@ namespace Else
             SetupTrayIcon();
 
             LauncherWindow = new LauncherWindow();
-            Current.MainWindow = LauncherWindow; // make launcher window globally accessible, hacky, try to remove in future
-
             // show launcher window once, so we can register for window messages
-            Current.MainWindow.Show();
-            Current.MainWindow.Hide();
+            LauncherWindow.Show();
+            LauncherWindow.Hide();
 
             SetupWndProc();
             
@@ -73,7 +71,7 @@ namespace Else
         /// <exception cref="Exception">Failed to acquire window handle</exception>
         public void SetupWndProc()
         {
-            _hwndSource = PresentationSource.FromVisual(Current.MainWindow) as HwndSource;
+            _hwndSource = PresentationSource.FromVisual(LauncherWindow) as HwndSource;
             if (_hwndSource == null) {
                 throw new Exception("Failed to acquire window handle");
             }
@@ -108,7 +106,7 @@ namespace Else
             
             // show launcher on double click
             _trayIcon.DoubleClick += (sender, args) => {
-                Current.MainWindow.Show();
+                LauncherWindow.Show();
             };
             
             // setup context menu
