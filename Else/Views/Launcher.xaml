@@ -15,6 +15,7 @@
         IsVisibleChanged="OnVisibleChanged"
         AllowsTransparency="True"
         RenderOptions.ClearTypeHint="Enabled"
+        Opacity="0"
         Background="Transparent">
     <Window.Resources>
     </Window.Resources>

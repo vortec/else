@@ -32,15 +32,12 @@ namespace Else.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool FadeInWindow {
             get {
                 return ((bool)(this["FadeInWindow"]));
-            }
-            set {
-                this["FadeInWindow"] = value;
             }
         }
     }

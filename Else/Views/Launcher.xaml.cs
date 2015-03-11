@@ -52,7 +52,7 @@ namespace Else.Views
                     da.EasingFunction = new CubicEase{
                         EasingMode = EasingMode.EaseOut,
                     };
-                    // todo: this animation is still buggy when opening and closing the window fast, cancelling the animation didn't work.
+                    // todo: this animation is still buggy when opening and closing the window fast (i tried cancelling the animation, but it doesn't work).
                     BeginAnimation(OpacityProperty, da);
                 }
                 else {
@@ -110,7 +110,7 @@ namespace Else.Views
         private void OnDeactivated(object sender, EventArgs e)
         {
             if (Properties.Settings.Default.AutoHideLauncher) {
-                //HideWindow();
+                HideWindow();
             }
         }
 
