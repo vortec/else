@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Else.Lib;
+using Else.Model;
 
 /*
  * todo: check memory consumption and possible leakage with icon usage.
@@ -68,7 +70,7 @@ namespace Else.Core.Plugins
                             });
                         }
                     }
-                    return results;
+                    return Task.FromResult(results);
                 }
             });
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Else.Lib;
@@ -51,7 +52,8 @@ namespace Else.Core.Plugins
                         };
                     }
                     result.Icon = _icon;
-                    return new List<Result>{result};
+                    var results = new List<Result>{result};
+                    return Task.FromResult(results);
                 }
             });
         }

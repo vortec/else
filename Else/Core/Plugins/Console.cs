@@ -1,4 +1,6 @@
-﻿namespace Else.Core.Plugins
+﻿using System.Threading.Tasks;
+
+namespace Else.Core.Plugins
 {
     class Console : Plugin
     {
@@ -7,8 +9,7 @@
         /// </summary>
         public override void Setup()
         {
-
+            throw new System.NotImplementedException();
         }
-
     }
 }

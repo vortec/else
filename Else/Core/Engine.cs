@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿
+using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using Else.Core.Plugins;
 using Else.Views;
+using Math = Else.Core.Plugins.Math;
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace Else.Core
@@ -34,6 +38,7 @@ namespace Else.Core
             LauncherWindow = launcherWindow;
             // load plugins
             _plugins = new List<Plugin>{
+                new GoogleSuggest(),
                 new Web(),
                 new Programs(),
                 new Math(),
@@ -91,26 +96,31 @@ namespace Else.Core
                         }
                     }
                 }
+
+                var fetchResultsAsync = new Action<List<ResultProvider>>(async providers => {
+                    var tasks = providers.Select(p => p.Query(Query)).ToList();
+                    while (tasks.Count > 0) {
+                        var next = await Task.WhenAny(tasks);
+                        tasks.Remove(next);
+                        var results = await next;
+                        ResultsList.AddRange(results);
+                    }
+                });
+
                 // if we have any exclusive providers, we ignore all other providers
                 if (exclusive.Any()) {
-                    foreach (var c in exclusive) {
-                        ResultsList.AddRange(c.Query(Query));
-                    }
+                    fetchResultsAsync(exclusive);
                 }
                 else {
                     // show shared providers
                     if (shared.Any()) {
-                        foreach (var c in shared) {
-                            ResultsList.AddRange(c.Query(Query));
-                        }
+                        fetchResultsAsync(shared);
                     }
                 }
 
                 // if there are no results at all, show the fallback providers
                 if (!ResultsList.Any()) {
-                    foreach (var c in fallback) {
-                        ResultsList.AddRange(c.Query(Query));
-                    }
+                    fetchResultsAsync(fallback);
                 }
             }
         }

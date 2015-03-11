@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Else.Lib;
 using Else.Model;
 
@@ -42,7 +43,7 @@ namespace Else.Core
         /// </summary>
         public bool Fallback;
         public Func<Query, ProviderInterest> IsInterested;
-        public Func<Query, List<Result>> Query;
+        public Func<Query, Task<List<Result>>> Query;
         
         public ResultProvider()
         {

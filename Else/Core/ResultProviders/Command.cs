@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Else.Lib;
 using Else.Model;
@@ -29,7 +30,7 @@ namespace Else.Core.ResultProviders
 
                 // attempt to replace tokens in result Title..
                 if (RequiresArguments) {
-                    string arguments = "";
+                    var arguments = "";
                     // check if keyword was matched
                     if (Keyword.StartsWith(query.Keyword)) {
                         arguments = query.Arguments;
@@ -42,7 +43,7 @@ namespace Else.Core.ResultProviders
                 }
 
                 results.Add(result);
-                return results;
+                return Task.FromResult(results);
             };
         }
 
