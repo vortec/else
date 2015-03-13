@@ -5,16 +5,29 @@ namespace Else.DataTypes
 {
     /// <summary>
     /// BindingList of <see cref="Model.Result" />, but automatically increments Model.Result.Index (for xaml usage).
+    /// <remarks>
+    /// BindingList does not trigger data-binding change events, so the UI will not update.  Instead you must call BindingRefresh to trigger the databinding event.
+    /// Only "Reset" event is triggered, so the UI will redraw every element.
+    /// </remarks>
     /// </summary>
     public class BindingResultsList : List<Model.Result>, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+        /// <summary>
+        /// Trigger CollectionChanged Reset event, so the UI element bound to this data source is refreshed.
+        /// </summary>
+        public void BindingRefresh()
+        {
+            if (CollectionChanged != null) {
+                var notification = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
+                CollectionChanged(this, notification);
+            }
+        }
         public new void Add(Model.Result value)
         {
             value.Index = Count;
             base.Add(value);
-            NotifyChanged();
         }
         public void AddRange(List<Model.Result> collection)
         {
@@ -24,22 +37,6 @@ namespace Else.DataTypes
                     r.Index = Count + i++;
                 }
                 base.AddRange(collection);
-                NotifyChanged();
-            }
-        }
-        public new void Clear()
-        {
-            base.Clear();
-            NotifyChanged();
-        }
-        /// <summary>
-        /// trigger reset always, since we don't need support for partial changes or such.
-        /// </summary>
-        private void NotifyChanged()
-        {
-            if (CollectionChanged != null) {
-                var notification = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset);
-                CollectionChanged(this, notification);
             }
         }
     }
