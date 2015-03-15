@@ -51,7 +51,7 @@ namespace Else.Core.Plugins
                     Title = p.DisplayText,
                     Icon = new BitmapImage(new Uri("pack://application:,,," +  p.IconName)),
                     Launch = query => {
-                        OpenProviderSearch("http://google.co.uk/search?q={0}", query.Arguments);
+                        OpenProviderSearch(p.Url, query.Arguments);
                     },
                     RequiresArguments = true,
                     Fallback = p.Fallback
