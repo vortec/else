@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Else.Lib;
@@ -29,7 +28,7 @@ namespace Else.Core.Plugins
                     }
                     return ProviderInterest.None;
                 },
-                Query = query => {
+                Query = (query, cancelToken) => {
                     Result result;
                     // try and execute the query using Jace math library
                     try {
@@ -53,7 +52,7 @@ namespace Else.Core.Plugins
                     }
                     result.Icon = _icon;
                     var results = new List<Result>{result};
-                    return Task.FromResult(results);
+                    return results;
                 }
             });
         }

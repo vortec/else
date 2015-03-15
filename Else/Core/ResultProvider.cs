@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
+using System.Threading;
 using Else.Lib;
 using Else.Model;
 
@@ -43,12 +43,12 @@ namespace Else.Core
         /// </summary>
         public bool Fallback;
         public Func<Query, ProviderInterest> IsInterested;
-        public Func<Query, Task<List<Result>>> Query;
+        public Func<Query, CancellationToken, List<Result>> Query;
         
         public ResultProvider()
         {
             IsInterested = query => {
-                if (!Keyword.IsEmpty()) {
+                 if (!query.Keyword.IsEmpty()) {
                     if (query.KeywordComplete && Keyword == query.Keyword) {
                         return ProviderInterest.Exclusive;
                     }

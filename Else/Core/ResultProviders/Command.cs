@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Else.Lib;
 using Else.Model;
@@ -19,7 +18,7 @@ namespace Else.Core.ResultProviders
         public bool RequiresArguments;
         public Command()
         {
-            Query = query => {
+            Query = (query, cts) => {
                 var results = new List<Result>();
                 
                 var result = new Result{
@@ -43,7 +42,7 @@ namespace Else.Core.ResultProviders
                 }
 
                 results.Add(result);
-                return Task.FromResult(results);
+                return results;
             };
         }
 

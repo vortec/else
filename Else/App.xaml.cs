@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -163,7 +162,7 @@ namespace Else
                 
                 // get virtual key code from high
                 var key = KeyInterop.KeyFromVirtualKey(high);
-
+                
                 // get modifier from low
                 var modifier = (Modifier)(low);
 

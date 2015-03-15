@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
@@ -47,17 +46,19 @@ namespace Else.Core.Plugins
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
             Debug.Print("done ({0} results)", _foundPrograms.Count);
 
+            
+
             Providers.Add(new ResultProvider{
                 Keyword = "launch",
                 MatchAll = true,
-                Query = query => {
-                    var results = new List<Model.Result>();
+                Query = (query, cancelToken) => {
+                    var results = new List<Result>();
                     var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
                     var regex = new Regex(pattern, RegexOptions.Compiled);
                     foreach (var program in _foundPrograms) {
                         // check if program name matches query
                         if (regex.IsMatch(program.Label) && results.Count < NumResults) {
-                            results.Add(new Model.Result{
+                            results.Add(new Result{
                                 Title = program.Label,
                                 Icon = program.Icon,
                                 SubTitle = program.ExePath,
@@ -70,7 +71,7 @@ namespace Else.Core.Plugins
                             });
                         }
                     }
-                    return Task.FromResult(results);
+                    return results;
                 }
             });
         }

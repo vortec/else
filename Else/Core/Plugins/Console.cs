@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-
+﻿
 namespace Else.Core.Plugins
 {
     class Console : Plugin

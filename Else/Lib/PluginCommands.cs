@@ -36,5 +36,9 @@ namespace Else.Lib
             CheckDependancy();
             _app.LauncherWindow.RewriteQuery(query);
         }
+        public static void RequestUpdate()
+        {
+            _app.LauncherWindow.Engine.RequestUpdate();
+        }
     }
 }

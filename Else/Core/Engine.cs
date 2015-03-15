@@ -1,16 +1,17 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using Else.Core.Plugins;
-using Else.Views;
+using Else.DataTypes;
+using Else.Model;
 using Math = Else.Core.Plugins.Math;
-using TextBox = System.Windows.Controls.TextBox;
+using SystemCommands = Else.Core.Plugins.SystemCommands;
+
 
 namespace Else.Core
 {
@@ -22,7 +23,7 @@ namespace Else.Core
         /// <summary>
         /// The results list
         /// </summary>
-        public DataTypes.BindingResultsList ResultsList = new DataTypes.BindingResultsList();
+        public BindingResultsList ResultsList = new BindingResultsList();
         /// <summary>
         /// Activated plugins.
         /// </summary>
@@ -30,12 +31,17 @@ namespace Else.Core
         /// <summary>
         /// Parsed version of the current query.
         /// </summary>
-        public Model.Query Query = new Model.Query();
+        public Query Query = new Query();
 
-        public LauncherWindow LauncherWindow;
+        private CancellationTokenSource _cancellationTokenSource;
 
-        public Engine(LauncherWindow launcherWindow) {
-            LauncherWindow = launcherWindow;
+        /// <summary>
+        /// Stores the raw string of the last query successfully executed.
+        /// </summary>
+        private string _lastQuery;
+
+
+        public Engine() {
             // load plugins
             _plugins = new List<Plugin>{
                 new GoogleSuggest(),
@@ -44,11 +50,19 @@ namespace Else.Core
                 new Math(),
                 new SystemCommands()
             };
+            
             // setup plugins
             foreach (var p in _plugins) {
-                p.Init(this);
                 p.Setup();
             }
+        }
+
+        /// <summary>
+        /// A plugin has requested that we execute the query again (perhaps it has different results for us)
+        /// </summary>
+        public void RequestUpdate()
+        {
+            ExecuteQuery(_lastQuery);
         }
 
         /// <summary>
@@ -63,16 +77,16 @@ namespace Else.Core
             }
         }
 
-
         /// <summary>
         /// Update ResultsList by querying plugins.
         /// </summary>
         /// <param name="query">The query.</param>
-        private void ExecuteQuery(string query)
+        private async void ExecuteQuery(string query)
         {
-            ResultsList.Clear();
+            _lastQuery = query;
             Query.Parse(query);
             
+            // todo: consider removing exclusive
             var exclusive = new List<ResultProvider>();
             var shared = new List<ResultProvider>();
             var fallback = new List<ResultProvider>();
@@ -97,32 +111,66 @@ namespace Else.Core
                     }
                 }
 
-                var fetchResultsAsync = new Action<List<ResultProvider>>(async providers => {
-                    var tasks = providers.Select(p => p.Query(Query)).ToList();
-                    while (tasks.Count > 0) {
-                        var next = await Task.WhenAny(tasks);
-                        tasks.Remove(next);
-                        var results = await next;
-                        ResultsList.AddRange(results);
-                    }
-                });
-
-                // if we have any exclusive providers, we ignore all other providers
-                if (exclusive.Any()) {
-                    fetchResultsAsync(exclusive);
-                }
-                else {
-                    // show shared providers
-                    if (shared.Any()) {
-                        fetchResultsAsync(shared);
-                    }
+                if (_cancellationTokenSource != null) {
+                    _cancellationTokenSource.Cancel();
+                    _cancellationTokenSource.Dispose();
                 }
 
-                // if there are no results at all, show the fallback providers
-                if (!ResultsList.Any()) {
-                    fetchResultsAsync(fallback);
+                // create a new cancellation token 
+                _cancellationTokenSource = new CancellationTokenSource();
+
+                try {
+                    // store results for this query temporarily before adding to ResultsList, in case the query is cancelled
+                    var queryResults = new List<Result>();
+                    
+                    // if we have any exclusive providers, we ignore all other providers
+                    if (exclusive.Any()) {
+                        queryResults.AddRange(await ProcessProviderQueryAsync(exclusive));
+                    }
+                    else if (shared.Any()) {
+                        queryResults.AddRange(await ProcessProviderQueryAsync(shared));
+                    }
+                
+                    // if there are no results at all, show the fallback providers
+                    if (!queryResults.Any()) {
+                        queryResults.AddRange(await ProcessProviderQueryAsync(fallback));
+                    }
+                    
+                    ResultsList.Clear();
+                    ResultsList.AddRange(queryResults);
+                    
+                    // trigger refresh of UI that is bound to the ResultsList
+                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => {
+                        ResultsList.BindingRefresh();
+                    }));
+                    
+                }
+                catch (OperationCanceledException) { }
+            }
+        }
+        private async Task<List<Result>> ProcessProviderQueryAsync(List<ResultProvider> providers)
+        {
+            // invoke Query() on each provider, collect the returned Task() objects
+            var tasks = providers
+                .Where(p => p != null)
+                .Select(p => Task.Run(() => p.Query(Query, _cancellationTokenSource.Token)))
+                .ToList();
+
+            // process each task as it finishes
+            var results = new List<Result>();
+            while (tasks.Count > 0) {
+                var next = await Task.WhenAny(tasks);
+                tasks.Remove(next);
+                try {
+                    var taskResults = await next;
+                    results.AddRange(taskResults);
+                }
+                catch (Exception) {
+                    // todo: improve handling here.  ideally we would ignore results from this plugin
+                    Debug.Print("provider failure :|");
                 }
             }
+            return results;
         }
     }
 }
