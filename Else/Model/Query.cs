@@ -23,6 +23,10 @@ namespace Else.Model
         /// </summary>
         public string Arguments;
         /// <summary>
+        /// Query has arguments
+        /// </summary>
+        public bool HasArguments;
+        /// <summary>
         /// Query is empty
         /// </summary>
         public bool Empty;
@@ -35,7 +39,7 @@ namespace Else.Model
         {
             Raw = query;
                 
-            int index = query.IndexOf(' ');
+            var index = query.IndexOf(' ');
             if (index != -1) {
                 // space found, get first word
                 Keyword = query.Substring(0, index);
@@ -48,7 +52,8 @@ namespace Else.Model
                 Arguments = "";
                 KeywordComplete = false;
             }
-            Empty = Raw.IsEmpty();
+            HasArguments = !Arguments.IsEmpty();
+            Empty = Raw.Trim().IsEmpty();
             Raw = query;
         }
     }
