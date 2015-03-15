@@ -11,11 +11,11 @@ namespace Else.Views
     {
         public readonly Engine Engine;
         
-        public LauncherWindow()
+        public LauncherWindow(Engine engine)
         {
             InitializeComponent();
 
-            Engine = new Engine(this);
+            Engine = engine;
             
             // setup window
             Topmost = true;

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Else.Core;
 using Else.Lib;
 using Else.Views;
 
@@ -15,11 +16,12 @@ namespace Else
 {
     public partial class App
     {
+        public Engine Engine;
         public HotkeyManager HotkeyManager;
         public LauncherWindow LauncherWindow;
         private HwndSource _hwndSource;
         private NotifyIcon _trayIcon;
-        private Mutex _instanceMutex = null;
+        private Mutex _instanceMutex;
 
         /// <summary>
         /// Creates a mutex with the Assembly GUID attribute.  We use GUID in the mutex name so we don't risk colliding with other apps.
@@ -42,7 +44,7 @@ namespace Else
         }
         protected override void OnStartup(StartupEventArgs e)
         {
-            // shutdown the app if we could not create the mutex.
+            // shutdown the app if we could not create the mutex (this is to prevent multiple instances of the application running)
             if (!CreateMutex()) {
                 Current.Shutdown();
                 return;
@@ -50,13 +52,15 @@ namespace Else
 
             base.OnStartup(e);
             InitializeComponent();
+
+            Engine = new Engine();
             
             // give PluginCommands (static class) reference to this
             PluginCommands.SetDependancy(this);
 
             SetupTrayIcon();
 
-            LauncherWindow = new LauncherWindow();
+            LauncherWindow = new LauncherWindow(Engine);
             // show launcher window once, so we can register for window messages
             LauncherWindow.Show();
             LauncherWindow.Hide();
