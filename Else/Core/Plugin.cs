@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Else.Core
 {
@@ -8,16 +7,7 @@ namespace Else.Core
     /// </summary>
     public abstract class Plugin
     {
-        public Engine Engine;
         public List<ResultProvider> Providers = new List<ResultProvider>();
-        
-        /// <summary>
-        /// Initializes this instance with dependancies.
-        /// </summary>
-        public void Init(Engine engine)
-        {
-            Engine = engine;
-        }
         
         /// <summary>
         /// Plugin setup
