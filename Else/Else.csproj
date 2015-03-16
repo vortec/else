@@ -110,7 +110,7 @@
     <Compile Include="Interop\Win32.cs" />
     <Compile Include="Lib\HotkeyManager.cs" />
     <Compile Include="Lib\UIHelpers.cs" />
-    <Compile Include="DesignerData\ResultsListTestData.cs" />
+    <Compile Include="DesignerData\ResultsList.cs" />
     <Compile Include="Core\Plugins\Console.cs" />
     <Compile Include="Core\Plugins\Math.cs" />
     <Compile Include="Core\Plugins\SystemCommands.cs" />

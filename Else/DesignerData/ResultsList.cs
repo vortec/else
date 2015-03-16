@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Media.Imaging;
 using Else.DataTypes;
+using Else.Lib;
 using Else.Model;
 
 namespace Else.DesignerData
@@ -8,7 +9,7 @@ namespace Else.DesignerData
     /// <summary>
     /// Provides test data for xaml Design View.
     /// </summary>
-    public class ResultsListTestData
+    public class ResultsList
     {
         static public BindingResultsList Items
         {
@@ -17,16 +18,16 @@ namespace Else.DesignerData
                     new Result{
                         Title = "Google",
                         SubTitle = "SubTitle Text",
-                        Icon = new BitmapImage(new Uri("pack://application:,,,/Else;component/Resources/Icons/google.png"))
+                        Icon = UIHelpers.LoadImageFromResources("Icons/google.png")
                     },
                     new Result{
                         Title = "Wikipedia",
                         SubTitle = "SubTitle Text",
-                        Icon = new BitmapImage(new Uri("pack://application:,,,/Else;component/Resources/Icons/wiki.png"))
+                        Icon = UIHelpers.LoadImageFromResources("Icons/wiki.png")
                     },
                     new Result{
                         Title = "No SubTitle",
-                        Icon = new BitmapImage(new Uri("pack://application:,,,/Else;component/Resources/Icons/google.png"))
+                        Icon = UIHelpers.LoadImageFromResources("Icons/google.png")
                     },
                 };
             }

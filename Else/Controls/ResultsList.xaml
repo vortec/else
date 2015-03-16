@@ -9,7 +9,7 @@
              d:DesignHeight="350" d:DesignWidth="555"
              Focusable="False">
     
-    <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance designerData:ResultsListTestData, IsDesignTimeCreatable=True}">
+    <ItemsControl x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance designerData:ResultsList, IsDesignTimeCreatable=True}">
         <ItemsControl.Style>
             <Style TargetType="Control">
                 <Setter Property="Focusable" Value="False" />
