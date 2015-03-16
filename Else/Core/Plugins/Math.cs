@@ -13,7 +13,7 @@ namespace Else.Core.Plugins
     {
         private Regex _isNotMathExpressionRegex = new Regex(@"[^0-9\(\)\^\.\+\*\/\-%<>!= ]", RegexOptions.Compiled);
         private CalculationEngine _calculationEngine = new CalculationEngine();
-        private BitmapImage _icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/calculator.png"));
+        private BitmapImage _icon = UIHelpers.LoadImageFromResources("Icons/calculator.png");
 
         /// <summary>
         /// Plugin setup

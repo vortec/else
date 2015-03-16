@@ -21,7 +21,6 @@ namespace Else.Core.Plugins
                         PluginCommands.HideWindow();
                         Process.Start(MakeProcessStartInfo("shutdown", "/s /t 0"));
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
                 new Command{
                     Keyword = "restart",
@@ -30,7 +29,6 @@ namespace Else.Core.Plugins
                         PluginCommands.HideWindow();
                         Process.Start(MakeProcessStartInfo("shutdown", "/r /t 0"));
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
                 new Command{
                     Keyword = "sleep",
@@ -39,7 +37,6 @@ namespace Else.Core.Plugins
                         PluginCommands.HideWindow();
                         Interop.Win32.SetSuspendState(false, true, true);
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
                 new Command{
                     Keyword = "hibernate",
@@ -48,7 +45,6 @@ namespace Else.Core.Plugins
                         PluginCommands.HideWindow();
                         Interop.Win32.SetSuspendState(true, true, true);
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
                 new Command{
                     Keyword = "lock",
@@ -59,7 +55,6 @@ namespace Else.Core.Plugins
                         // alternative (maybe requires permissions):
                         // Process.Start(@"C:\WINDOWS\system32\rundll32.exe", "user32.dll,LockWorkStation");
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
                 new Command{
                     Keyword = "recyclebin",
@@ -68,7 +63,6 @@ namespace Else.Core.Plugins
                         PluginCommands.HideWindow();
                         Process.Start("explorer.exe", "shell:RecycleBinFolder");
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
                 new Command{
                     Keyword = "logoff",
@@ -76,7 +70,6 @@ namespace Else.Core.Plugins
                     Launch = query => {
                         Interop.Win32.ExitWindowsEx(0, 0);
                     },
-                    //Icon = new BitmapImage(new Uri("pack://application:,,,/Resources/Icons/shutdown.png"))
                 },
             };
         }

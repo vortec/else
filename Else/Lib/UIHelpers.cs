@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media.Imaging;
 
 namespace Else.Lib
 {
@@ -24,6 +26,12 @@ namespace Else.Lib
                 return true;
             }
             return false;
+        }
+
+        public static BitmapImage LoadImageFromResources(string path)
+        {
+            var uri = new Uri("pack://application:,,,/Else;component/Resources/" + path);
+            return new BitmapImage(uri);
         }
     }
 }
