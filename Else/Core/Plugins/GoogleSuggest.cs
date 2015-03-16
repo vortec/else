@@ -22,17 +22,18 @@ namespace Else.Core.Plugins
         private const string Url = "http://suggestqueries.google.com/complete/search";
         private HttpClient _client = new HttpClient();
         private BitmapImage _icon = UIHelpers.LoadImageFromResources("Icons/google.png");
+        private ResultProvider _provider;
 
         /// <summary>
         /// Plugin setup
         /// </summary>
         public override void Setup()
         {
-            var provider = new ResultProvider{
+            _provider = new ResultProvider{
                 Keyword = "g",
                 Query = Query
             };
-            Providers.Add(provider);
+            Providers.Add(_provider);
         }
 
         private List<Result> Query(Query query, CancellationToken cancelToken)
@@ -76,12 +77,13 @@ namespace Else.Core.Plugins
                     }
                 };
             }
-            // otherwise the query has not been provided yet
+            // otherwise the query has not been provided yet, running the action will autocomplete the query
             return new List<Result>{
                 new Result{
                     Title = "Search Google",
                     SubTitle = "Search Google with Suggestions",
-                    Icon = _icon
+                    Icon = _icon,
+                    Launch = query1 => PluginCommands.RewriteQuery(_provider.Keyword + ' ')
                 }
             };
         }
