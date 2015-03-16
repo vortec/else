@@ -51,7 +51,8 @@ namespace Else.Core.Plugins
                     Title = p.DisplayText,
                     Icon = UIHelpers.LoadImageFromResources(p.IconName),
                     Launch = query => {
-                        OpenProviderSearch(p.Url, query.Arguments);
+                        var searchKeywords = query.Keyword.StartsWith(p.Keyword) ? query.Arguments : query.Raw;
+                        OpenProviderSearch(p.Url, searchKeywords);
                     },
                     RequiresArguments = true,
                     Fallback = p.Fallback
