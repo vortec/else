@@ -33,7 +33,7 @@ namespace Else.Core
         /// </summary>
         public Query Query = new Query();
 
-        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _cancelTokenSource;
 
         /// <summary>
         /// Stores the raw string of the last query successfully executed.
@@ -85,18 +85,27 @@ namespace Else.Core
         {
             _lastQuery = query;
             Query.Parse(query);
-            
-            // todo: consider removing exclusive
-            var exclusive = new List<ResultProvider>();
-            var shared = new List<ResultProvider>();
-            var fallback = new List<ResultProvider>();
 
-            if (!Query.Empty) {
-                // determine which providers are able to respond to this query
+            // if a query is already running, request cancellation
+            if (_cancelTokenSource != null) {
+                    _cancelTokenSource.Cancel(true);
+                    //_cancelTokenSource.Dispose();
+                    //_cancelTokenSource = null;
+                }
+
+            if (Query.Empty) {
+                // empty query, remove existing results
+                ResultsList.Clear();
+                ResultsList.BindingRefresh();
+            }
+            else {
+                // determine which providers are able to respond to this query, and sort them into groups
+                var exclusive = new List<ResultProvider>(); // todo: consider removing exclusive
+                var shared = new List<ResultProvider>();
+                var fallback = new List<ResultProvider>();
                 foreach (var p in _plugins) {
                     foreach (var c in p.Providers) {
                         if (c.IsInterested != null) {
-                            // sort them into groups
                             var x = c.IsInterested(Query);
                             if (x == ProviderInterest.Exclusive) {
                                 exclusive.Add(c);
@@ -111,13 +120,8 @@ namespace Else.Core
                     }
                 }
 
-                if (_cancellationTokenSource != null) {
-                    _cancellationTokenSource.Cancel();
-                    _cancellationTokenSource.Dispose();
-                }
-
                 // create a new cancellation token 
-                _cancellationTokenSource = new CancellationTokenSource();
+                _cancelTokenSource = new CancellationTokenSource();
 
                 try {
                     // store results for this query temporarily before adding to ResultsList, in case the query is cancelled
@@ -143,7 +147,6 @@ namespace Else.Core
                     await Application.Current.Dispatcher.BeginInvoke(new Action(() => {
                         ResultsList.BindingRefresh();
                     }));
-                    
                 }
                 catch (OperationCanceledException) { }
             }
@@ -153,9 +156,9 @@ namespace Else.Core
             // invoke Query() on each provider, collect the returned Task() objects
             var tasks = providers
                 .Where(p => p != null)
-                .Select(p => Task.Run(() => p.Query(Query, _cancellationTokenSource.Token)))
+                .Select(p => Task.Factory.StartNew(() => p.Query(Query, _cancelTokenSource.Token), _cancelTokenSource.Token))
                 .ToList();
-
+            
             // process each task as it finishes
             var results = new List<Result>();
             while (tasks.Count > 0) {
@@ -165,8 +168,11 @@ namespace Else.Core
                     var taskResults = await next;
                     results.AddRange(taskResults);
                 }
-                catch (Exception) {
-                    // todo: improve handling here.  ideally we would ignore results from this plugin
+                catch (OperationCanceledException) {
+                    // rethrow this exception.
+                    throw;
+                }
+                catch (Exception e) {
                     Debug.Print("provider failure :|");
                 }
             }

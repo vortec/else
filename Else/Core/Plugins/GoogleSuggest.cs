@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
@@ -83,10 +84,10 @@ namespace Else.Core.Plugins
                     AbsoluteExpiration = DateTimeOffset.UtcNow.AddMinutes(30)
                 };
                 // don't fill the cache if the query was cancelled
-                if (!cancelToken.IsCancellationRequested) {
-                    MemoryCache.Default.Set(keywords, results, cip);
-                    PluginCommands.RequestUpdate();
-                }
+                cancelToken.ThrowIfCancellationRequested();
+                
+                MemoryCache.Default.Set(keywords, results, cip);
+                PluginCommands.RequestUpdate();
             }
             catch (HttpRequestException) {
                 // todo: improve error handling here, currently we just show no results.  (perhaps could do retry then fail?)
@@ -106,9 +107,10 @@ namespace Else.Core.Plugins
                 hl = "en",
                 q = keywords
             });
-
+            
             // begin HTTP request
             var response = await _client.GetAsync(url, cancelToken);
+            
             if (response.IsSuccessStatusCode) {
                 // try parse the json into an array of strings
                 var content = await response.Content.ReadAsStringAsync();
@@ -118,7 +120,7 @@ namespace Else.Core.Plugins
             }
             else {
                 // bad response from server, throw exception
-                string msg = response.Content.ReadAsStringAsync().Result;
+                var msg = response.Content.ReadAsStringAsync().Result;
                 throw new Exception(msg);
             }
         }
