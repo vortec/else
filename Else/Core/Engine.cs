@@ -33,6 +33,9 @@ namespace Else.Core
         /// </summary>
         public Query Query = new Query();
 
+        /// <summary>
+        /// The cancellation token of the currently executing query.
+        /// </summary>
         private CancellationTokenSource _cancelTokenSource;
 
         /// <summary>
