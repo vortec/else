@@ -61,6 +61,7 @@ namespace Else.Views
                 }
             }
         }
+
         /// <summary>
         /// Hide the window (wrapper for Hide() )
         /// </summary>
@@ -85,12 +86,6 @@ namespace Else.Views
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue) {
-                // launcher is shown, reset form
-                //var storyboard = (Storyboard)TryFindResource("TestFade");
-                //if (storyboard != null) {
-                //    storyboard.Begin(this);
-                //}
-                
                 QueryInput.Text = "";
             }
         }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media.Imaging;
 using Else.Lib;
 using Else.Model;
 using Flurl;
@@ -19,6 +21,7 @@ namespace Else.Core.Plugins
     {
         private const string Url = "http://suggestqueries.google.com/complete/search";
         private HttpClient _client = new HttpClient();
+        private BitmapImage _icon = UIHelpers.LoadImageFromResources("Icons/google.png");
 
         /// <summary>
         /// Plugin setup
@@ -43,15 +46,23 @@ namespace Else.Core.Plugins
                 if (cachedSuggestions != null) {
                     // convert the list of suggestion strings to a List<Result>
                     if (cachedSuggestions.Any()) {
-                        var results = cachedSuggestions.Select(s => new Result{
-                            Title = s,
+                        var results = cachedSuggestions.Select(suggestion => new Result{
+                            Title = suggestion,
+                            Icon = _icon,
+                            SubTitle = "Search google for " + suggestion,
+                            Launch = query1 => {
+                                Web.OpenProviderSearch("http://google.co.uk/search?q={0}", suggestion);
+                            }
                         }).ToList();
                         return results;
                     }
                     else {
                         // no suggestions were received from the server
                         return new List<Result>{
-                            new Result{Title="no results found"}
+                            new Result{
+                                Title = "No search suggestions found.",
+                                Icon = _icon
+                            }
                         };
                     }
                 }
@@ -59,14 +70,18 @@ namespace Else.Core.Plugins
                 // Cache miss, begin the background query to fill the cache
                 var x = GetSuggestionsAsync(query.Arguments, cancelToken);
                 return new List<Result>{
-                    new Result{Title="searching..."}
+                    new Result{
+                        Title="Retreiving search suggestions...",
+                        Icon = _icon
+                    }
                 };
             }
             // otherwise the query has not been provided yet
             return new List<Result>{
                 new Result{
                     Title = "Search Google",
-                    SubTitle = "Search Google with Suggestions"
+                    SubTitle = "Search Google with Suggestions",
+                    Icon = _icon
                 }
             };
         }

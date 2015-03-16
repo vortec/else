@@ -32,11 +32,11 @@ namespace Else.Core.Plugins
         /// Define search providers
         /// </summary>
         List<SearchEngine> _searchProviders = new List<SearchEngine>{
-            new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "/Resources/Icons/google.png", true),
-            new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "/Resources/Icons/google.png"),
-            new SearchEngine("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "/Resources/Icons/google.png"),
-            new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "/Resources/Icons/google.png"),
-            new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "/Resources/Icons/wiki.png", true)
+            new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "Icons/google.png", true),
+            new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "Icons/google.png"),
+            new SearchEngine("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "Icons/google.png"),
+            new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "Icons/google.png"),
+            new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "Icons/wiki.png", true)
         };
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Else.Core.Plugins
                 Providers.Add(new Command{
                     Keyword = p.Keyword,
                     Title = p.DisplayText,
-                    Icon = new BitmapImage(new Uri("pack://application:,,," +  p.IconName)),
+                    Icon = UIHelpers.LoadImageFromResources(p.IconName),
                     Launch = query => {
                         OpenProviderSearch(p.Url, query.Arguments);
                     },
@@ -62,7 +62,7 @@ namespace Else.Core.Plugins
         /// Opens the browser.
         /// </summary>
         /// <param name="url">The URL.</param>
-        private void OpenBrowser(string url)
+        public static void OpenBrowser(string url)
         {
             PluginCommands.HideWindow();
             Process.Start("chrome.exe", url);
@@ -72,7 +72,7 @@ namespace Else.Core.Plugins
         /// </summary>
         /// <param name="providerUrl">The provider URL.</param>
         /// <param name="keywords">The search keywords.</param>
-        private void OpenProviderSearch(string providerUrl, string keywords)
+        public static void OpenProviderSearch(string providerUrl, string keywords)
         {
             var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
             OpenBrowser(url);
