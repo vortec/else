@@ -86,7 +86,6 @@ namespace Else.Core
         /// <param name="query">The query.</param>
         private async void ExecuteQuery(string query)
         {
-            _lastQuery = query;
             Query.Parse(query);
 
             // if a query is already running, request cancellation
@@ -143,8 +142,10 @@ namespace Else.Core
                         queryResults.AddRange(await ProcessProviderQueryAsync(fallback));
                     }
                     
+                    // query successful, show the results
                     ResultsList.Clear();
                     ResultsList.AddRange(queryResults);
+                    _lastQuery = query;
                     
                     // trigger refresh of UI that is bound to the ResultsList
                     await Application.Current.Dispatcher.BeginInvoke(new Action(() => {
