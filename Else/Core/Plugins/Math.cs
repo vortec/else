@@ -21,6 +21,7 @@ namespace Else.Core.Plugins
         {
             Providers.Add(new ResultProvider{
                 Fallback = true,
+                // we only show interest in queries which are math expressions
                 IsInterested = query => {
                     if (!_isNotMathExpressionRegex.IsMatch(query.Raw)) {
                         return ProviderInterest.Exclusive;
@@ -33,6 +34,7 @@ namespace Else.Core.Plugins
                     try {
                         double mathResult = _calculationEngine.Calculate(query.Raw);
                         // todo: check the string representation is okay for really long numbers
+                        // converting from double to string gives us math exponents, so we use this line to provide a simple number string
                         var strMathResult = mathResult.ToString("F99").TrimEnd("0".ToCharArray()).TrimEnd(".".ToCharArray());
                         result = new Result{
                             Title = strMathResult,
