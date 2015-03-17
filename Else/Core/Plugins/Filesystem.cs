@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using Else.Lib;
 using Else.Model;
+using Microsoft.Search.Interop;
 
 namespace Else.Core.Plugins
 {
@@ -25,7 +26,8 @@ namespace Else.Core.Plugins
                     if (query.HasArguments) {
                         // do search
                         var results = new List<Result>();
-                        foreach (var f in Search(query.Arguments)) {
+
+                        foreach (var f in Search_FromAQS(query.Arguments)) {
                             results.Add(new Result{
                                 Title = f.ItemDisplayName,
                                 SubTitle = f.ItemPathDisplay,
@@ -41,23 +43,23 @@ namespace Else.Core.Plugins
                         Title = "Open file..",
                         Launch = query1 => PluginCommands.RewriteQuery(_openProvider.Keyword + ' ')
                     }.ToList();
+                    
                 }
             };
             Providers.Add(_openProvider);
         }
+        
         public class SearchResult {
             public string ItemDisplayName;
             public string ItemPathDisplay;
             public string ItemUrl;
         }
-        
 
-        private const string ConnectionString = "Provider=Search.CollatorDSO;Extended Properties=\"Application=Windows\"";
-        private static IEnumerable<SearchResult> Search(string keywords)
+        private static IEnumerable<SearchResult> Search_FromSQL(string keywords)
         {
-            if (!keywords.EndsWith("*")) {
-                keywords += "*";
-            }
+            //if (!keywords.EndsWith("*")) {
+            //    keywords += "*";
+            //}
             var tostrip = new List<string>{
                 "\\",
                 "/",
@@ -76,12 +78,32 @@ namespace Else.Core.Plugins
             var select = "SELECT TOP 10 System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl FROM SystemIndex";
             string where = "";
             if (keywords != "*") {
-                where = String.Format(" WHERE CONTAINS (System.ItemNameDisplay, '\"{0}\"')", keywords);
+                where = String.Format(" WHERE (System.Filename LIKE '{0}%' OR CONTAINS (System.ItemNameDisplay, '\"{0}\"'))", keywords);
             }
             
             var order = " ORDER BY System.Search.Rank DESC";
             var sql = select + where + order;
-            
+            return Search(sql);
+
+        }
+        private static IEnumerable<SearchResult> Search_FromAQS(string query)
+        {
+            var manager = new CSearchManager();
+            var catalogManager = manager.GetCatalog("SystemIndex");
+            var queryHelper = catalogManager.GetQueryHelper();
+            queryHelper.QuerySelectColumns = "System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl";
+            queryHelper.QueryWhereRestrictions = "AND scope='file:' AND System.FileAttributes <> ALL BITWISE 2";
+            queryHelper.QueryContentProperties = "System.ItemNameDisplay";
+            queryHelper.QueryMaxResults = 10;
+            queryHelper.QuerySorting = "System.Search.Rank DESC";
+            var sql = queryHelper.GenerateSQLFromUserQuery(query);
+            return Search(sql);
+        }
+        
+
+        private const string ConnectionString = "Provider=Search.CollatorDSO;Extended Properties=\"Application=Windows\"";
+        private static IEnumerable<SearchResult> Search(string sql)
+        {
             Debug.Print("SQL = [{0}]", sql);
             var command = new OleDbCommand(sql);
             var connection = new OleDbConnection(ConnectionString);
