@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Windows.Media.Imaging;
 using Else.Core.ResultProviders;
 using Else.Lib;
 

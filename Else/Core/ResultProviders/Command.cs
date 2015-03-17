@@ -23,6 +23,7 @@ namespace Else.Core.ResultProviders
                 
                 var result = new Result{
                     Title = Title,
+                    SubTitle = SubTitle,
                     Icon = Icon,
                     Launch = HandleLaunch
                 };

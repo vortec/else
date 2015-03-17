@@ -1,9 +1,7 @@
-﻿using System.Windows;
-
-namespace Else.Views
+﻿namespace Else.Views
 {
     
-    public partial class SettingsWindow : Window
+    public partial class SettingsWindow
     {
         public SettingsWindow()
         {

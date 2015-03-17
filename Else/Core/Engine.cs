@@ -175,7 +175,7 @@ namespace Else.Core
                     // rethrow this exception.
                     throw;
                 }
-                catch (Exception e) {
+                catch (Exception) {
                     Debug.Print("provider failure :|");
                 }
             }

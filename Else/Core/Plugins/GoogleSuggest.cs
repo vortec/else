@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
@@ -72,7 +70,7 @@ namespace Else.Core.Plugins
                 var x = GetSuggestionsAsync(query.Arguments, cancelToken);
                 return new List<Result>{
                     new Result{
-                        Title="Retreiving search suggestions...",
+                        Title="Retrieving search suggestions...",
                         Icon = _icon
                     }
                 };
