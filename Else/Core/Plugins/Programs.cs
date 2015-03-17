@@ -29,11 +29,17 @@ namespace Else.Core.Plugins
             public string LinkPath;
             public string Label;
             //public string iconLocation;
-            //public Icon icon;
             public BitmapSource Icon;
         }
 
+        /// <summary>
+        /// Maximum number of results to display
+        /// </summary>
         private const int NumResults = 10;
+
+        /// <summary>
+        /// Store found programs here.
+        /// </summary>
         private List<ProgramInfo> _foundPrograms = new List<ProgramInfo>();
 
         /// <summary>
@@ -41,20 +47,20 @@ namespace Else.Core.Plugins
         /// </summary>
         public override void Setup()
         {
+            // recursively scan certain directories and process any .lnk files (shortcuts to applications)
             Debug.Print("Scanning for programs..");
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
             Debug.Print("done ({0} results)", _foundPrograms.Count);
-
-            
 
             Providers.Add(new ResultProvider{
                 Keyword = "launch",
                 MatchAll = true,
                 Query = (query, cancelToken) => {
                     var results = new List<Result>();
+                    // regex that matches the start of word case-insensitive (e.g. if query is 'text', then 'Sublime Text' will be matched)
                     var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
-                    var regex = new Regex(pattern, RegexOptions.Compiled);
+                    var regex = new Regex(@"(?i)\b", RegexOptions.Compiled);
                     foreach (var program in _foundPrograms) {
                         // check if program name matches query
                         if (regex.IsMatch(program.Label) && results.Count < NumResults) {
@@ -91,7 +97,7 @@ namespace Else.Core.Plugins
         }
 
         /// <summary>
-        /// Resolves the shortcut and adds to _foundPrograms.
+        /// Processes the shortcut and adds to _foundPrograms.
         /// </summary>
         /// <param name="file">The .lnk file.</param>
         void ProcessShortcut(FileInfo file)
