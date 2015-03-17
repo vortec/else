@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using Else.Lib;
 
@@ -19,6 +20,11 @@ namespace Else.Model
             get {
                 return !SubTitle.IsEmpty();
             }
+        }
+        public List<Result> ToList() {
+            return new List<Result>{
+                this
+            };
         }
     }
 }
