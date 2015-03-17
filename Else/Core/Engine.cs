@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -47,11 +48,12 @@ namespace Else.Core
         public Engine() {
             // load plugins
             _plugins = new List<Plugin>{
-                new GoogleSuggest(),
-                new Web(),
-                new Programs(),
-                new Math(),
-                new SystemCommands()
+                //new GoogleSuggest(),
+                //new Web(),
+                //new Programs(),
+                //new Math(),
+                //new SystemCommands()
+                new Filesystem()
             };
             
             // setup plugins
