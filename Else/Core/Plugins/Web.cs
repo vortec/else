@@ -32,6 +32,7 @@ namespace Else.Core.Plugins
         /// </summary>
         List<SearchEngine> _searchProviders = new List<SearchEngine>{
             new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "Icons/google.png", true),
+            new SearchEngine("maps", "Search google maps for '{arguments}'", "http://google.co.uk/maps?q={0}", "Icons/google.png"),
             new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "Icons/google.png"),
             new SearchEngine("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "Icons/google.png"),
             new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "Icons/google.png"),
