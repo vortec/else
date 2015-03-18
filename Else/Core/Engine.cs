@@ -53,7 +53,7 @@ namespace Else.Core
                 //new Programs(),
                 //new Math(),
                 //new SystemCommands()
-                new Filesystem()
+                new FileSearch()
             };
             
             // setup plugins

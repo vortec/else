@@ -13,7 +13,7 @@ using Microsoft.Search.Interop;
 
 namespace Else.Core.Plugins
 {
-    public class Filesystem : Plugin
+    public class FileSearch : Plugin
     {
         /// <summary>
         /// Plugin setup

@@ -105,7 +105,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
-    <Compile Include="Core\Plugins\Filesystem.cs" />
+    <Compile Include="Core\Plugins\FileSearch.cs" />
     <Compile Include="Core\Plugins\GoogleSuggest.cs" />
     <Compile Include="Core\ResultProviders\Command.cs" />
     <Compile Include="Core\ResultProvider.cs" />
