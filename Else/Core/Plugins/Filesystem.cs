@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Diagnostics;
+using System.Linq.Expressions;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using Else.Lib;
 using Else.Model;
 using Microsoft.Search.Interop;
@@ -15,6 +19,7 @@ namespace Else.Core.Plugins
         /// Plugin setup
         /// </summary>
         private const string ConnectionString = "Provider=Search.CollatorDSO;Extended Properties=\"Application=Windows\"";
+        private const int MaxResults = 20;
         ResultProvider _openProvider;
         public override void Setup()
         {
@@ -25,14 +30,28 @@ namespace Else.Core.Plugins
                         // do search
                         try {
                             var results = new List<Result>();
-                            foreach (var f in Search_FromAQS(query.Arguments)) {
-                                results.Add(new Result{
-                                    Title = f.ItemDisplayName + "  " + f.Rank,
+                            var sql = SQL_FromAQS(query.Arguments);
+                            foreach (var f in Search(sql)) {
+                                var result = new Result{
+                                    Title = f.ItemDisplayName,
                                     SubTitle = f.ItemPathDisplay,
                                     Launch = query1 => {
+                                        PluginCommands.HideWindow();
                                         Process.Start(f.ItemUrl);
                                     }
-                                });
+                                };
+                                // attempt to get icon
+                                var icon = IconTools.GetIconForFile(f.ItemPathDisplay, ShellIconSize.LargeIcon);
+                                if (icon != null) {
+                                    try {
+                                        var bitmapImage = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+                                        bitmapImage.Freeze();
+                                        result.Icon = bitmapImage;
+                                    }
+                                    catch (Exception) {
+                                    }
+                                }
+                                results.Add(result);
                             }
                             return results;
                         }
@@ -64,9 +83,7 @@ namespace Else.Core.Plugins
         /// <summary>
         /// Queries the windows search index using simple keyword matching on the FileName and ItemDisplayName.
         /// </summary>
-        /// <param name="keywords">The keywords.</param>
-        /// <returns>An iterator of SearchResults</returns>
-        private static IEnumerable<SearchResult> Search_FromSQL(string keywords)
+        private static string SQL_FromSimpleQuery(string keywords)
         {
             var tostrip = new List<string>{
                 "\\",
@@ -83,36 +100,33 @@ namespace Else.Core.Plugins
                 keywords = keywords.Replace(c, "");
             }
             
-            var select = "SELECT TOP 10 System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl FROM SystemIndex";
-            string where = "";
+            var select = String.Format("SELECT TOP {0} System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl FROM SystemIndex", MaxResults);
+            var where = "";
             if (keywords != "*") {
                 where = String.Format(" WHERE (System.Filename LIKE '{0}%' OR CONTAINS (System.ItemNameDisplay, '\"{0}\"'))", keywords);
             }
             
             var order = " ORDER BY System.Search.Rank DESC";
             var sql = select + where + order;
-            return Search(sql);
-
+            return sql;
         }
         
         /// <summary>
         /// Queries the windows search index from an AQS query.
         /// </summary>
         /// <remarks><see cref="https://msdn.microsoft.com/en-us/library/aa965711%28v=vs.85%29.aspx"/></remarks>
-        /// <param name="aqsQuery">The AQS query.</param>
-        /// <returns>An iterator of SearchResults</returns>
-        private static IEnumerable<SearchResult> Search_FromAQS(string aqsQuery)
+        private static string SQL_FromAQS(string aqsQuery)
         {
             var manager = new CSearchManager();
             var catalogManager = manager.GetCatalog("SystemIndex");
             var queryHelper = catalogManager.GetQueryHelper();
             queryHelper.QuerySelectColumns = "System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl, System.Search.Rank";
-            //queryHelper.QueryWhereRestrictions = "AND scope='file:' AND System.FileAttributes <> ALL BITWISE 2";
+            queryHelper.QueryWhereRestrictions = "AND scope='file:' AND System.FileAttributes <> ALL BITWISE 2";
             queryHelper.QueryContentProperties = "System.ItemNameDisplay";
-            queryHelper.QueryMaxResults = 100;
+            queryHelper.QueryMaxResults = MaxResults;
             queryHelper.QuerySorting = "System.Search.Rank DESC";
             var sql = queryHelper.GenerateSQLFromUserQuery(aqsQuery);
-            return Search(sql);
+            return sql;
         }
 
         /// <summary>
@@ -122,7 +136,7 @@ namespace Else.Core.Plugins
         /// <returns>An iterator of SearchResults</returns>
         private static IEnumerable<SearchResult> Search(string sql)
         {
-            //Debug.Print("SQL = [{0}]", sql);
+            Debug.Print("SQL = [{0}]", sql);
             var command = new OleDbCommand(sql);
             var connection = new OleDbConnection(ConnectionString);
             OleDbDataReader reader;
