@@ -77,7 +77,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Search.Interop">
-      <HintPath>..\..\..\Windows Search 3x SDK\Managed\Microsoft.Search.Interop.dll</HintPath>
+      <HintPath>dll\Microsoft.Search.Interop.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
