@@ -1,5 +1,7 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -37,8 +39,8 @@ namespace Else.Controls
             set {
                 if (_items != value) {
                     _items = value;
-                    _items.CollectionChanged += OnCollectionChanged;
                     NotifyPropertyChanged();
+                    _items.CollectionChanged += OnCollectionChanged;
                 }
             }
         }
@@ -46,6 +48,7 @@ namespace Else.Controls
         {
             InitializeComponent();
             ItemsControl.DataContext = this;
+            
         }
         public void Init(Engine engine)
         {
@@ -85,7 +88,10 @@ namespace Else.Controls
         /// </summary>
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            SelectIndex(0);
+            // we schedule the selectindex to happen later, because the itemscontrol hasn't displayed the new items yet
+            Dispatcher.BeginInvoke(new Action(() => {
+                SelectIndex(0);
+            }));
         }
 
         /// <summary>
