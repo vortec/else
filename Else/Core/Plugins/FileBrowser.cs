@@ -34,8 +34,7 @@ namespace Else.Core.Plugins
         {
             var provider = new ResultProvider{
                 IsInterested = query => {
-                    if (_diskPathRegex.IsMatch(query.Raw)) {
-                        query.IsPath = true;
+                    if (query.IsPath) {
                         return ProviderInterest.Exclusive;
                     }
                     return ProviderInterest.None;

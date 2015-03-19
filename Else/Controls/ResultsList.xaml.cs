@@ -79,7 +79,6 @@ namespace Else.Controls
         {
             if (index >= 0 && index < Items.Count) {
                 SelectedIndex = index;
-                ScrollIntoView(index);
             }
         }
         private void ScrollIntoView(int index)
@@ -133,7 +132,9 @@ namespace Else.Controls
                             // wrap to top
                             newIndex = 0;
                         }
+                        // select the new item and ensure its in the scrollviewer view
                         SelectIndex(newIndex);
+                        ScrollIntoView(newIndex);
                     }
                 }
             }
