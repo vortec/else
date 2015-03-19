@@ -17,7 +17,7 @@
         </ItemsControl.Style>
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <VirtualizingStackPanel></VirtualizingStackPanel>
+                <VirtualizingStackPanel x:Name="VirtualizingStackPanel" IsItemsHost="True" />
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
         <ItemsControl.Template>

@@ -81,6 +81,11 @@ namespace Else.Controls
                 SelectedIndex = index;
             }
         }
+
+        /// <summary>
+        /// Scrolls the item at index into view.
+        /// </summary>
+        /// <param name="index">The index.</param>
         private void ScrollIntoView(int index)
         {
             ItemsControl.UpdateLayout();
@@ -102,6 +107,33 @@ namespace Else.Controls
             }));
         }
 
+        private void IncrementIndex(int increment, bool wrap)
+        {
+            if (increment != 0) {
+                var newIndex = SelectedIndex + increment;
+                if (newIndex < 0) {
+                    if (wrap) {
+                        // wrap to bottom
+                        newIndex = Items.Count - 1;
+                    }
+                    else {
+                        // don't wrap, stop at top
+                        newIndex = 0;
+                    }
+                }
+                else if (newIndex >= Items.Count) {
+                    if (wrap) {
+                        // wrap to top
+                        newIndex = 0;
+                    }
+                    else {
+                        // don't wrap, stop at bottom
+                        newIndex = Items.Count - 1;
+                    }
+                }
+                SelectIndex(newIndex);
+            }
+        }
         /// <summary>
         /// Process keyboard input for navigating and launching a Result.
         /// </summary>
@@ -115,26 +147,18 @@ namespace Else.Controls
                     }
                 }
                 else {
-                    var inc = 0;
                     if (e.Key == Key.Up) {
-                        inc--;
+                        IncrementIndex(-1, wrap:true);
                     }
-                    else if (e.Key == Key.Down) {
-                        inc++;
+                    if (e.Key == Key.Down) {
+                        IncrementIndex(1, wrap:true);
                     }
-                    if (inc != 0) {
-                        var newIndex = SelectedIndex + inc;
-                        if (newIndex < 0) {
-                            // wrap to bottom
-                            newIndex = Items.Count - 1;
-                        }
-                        else if (newIndex >= Items.Count) {
-                            // wrap to top
-                            newIndex = 0;
-                        }
-                        // select the new item and ensure its in the scrollviewer view
-                        SelectIndex(newIndex);
-                        ScrollIntoView(newIndex);
+                    // todo: perhaps for pagedown, we should leave the user at the top of teh results list, rather than the bottom (current)
+                    if (e.Key == Key.PageUp) {
+                        IncrementIndex(-6, wrap:false);
+                    }
+                    if (e.Key == Key.PageDown) {
+                        IncrementIndex(6, wrap:false);
                     }
                 }
             }

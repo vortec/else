@@ -23,7 +23,7 @@ namespace Else.Core.Plugins
         /// <summary>
         /// List Directories first (like windows), or mix the list (like linux)
         /// </summary>
-        private const bool ListDirectoriesFirst = false;
+        private const bool ListDirectoriesFirst = true;
 
         class FileSystemEntry {
             public string FileName;
