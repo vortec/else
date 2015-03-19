@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
 using Else.Core;
 using Else.DataTypes;
+using Else.Lib;
 
 namespace Else.Controls
 {
@@ -22,6 +20,7 @@ namespace Else.Controls
         public Engine Engine;
         public event PropertyChangedEventHandler PropertyChanged;
         private ScrollViewer _scrollViewer;
+        private VirtualizingPanel _virtualizingPanel;
 
         private int _selectedIndex;
         public int SelectedIndex {
@@ -52,20 +51,22 @@ namespace Else.Controls
         {
             InitializeComponent();
             ItemsControl.DataContext = this;
+            // when ItemsControl is loaded, store references to some of its components
             ItemsControl.Loaded += (sender, args) => {
-                _scrollViewer = VisualTreeHelper.GetChild(ItemsControl, 0) as ScrollViewer;
+                _scrollViewer = UIHelpers.FindChild<ScrollViewer>(ItemsControl, "ScrollViewer");
+                _virtualizingPanel = UIHelpers.FindChild<VirtualizingStackPanel>(ItemsControl, "VirtualizingStackPanel");
             };
-            
         }
+
         public void Init(Engine engine)
         {
             Engine = engine;
+            // use the ResultsList from Engine to display our results.
             Items = engine.ResultsList;
-
         }
 
         /// <summary>
-        /// Notifies the property changed.
+        /// Triggers the property changed event.
         /// </summary>
         /// <param name="propertyName">Name of the property.</param>
         private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
@@ -74,23 +75,33 @@ namespace Else.Controls
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        
+
+        /// <summary>
+        /// Selects an item in the results list.
+        /// </summary>
+        /// <param name="index">The index.</param>
         private void SelectIndex(int index)
         {
             if (index >= 0 && index < Items.Count) {
                 SelectedIndex = index;
             }
         }
-
         /// <summary>
         /// Scrolls the item at index into view.
         /// </summary>
         /// <param name="index">The index.</param>
         private void ScrollIntoView(int index)
         {
-            ItemsControl.UpdateLayout();
             var container = ItemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
+
+            if (container == null) {
+                // container does not exist because it has been virtualized..
+                // force the panel to create the container
+                _virtualizingPanel.BringIndexIntoViewPublic(index);
+                container = ItemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
+            }
             if (container != null) {
+                // scroll container into view
                 container.BringIntoView();
             }
         }
@@ -132,6 +143,7 @@ namespace Else.Controls
                     }
                 }
                 SelectIndex(newIndex);
+                ScrollIntoView(newIndex);
             }
         }
         /// <summary>
