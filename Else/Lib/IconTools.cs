@@ -106,8 +106,7 @@ namespace Else.Lib
         {
             return new Lazy<BitmapSource>(() => {
                 try {
-                    Debug.Print("load icon");
-                    var icon = IconTools.GetIconForFile(path, ShellIconSize.LargeIcon);
+                    var icon = GetIconForFile(path, ShellIconSize.LargeIcon);
                     // icon was not found
                     if (icon == null) {
                         return null;
