@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Else.Core;
+using Else.Lib;
 
 namespace Else.Views
 {
@@ -75,9 +76,23 @@ namespace Else.Views
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            // if escape key is pressed, close the launcher
+            
             if (e.Key == Key.Escape) {
+                // escape key is pressed, close the launcher
                 HideWindow();
+            }
+            else if (e.Key == Key.Back) {
+                // backspace is pressed
+                // if the current query is a filesystem path, and ends with \, remove the last part of the path (e.g. "c:\test\one\" becomes "c:\test\")
+                if (Engine.Query.IsPath) {
+                    var raw = Engine.Query.Raw;
+                    if (!raw.IsEmpty() && raw.EndsWith("\\")) {
+                        var n = raw.LastIndexOf("\\", raw.Length-2, StringComparison.Ordinal);
+                        var newstr = raw.Substring(0, n+1);
+                        RewriteQuery(newstr);
+                        e.Handled = true;
+                    }
+                }
             }
         }
         /// <summary>

@@ -1,4 +1,5 @@
-﻿using Else.Lib;
+﻿using System.Text.RegularExpressions;
+using Else.Lib;
 
 namespace Else.Model
 {
@@ -30,6 +31,16 @@ namespace Else.Model
         /// Query is empty
         /// </summary>
         public bool Empty;
+
+        /// <summary>
+        /// Query is a filesystem path (e.g. c:\repos\else)
+        /// </summary>
+        public bool IsPath;
+
+        /// <summary>
+        /// Regex for detecting a path (e.g. c:\test)
+        /// </summary>
+        public Regex PathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
         
         /// <summary>
         /// Parses the specified query into different fields.
@@ -55,6 +66,7 @@ namespace Else.Model
             HasArguments = !Arguments.IsEmpty();
             Empty = Raw.Trim().IsEmpty();
             Raw = query;
+            IsPath = PathRegex.IsMatch(query);
         }
     }
 }
