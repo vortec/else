@@ -48,11 +48,11 @@ namespace Else.Core
         public Engine() {
             // load plugins
             _plugins = new List<Plugin>{
-                //new GoogleSuggest(),
-                //new Web(),
-                //new Programs(),
-                //new Math(),
-                //new SystemCommands()
+                new GoogleSuggest(),
+                new Web(),
+                new Programs(),
+                new Math(),
+                new SystemCommands(),
                 new FileSearch(),
                 new FileBrowser()
             };
