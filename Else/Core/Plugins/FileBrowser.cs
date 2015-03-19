@@ -23,7 +23,7 @@ namespace Else.Core.Plugins
         /// <summary>
         /// List Directories first (like windows), or mix the list (like linux)
         /// </summary>
-        private const bool ListDirectoriesFirst = true;
+        private const bool ListDirectoriesFirst = false;
 
         class FileSystemEntry {
             public string FileName;
@@ -77,7 +77,7 @@ namespace Else.Core.Plugins
                             
                             IEnumerable<FileSystemEntry> sorted;
                             if (ListDirectoriesFirst) {
-                                sorted = entries.OrderBy(e => e.IsDirectory).ThenBy(e => e.FileName);
+                                sorted = entries.OrderByDescending(e => e.IsDirectory).ThenBy(e => e.FileName);
                             }
                             else {
                                 sorted = entries.OrderBy(e => e.FileName);
