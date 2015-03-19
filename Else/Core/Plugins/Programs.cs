@@ -59,7 +59,7 @@ namespace Else.Core.Plugins
                     var results = new List<Result>();
                     // regex that matches the start of word case-insensitive (e.g. if query is 'text', then 'Sublime Text' will be matched)
                     var pattern = @"(?i)\b" + Regex.Escape(query.Raw);
-                    var regex = new Regex(@"(?i)\b", RegexOptions.Compiled);
+                    var regex = new Regex(pattern, RegexOptions.Compiled);
                     foreach (var program in _foundPrograms) {
                         // check if program name matches query
                         if (regex.IsMatch(program.Label) && results.Count < NumResults) {
