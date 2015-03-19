@@ -9,7 +9,7 @@
              d:DesignHeight="350" d:DesignWidth="555"
              Focusable="False">
     
-    <ItemsControl  VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling"  ScrollViewer.CanContentScroll="True"  x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance designerData:ResultsList, IsDesignTimeCreatable=True}">
+    <ItemsControl VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.CanContentScroll="True"  x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance designerData:ResultsList, IsDesignTimeCreatable=True}">
         <ItemsControl.Style>
             <Style TargetType="Control">
                 <Setter Property="Focusable" Value="False" />
@@ -22,7 +22,7 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.Template>
             <ControlTemplate>
-                <ScrollViewer Style="{StaticResource ResultsListScrollViewer}" Focusable="False" CanContentScroll="True">
+                <ScrollViewer x:Name="ScrollViewer" Style="{StaticResource ResultsListScrollViewer}" Focusable="False" CanContentScroll="True">
                     <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
                 </ScrollViewer>
             </ControlTemplate>

@@ -5,7 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Threading;
 using Else.Core;
 using Else.DataTypes;
 
@@ -18,6 +21,7 @@ namespace Else.Controls
     {
         public Engine Engine;
         public event PropertyChangedEventHandler PropertyChanged;
+        private ScrollViewer _scrollViewer;
 
         private int _selectedIndex;
         public int SelectedIndex {
@@ -48,6 +52,9 @@ namespace Else.Controls
         {
             InitializeComponent();
             ItemsControl.DataContext = this;
+            ItemsControl.Loaded += (sender, args) => {
+                _scrollViewer = VisualTreeHelper.GetChild(ItemsControl, 0) as ScrollViewer;
+            };
             
         }
         public void Init(Engine engine)
@@ -77,6 +84,7 @@ namespace Else.Controls
         }
         private void ScrollIntoView(int index)
         {
+            ItemsControl.UpdateLayout();
             var container = ItemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
             if (container != null) {
                 container.BringIntoView();
@@ -91,6 +99,7 @@ namespace Else.Controls
             // we schedule the selectindex to happen later, because the itemscontrol hasn't displayed the new items yet
             Dispatcher.BeginInvoke(new Action(() => {
                 SelectIndex(0);
+                _scrollViewer.ScrollToTop();
             }));
         }
 
