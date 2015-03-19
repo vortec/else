@@ -41,16 +41,8 @@ namespace Else.Core.Plugins
                                     }
                                 };
                                 // attempt to get icon
-                                var icon = IconTools.GetIconForFile(f.ItemPathDisplay, ShellIconSize.LargeIcon);
-                                if (icon != null) {
-                                    try {
-                                        var bitmapImage = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
-                                        bitmapImage.Freeze();
-                                        result.Icon = bitmapImage;
-                                    }
-                                    catch (Exception) {
-                                    }
-                                }
+                                result.Icon = IconTools.GetBitmapForFile(f.ItemPathDisplay);
+                                
                                 results.Add(result);
                             }
                             return results;

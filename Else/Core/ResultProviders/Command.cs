@@ -14,7 +14,7 @@ namespace Else.Core.ResultProviders
         public string Title;
         public string SubTitle;
         public Action<Query> Launch;
-        public BitmapImage Icon;
+        public Lazy<BitmapSource> Icon;
         public bool RequiresArguments;
         public Command()
         {

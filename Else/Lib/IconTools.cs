@@ -1,9 +1,13 @@
-﻿// Building a Better ExtractAssociatedIcon
+﻿// Building a Better ExtractAssociatedIcon - customized
 // Bradley Smith - 2010/07/28
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
 namespace Else.Lib
@@ -92,6 +96,34 @@ namespace Else.Lib
         #endregion
 
         /// <summary>
+        /// Returns wrapped function for loading a file icon
+        /// Accepts paths to executables, or folders.
+        /// </summary>
+        /// <param name="path">The path to the file or directory.</param>
+        /// <param name="size">The icon size.</param>
+        /// <returns>Lazy<BitmapSource>, which will load the icon from disk when accessed.</returns>
+        public static Lazy<BitmapSource> GetBitmapForFile(string path, ShellIconSize size=ShellIconSize.LargeIcon)
+        {
+            return new Lazy<BitmapSource>(() => {
+                try {
+                    Debug.Print("load icon");
+                    var icon = IconTools.GetIconForFile(path, ShellIconSize.LargeIcon);
+                    // icon was not found
+                    if (icon == null) {
+                        return null;
+                    }
+                    // convert the Icon to a BitmapImage
+                    var bitmapSource = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
+                    bitmapSource.Freeze();
+                    return bitmapSource;
+                }
+                catch {
+                    return null;
+                }
+            });
+        }
+
+        /// <summary>
         /// Returns an icon representation of the specified file.
         /// </summary>
         /// <param name="filename">The path to the file.</param>
@@ -105,6 +137,7 @@ namespace Else.Lib
             }
             return Icon.FromHandle(shinfo.hIcon);
         }
+        
         /// <summary>
         /// Returns the default icon representation for files with the specified extension.
         /// </summary>

@@ -28,8 +28,7 @@ namespace Else.Core.Plugins
             public string ExePath;
             public string LinkPath;
             public string Label;
-            //public string iconLocation;
-            public BitmapSource Icon;
+            public Lazy<BitmapSource> Icon;
         }
 
         /// <summary>
@@ -108,29 +107,14 @@ namespace Else.Core.Plugins
             var app = new ProgramInfo{
                 ExePath = shortcut.TargetPath,
                 LinkPath = shortcut.FullName,
-                Label = Path.GetFileNameWithoutExtension(file.Name)
-                //iconLocation = shortcut.IconLocation,
+                Label = Path.GetFileNameWithoutExtension(file.Name),
+                Icon = IconTools.GetBitmapForFile(shortcut.TargetPath)
             };
             
             // skip shortcuts that have no target, or the target exectuable does not exist
             if (shortcut.TargetPath.IsEmpty() || !File.Exists(shortcut.TargetPath)) {
                 return;
             }
-            
-            // try to fetch the icon
-            var largeIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.LargeIcon);
-            //Icon smallIcon = IconTools.GetIconForFile(shortcut.TargetPath, ShellIconSize.SmallIcon);
-
-            if (largeIcon != null) {
-                // hurrah, icon found.
-                app.Icon = Imaging.CreateBitmapSourceFromHIcon(largeIcon.Handle, new Int32Rect(0, 0, largeIcon.Width, largeIcon.Height), BitmapSizeOptions.FromEmptyOptions());
-            }
-
-            /* alternative method:
-                //using (var icon = SystemCommands.Drawing.Icon.ExtractAssociatedIcon(shortcut.TargetPath)) {
-                //    link.icon = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
-                //}
-            */
 
             _foundPrograms.Add(app);
         }

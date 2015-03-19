@@ -28,10 +28,12 @@ namespace Else.Lib
             return false;
         }
 
-        public static BitmapImage LoadImageFromResources(string path)
+        public static Lazy<BitmapSource> LoadImageFromResources(string path)
         {
-            var uri = new Uri("pack://application:,,,/Else;component/Resources/" + path);
-            return new BitmapImage(uri);
+            return new Lazy<BitmapSource>(() => {
+                var uri = new Uri("pack://application:,,,/Else;component/Resources/" + path);
+                return new BitmapImage(uri);
+            });
         }
     }
 }

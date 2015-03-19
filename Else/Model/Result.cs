@@ -13,7 +13,7 @@ namespace Else.Model
         public string Title {get; set;}
         public string SubTitle {get; set;}
         public int Index {get;set;}
-        public BitmapSource Icon {get; set;}
+        public Lazy<BitmapSource> Icon {get; set;}
         // anonymous method that is invoked when the result is selected
         public Action<Query> Launch;
         public bool HasSubTitle {

@@ -19,7 +19,7 @@ namespace Else.Core.Plugins
     {
         private const string Url = "http://suggestqueries.google.com/complete/search";
         private HttpClient _client = new HttpClient();
-        private BitmapImage _icon = UIHelpers.LoadImageFromResources("Icons/google.png");
+        private Lazy<BitmapSource> _icon = UIHelpers.LoadImageFromResources("Icons/google.png");
         private ResultProvider _provider;
 
         /// <summary>
