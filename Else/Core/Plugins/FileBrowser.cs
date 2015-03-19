@@ -20,11 +20,15 @@ namespace Else.Core.Plugins
         /// todo: ~ (home) support
         
         private Regex _diskPathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
-        // if listDirectoriesFirst is true, it behaves like Windows, otherwise like linux
-        bool listDirectoriesFirst = false;
+        /// <summary>
+        /// List Directories first (like windows), or mix the list (like linux)
+        /// </summary>
+        private const bool ListDirectoriesFirst = false;
+
         class FileSystemEntry {
-            public string Name;
-            public bool isDirectory;
+            public string FileName;
+            public string Path;
+            public bool IsDirectory;
         }
         public override void Setup()
         {
@@ -58,55 +62,49 @@ namespace Else.Core.Plugins
                                 var name = Path.GetFileName(path);
                                 if (name != null && name.ToLower().StartsWith(filter.ToLower())) {
                                     entries.Add(new FileSystemEntry{
-                                        Name = name,
-                                        isDirectory = isDirectory
+                                        FileName = name,
+                                        Path = path,
+                                        IsDirectory = isDirectory
                                     });
                                 }
                             });
 
                             foreach (var dir in Directory.EnumerateDirectories(dirName)) {
                                 filterEntry(dir, true);
-                            }
+                            } 
                             foreach (var file in Directory.EnumerateFiles(dirName)) {
                                 filterEntry(file, false);
                             }
                             
                             IEnumerable<FileSystemEntry> sorted;
-                            if (listDirectoriesFirst) {
-                                sorted = entries.OrderBy(e => e.isDirectory).ThenBy(e => e.Name);
+                            if (ListDirectoriesFirst) {
+                                sorted = entries.OrderBy(e => e.IsDirectory).ThenBy(e => e.FileName);
                             }
                             else {
-                                sorted = entries.OrderBy(e => e.Name);
+                                sorted = entries.OrderBy(e => e.FileName);
                             }
 
                             foreach (var item in sorted) {
                                 results.Add(new Result{
-                                    Title = item.Name,
+                                    Title = item.FileName,
                                     Launch = query1 => {
-                                        var path = Path.Combine(dirName, item.Name);
-                                        if (item.isDirectory) {
-                                            PluginCommands.RewriteQuery(path + "\\");
+                                        
+                                        if (item.IsDirectory) {
+                                            // rewrite query to navigate to the selected directory
+                                            PluginCommands.RewriteQuery(item.Path + "\\");
                                         }
                                         else {
-                                            Debug.Print("starting {0}", path);
-                                            Process.Start(path);
+                                            // launch the file (could be exe, jpeg, anything)
+                                            Process.Start(item.Path);
                                         }
-                                    }
+                                    },
+                                    Icon = IconTools.GetBitmapForFile(item.Path)
                                 });
                             }
                             return results;
                         }
                     }
                     return new List<Result>();
-
-                    
-
-                    
-                    
-                    //return new Result{
-                    //    Title = currentDirectory,
-
-                    //}.ToList();
                 }
             };
             Providers.Add(provider);
