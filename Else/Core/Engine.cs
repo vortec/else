@@ -68,7 +68,7 @@ namespace Else.Core
         /// </summary>
         public void RequestUpdate()
         {
-            ExecuteQuery(_lastQuery);
+            BeginQuery(_lastQuery);
         }
 
         /// <summary>
@@ -79,84 +79,96 @@ namespace Else.Core
             var textbox = sender as TextBox;
             if (textbox != null) {
                 var query = textbox.Text;
-                ExecuteQuery(query);
+                BeginQuery(query);
             }
+        }
+        public async void BeginQuery(string query)
+        {
+            // parse the query
+            Query.Parse(query);
+
+            // if a query is already running, request cancellation
+            if (_cancelTokenSource != null) {
+                _cancelTokenSource.Cancel(true);
+                //_cancelTokenSource.Dispose();
+                //_cancelTokenSource = null;
+            }
+            
+            // empty query, remove existing results
+            if (Query.Empty) {
+                ResultsList.Clear();
+                ResultsList.BindingRefresh();
+                return;
+            }
+
+            // create a new cancellation token 
+            _cancelTokenSource = new CancellationTokenSource();
+
+            // execute the query in a new thread
+            await Task.Factory.StartNew(async () => {
+                await ExecuteQuery(query);
+            }, _cancelTokenSource.Token);
+
         }
 
         /// <summary>
         /// Update ResultsList by querying plugins.
         /// </summary>
         /// <param name="query">The query.</param>
-        private async void ExecuteQuery(string query)
+        private async Task ExecuteQuery(string query)
         {
-            Query.Parse(query);
-
-            // if a query is already running, request cancellation
-            if (_cancelTokenSource != null) {
-                    _cancelTokenSource.Cancel(true);
-                    //_cancelTokenSource.Dispose();
-                    //_cancelTokenSource = null;
-                }
-
-            if (Query.Empty) {
-                // empty query, remove existing results
-                ResultsList.Clear();
-                ResultsList.BindingRefresh();
-            }
-            else {
-                // determine which providers are able to respond to this query, and sort them into groups
-                var exclusive = new List<ResultProvider>(); // todo: consider removing exclusive
-                var shared = new List<ResultProvider>();
-                var fallback = new List<ResultProvider>();
-                foreach (var p in _plugins) {
-                    foreach (var c in p.Providers) {
-                        if (c.IsInterested != null) {
-                            var x = c.IsInterested(Query);
-                            if (x == ProviderInterest.Exclusive) {
-                                exclusive.Add(c);
-                            }
-                            else if (x == ProviderInterest.Shared) {
-                                shared.Add(c);
-                            }
-                            else if (x == ProviderInterest.Fallback) {
-                                fallback.Add(c);
-                            }
+            // determine which providers are able to respond to this query, and sort them into groups
+            var exclusive = new List<ResultProvider>(); // todo: consider removing exclusive
+            var shared = new List<ResultProvider>();
+            var fallback = new List<ResultProvider>();
+            foreach (var p in _plugins) {
+                foreach (var c in p.Providers) {
+                    if (c.IsInterested != null) {
+                        var x = c.IsInterested(Query);
+                        if (x == ProviderInterest.Exclusive) {
+                            exclusive.Add(c);
+                        }
+                        else if (x == ProviderInterest.Shared) {
+                            shared.Add(c);
+                        }
+                        else if (x == ProviderInterest.Fallback) {
+                            fallback.Add(c);
                         }
                     }
                 }
-
-                // create a new cancellation token 
-                _cancelTokenSource = new CancellationTokenSource();
-
-                try {
-                    // store results for this query temporarily before adding to ResultsList, in case the query is cancelled
-                    var queryResults = new List<Result>();
-                    
-                    // if we have any exclusive providers, we ignore all other providers
-                    if (exclusive.Any()) {
-                        queryResults.AddRange(await ProcessProviderQueryAsync(exclusive));
-                    }
-                    else if (shared.Any()) {
-                        queryResults.AddRange(await ProcessProviderQueryAsync(shared));
-                    }
-                
-                    // if there are no results at all, show the fallback providers
-                    if (!queryResults.Any()) {
-                        queryResults.AddRange(await ProcessProviderQueryAsync(fallback));
-                    }
-                    
-                    // query successful, show the results
-                    ResultsList.Clear();
-                    ResultsList.AddRange(queryResults);
-                    _lastQuery = query;
-                    
-                    // trigger refresh of UI that is bound to the ResultsList
-                    await Application.Current.Dispatcher.BeginInvoke(new Action(() => {
-                        ResultsList.BindingRefresh();
-                    }));
-                }
-                catch (OperationCanceledException) { }
             }
+
+            // create a new cancellation token 
+            _cancelTokenSource = new CancellationTokenSource();
+
+            try {
+                // store results for this query temporarily before adding to ResultsList, in case the query is cancelled
+                var queryResults = new List<Result>();
+                    
+                // if we have any exclusive providers, we ignore all other providers
+                if (exclusive.Any()) {
+                    queryResults.AddRange(await ProcessProviderQueryAsync(exclusive));
+                }
+                else if (shared.Any()) {
+                    queryResults.AddRange(await ProcessProviderQueryAsync(shared));
+                }
+                
+                // if there are no results at all, show the fallback providers
+                if (!queryResults.Any()) {
+                    queryResults.AddRange(await ProcessProviderQueryAsync(fallback));
+                }
+                    
+                // query successful, show the results
+                ResultsList.Clear();
+                ResultsList.AddRange(queryResults);
+                _lastQuery = query;
+                    
+                // trigger refresh of UI that is bound to the ResultsList
+                await Application.Current.Dispatcher.BeginInvoke(new Action(() => {
+                    ResultsList.BindingRefresh();
+                }));
+            }
+            catch (OperationCanceledException) { }
         }
         private async Task<List<Result>> ProcessProviderQueryAsync(List<ResultProvider> providers)
         {
