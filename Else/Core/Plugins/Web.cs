@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Else.Core.ResultProviders;
 using Else.Lib;
+using Else.Model;
 
 namespace Else.Core.Plugins
 {
@@ -58,6 +59,26 @@ namespace Else.Core.Plugins
                     Fallback = p.Fallback
                 });
             }
+            // add "http://" handler
+            Providers.Add(new ResultProvider{
+                MatchAll = true,
+                Query = (query, token) => {
+                    return new Result{
+                        Title = query.Raw,
+                        SubTitle = "Open the typed URL",
+                        Launch = query1 => {
+                            PluginCommands.HideWindow();
+                            OpenBrowser(query1.Raw);
+                        }
+                    }.ToList();
+                },
+                IsInterested = query => {
+                    if (query.Raw.StartsWith("http://")) {
+                        return ProviderInterest.Exclusive;
+                    }
+                    return ProviderInterest.None;
+                }
+            });
         }
         /// <summary>
         /// Opens the browser.
