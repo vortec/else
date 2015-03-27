@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -38,9 +39,15 @@ namespace Else
             base.OnStartup(e);
             InitializeComponent();
 
-            Paths.CreateUserDirectories();
+            try {
+                Paths.Setup();
+            }
+            catch (FileNotFoundException notFoundE) {
+                Debug.Fail(notFoundE.Message);
+                Current.Shutdown();
+            }
 
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
             Debug.Print("Local user config path: {0}", config.FilePath);
 
             // initialize themes and scan the disk for them

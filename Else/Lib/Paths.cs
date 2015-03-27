@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Deployment.Application;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Windows.Forms;
 
 
 namespace Else.Lib
@@ -11,31 +14,59 @@ namespace Else.Lib
     public static class Paths
     {
         /// <summary>
-        /// The users custom data path (%appdata%\Else)
+        /// The user data directory (e.g. %appdata%\Else)
         /// </summary>
-        public static string UserDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Assembly.GetEntryAssembly().GetName().Name);
+        public static string UserDataDirectory;
 
         /// <summary>
-        /// The directory that contains the application exe (c:\program files\Else)
+        /// Our app data directory
         /// </summary>
-        public static string AppDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        public static string AppDataDirectory;
 
+        public static void Setup()
+        {
+            // try and find our app data directory
+            if (ApplicationDeployment.IsNetworkDeployed) {
+                // is deployed via click-once
+                AppDataDirectory = Application.UserAppDataPath;
+            }
+            else {
+                // otherwise use the same directory as the .exe
+                AppDataDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            }
+
+            UserDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Assembly.GetEntryAssembly().GetName().Name);
+
+            // ensure we have both
+            if (!Directory.Exists(AppDataDirectory)) {
+                throw new FileNotFoundException(string.Format("Failed to find App Data directory (expected: {0})", AppDataDirectory));
+            }
+            if (!Directory.Exists(UserDataDirectory)) {
+                throw new FileNotFoundException(string.Format("Failed to find User Data directory (expected: {0})", UserDataDirectory));
+            }
+
+            Debug.Print("App Data Directory = {0}", AppDataDirectory);
+            Debug.Print("User Data Directory = {0}", UserDataDirectory);
+
+            // all is fine, continue
+            CreateUserDirectories();
+        }
         /// <summary>
         /// Ensures the user directory and sub directories exist, otherwise creates them
         /// </summary>
-        public static void CreateUserDirectories()
+        private static void CreateUserDirectories()
         {
-            Directory.CreateDirectory(Path.Combine(UserDirectory, "Plugins"));
-            Directory.CreateDirectory(Path.Combine(UserDirectory, "Themes"));
+            Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Plugins"));
+            Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Themes"));
         }
 
         public static string GetUserPath(string path)
         {
-            return Path.Combine(UserDirectory, path);
+            return Path.Combine(UserDataDirectory, path);
         }
         public static string GetAppPath(string path)
         {
-            return Path.Combine(AppDirectory, path);
+            return Path.Combine(AppDataDirectory, path);
         }
     }
 }
