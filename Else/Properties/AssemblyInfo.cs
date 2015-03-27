@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -10,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("Else")]
 [assembly: AssemblyDescription("Else Productivity Application")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("MrWeiss")]
+[assembly: AssemblyCompany("Else")]
 [assembly: AssemblyProduct("Else")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
