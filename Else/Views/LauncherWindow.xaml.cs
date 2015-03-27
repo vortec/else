@@ -3,33 +3,28 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Else.Core;
-using Else.Lib;
+using Else.Properties;
 
 namespace Else.Views
 {
     public partial class LauncherWindow
     {
-        public readonly Engine Engine;
-        
-        public LauncherWindow(Engine engine)
+        public Engine Engine;
+
+        public LauncherWindow()
         {
             InitializeComponent();
-
+        }
+        /// <summary>
+        /// Initializes the Launcher Window and connects it to Engine.
+        /// </summary>
+        /// <param name="engine">The engine.</param>
+        public void Init(Engine engine)
+        {
             Engine = engine;
-            
-            // setup window
-            Topmost = true;
-            
-            // callback when query changes
-            QueryInput.TextChanged += Engine.OnQueryChanged;
 
-            // hook into escape key
-            PreviewKeyDown += OnKeyDown;
-            
-            // bind ResultsList to keyboard input
-            PreviewKeyDown += ResultsList.OnKeyDown;
-
-            ResultsList.Init(Engine);
+            // bind resultslist to engine
+            LauncherControl.Init(engine);
         }
 
         /// <summary>
@@ -39,7 +34,7 @@ namespace Else.Views
         {
             if (Visibility != Visibility.Visible) {
                 // check if we should do fade
-                if (Properties.Settings.Default.FadeInWindow) {
+                if (Settings.Default.FadeInWindow) {
                     Opacity = 0;
                     Show();
                     Activate();
@@ -49,7 +44,8 @@ namespace Else.Views
                     //da.EasingFunction = new BackEase{
                     //    EasingMode = EasingMode.EaseOut,
                     //};
-                    da.EasingFunction = new CubicEase{
+                    da.EasingFunction = new CubicEase
+                    {
                         EasingMode = EasingMode.EaseOut,
                     };
                     // todo: this animation is still buggy when opening and closing the window fast (i tried cancelling the animation, but it doesn't work).
@@ -64,7 +60,7 @@ namespace Else.Views
         }
 
         /// <summary>
-        /// Hide the window (wrapper for Hide() )
+        /// Hide the window (wrapper for Hide() that handles fading)
         /// </summary>
         public void HideWindow()
         {
@@ -74,25 +70,10 @@ namespace Else.Views
             }
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
         {
-            
             if (e.Key == Key.Escape) {
-                // escape key is pressed, close the launcher
                 HideWindow();
-            }
-            else if (e.Key == Key.Back) {
-                // backspace is pressed
-                // if the current query is a filesystem path, and ends with \, remove the last part of the path (e.g. "c:\test\one\" becomes "c:\test\")
-                if (Engine.Query.IsPath) {
-                    var raw = Engine.Query.Raw;
-                    if (!raw.IsEmpty() && raw.EndsWith("\\")) {
-                        var n = raw.LastIndexOf("\\", raw.Length-2, StringComparison.Ordinal);
-                        var newstr = raw.Substring(0, n+1);
-                        RewriteQuery(newstr);
-                        e.Handled = true;
-                    }
-                }
             }
         }
         /// <summary>
@@ -101,7 +82,7 @@ namespace Else.Views
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue) {
-                QueryInput.Text = "";
+                LauncherControl.QueryInput.Text = "";
             }
         }
 
@@ -110,7 +91,7 @@ namespace Else.Views
         /// </summary>
         private void OnActivated(object sender, EventArgs e)
         {
-            QueryInput.Focus();
+            LauncherControl.QueryInput.Focus();
         }
 
         /// <summary>
@@ -118,8 +99,8 @@ namespace Else.Views
         /// </summary>
         private void OnDeactivated(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.AutoHideLauncher) {
-                HideWindow();
+            if (Settings.Default.AutoHideLauncher) {
+                //HideWindow();
             }
         }
 
@@ -129,8 +110,8 @@ namespace Else.Views
         /// <param name="newQuery">The new query.</param>
         public void RewriteQuery(string newQuery)
         {
-            QueryInput.Text = newQuery;
-            QueryInput.CaretIndex = QueryInput.Text.Length;
+            LauncherControl.QueryInput.Text = newQuery;
+            LauncherControl.QueryInput.CaretIndex = LauncherControl.QueryInput.Text.Length;
         }
     }
 }
