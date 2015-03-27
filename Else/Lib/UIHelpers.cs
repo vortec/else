@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -75,6 +76,54 @@ namespace Else.Lib
 
             return foundChild;
         }
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj, string childName=null) where T : DependencyObject
+        {
+            if (depObj != null) {
+                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
+                    var child = VisualTreeHelper.GetChild(depObj, i);
+                    var name = (string)child.GetValue(FrameworkElement.NameProperty);
+
+                    if (child is T) {
+                        if (string.IsNullOrEmpty(childName) || name == childName) {
+                            yield return (T)child;
+                        }
+                    }
+
+                    foreach (var childOfChild in FindVisualChildren<T>(child, childName)) {
+                        yield return childOfChild;
+                    }
+                }
+            }
+        }
+        public static UIElement FindChildByTypeName(DependencyObject parent, string typeName)
+        {
+            // Confirm parent and childName are valid. 
+            if (parent == null) return null;
+
+            UIElement foundChild = null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++) {
+                var child = VisualTreeHelper.GetChild(parent, i);
+
+                // If the child is not of the request child type child
+                UIElement childElement = child as UIElement;
+                if (childElement != null && childElement.GetType().Name == typeName) {
+                    foundChild = childElement;
+                }
+                else {
+                    // recurse
+                    foundChild = FindChildByTypeName(child, typeName);
+                    if (foundChild != null) {
+                        break;
+                    }
+                }
+            }
+
+            return foundChild;
+        }
+
+        
 
         public static Lazy<BitmapSource> LoadImageFromResources(string path)
         {
