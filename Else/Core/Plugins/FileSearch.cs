@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using Else.Lib;
 using Else.Model;
 using Microsoft.Search.Interop;

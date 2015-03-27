@@ -2,7 +2,6 @@
 // Bradley Smith - 2010/07/28
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows;
