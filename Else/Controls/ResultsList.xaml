@@ -22,16 +22,16 @@
         </ItemsControl.ItemsPanel>
         <ItemsControl.Template>
             <ControlTemplate>
-                <ScrollViewer x:Name="ScrollViewer" Style="{StaticResource ResultsListScrollViewer}" Focusable="False" CanContentScroll="True">
-                    <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                <ScrollViewer x:Name="ScrollViewer" Style="{DynamicResource ResultsScrollViewer}" Focusable="False" CanContentScroll="True">
+                    <ItemsPresenter UseLayoutRounding="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                 </ScrollViewer>
             </ControlTemplate>
         </ItemsControl.Template>
         <ItemsControl.ItemTemplate>
             <DataTemplate>
-                <StackPanel x:Name="ItemsContainer" Style="{StaticResource ResultsListItemsContainer}">
-                    <Separator Style="{StaticResource ResultsListSeperator}" />
-                    <Grid Margin="0 0 0 0" RenderOptions.ClearTypeHint="Enabled">
+                <StackPanel x:Name="ResultContainer" Style="{DynamicResource ResultContainer}">
+                    <Border x:Name="preResultSeparator" Style="{DynamicResource ResultSeparator}"/>
+                    <Grid Margin="0" RenderOptions.ClearTypeHint="Enabled">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="40"/>
                         </Grid.RowDefinitions>
@@ -41,11 +41,11 @@
                         </Grid.ColumnDefinitions>
                         <Image x:Name="icon" Source="{Binding Icon.Value}" Width="32"  Height="32" Grid.Column="0"/>
                         <StackPanel x:Name="TitleContainer" Grid.Column="1">
-                            <TextBlock x:Name="Title" Text="{Binding Title}" FontSize="17" Margin="0" TextTrimming="CharacterEllipsis"/>
-                            <TextBlock x:Name="SubTitle" Text="{Binding SubTitle}" FontSize="10" Margin="0" Foreground="#FF777777" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock x:Name="Title" Style="{DynamicResource ResultTitle}" Text="{Binding Title}" FontSize="17" Margin="0" TextTrimming="CharacterEllipsis"/>
+                            <TextBlock x:Name="SubTitle" Style="{DynamicResource ResultSubTitle}" Text="{Binding SubTitle}" FontSize="10" Margin="0" TextTrimming="CharacterEllipsis"/>
                         </StackPanel>
                     </Grid>
-                    <Separator x:Name="lastSeperator" Visibility="Collapsed" Style="{StaticResource ResultsListSeperator}"/>
+                    <Border x:Name="postResultSeparator" Style="{DynamicResource ResultSeparator}" Visibility="Collapsed" />
                 </StackPanel>
                 <DataTemplate.Triggers>
                     <DataTrigger Value="True">
@@ -55,10 +55,10 @@
                                 <Binding Path="Index" />
                             </MultiBinding>
                         </DataTrigger.Binding>
-                        <Setter TargetName="ItemsContainer" Property="Background" Value="{StaticResource ResultsListSelectedBrush}" />
+                        <Setter TargetName="ResultContainer" Property="Background" Value="{DynamicResource ResultSelectedBackgroundColor}" />
                     </DataTrigger>
                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource LastItemInContainerConverter}}" Value="True">
-                        <Setter TargetName="lastSeperator" Property="Visibility" Value="Visible" />
+                        <Setter TargetName="postResultSeparator" Property="Visibility" Value="Visible" />
                     </DataTrigger>
                     <!-- if Subtitle is not provided, make the Title consume available space and center vertically. -->
                     <DataTrigger Binding="{Binding Path=HasSubTitle}" Value="False">
