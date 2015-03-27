@@ -35,12 +35,22 @@ namespace Else.Lib
         /// </summary>
         public Theme ActiveTheme;
 
+        /// <summary>
+        /// Makes sure the settings directory exists.
+        /// </summary>
+        public void EnsureThemeDirectoryExistance(string directory)
+        {
+            Directory.CreateDirectory(directory);
+        }
+
         
         /// <summary>
         /// Scans a directory for files with a .json extension, and attempts to load them as themes.
         /// </summary>
         public void ScanForThemes(string directory, bool isEditable)
         {
+            EnsureThemeDirectoryExistance(directory);
+
             foreach (var path in Directory.EnumerateFiles(directory).Where(s => s.EndsWith(".json"))) {
                 if (File.Exists(path)) {
                     var theme = new Theme();
