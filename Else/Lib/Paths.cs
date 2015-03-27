@@ -37,24 +37,22 @@ namespace Else.Lib
 
             UserDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Assembly.GetEntryAssembly().GetName().Name);
 
-            // ensure we have both
+            // ensure we have AppDataDirectory
             if (!Directory.Exists(AppDataDirectory)) {
                 throw new FileNotFoundException(string.Format("Failed to find App Data directory (expected: {0})", AppDataDirectory));
             }
-            if (!Directory.Exists(UserDataDirectory)) {
-                throw new FileNotFoundException(string.Format("Failed to find User Data directory (expected: {0})", UserDataDirectory));
-            }
+            
+            // create UserData directories if they do not exist
+            CreateUserDataDirectories();
 
             Debug.Print("App Data Directory = {0}", AppDataDirectory);
             Debug.Print("User Data Directory = {0}", UserDataDirectory);
-
-            // all is fine, continue
-            CreateUserDirectories();
+            
         }
         /// <summary>
         /// Ensures the user directory and sub directories exist, otherwise creates them
         /// </summary>
-        private static void CreateUserDirectories()
+        private static void CreateUserDataDirectories()
         {
             Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Plugins"));
             Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Themes"));
