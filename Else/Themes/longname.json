@@ -1,0 +1,13 @@
+﻿{
+    "Name": "Theme With an Extremely Long Name, it just continues...",
+    "Author" :  "By Person With a Long Name, who lives in somalia",
+    "WindowBorderColor": "#7F363636",
+    "WindowBackgroundColor": "White",
+    "QueryBoxBackgroundColor": "Transparent",
+    "QueryBoxTextColor": "Black",
+    "ResultBackgroundColor": "White",
+    "ResultSelectedBackgroundColor": "#EEEDEF",
+    "ResultTitleColor": "red",
+    "ResultSubTitleColor": "#FF777777"
+}
+

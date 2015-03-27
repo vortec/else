@@ -1,0 +1,13 @@
+﻿{
+    "Name": "Light",
+    "Author" :  "James Hutchby",
+    "WindowBorderColor": "#7F363636",
+    "WindowBackgroundColor": "White",
+    "QueryBoxBackgroundColor": "Transparent",
+    "QueryBoxTextColor": "Black",
+    "ResultBackgroundColor": "White",
+    "ResultSelectedBackgroundColor": "#EEEDEF",
+    "ResultTitleColor": "Black",
+    "ResultSubTitleColor": "#777777"
+}
+

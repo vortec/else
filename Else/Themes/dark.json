@@ -1,0 +1,22 @@
+﻿{
+    "Name": "Dark",
+    "Author" :  "By James Hutchby",
+    
+    "WindowBorderColor": "#7F363636",
+    "WindowBackgroundColor": "#1e1e1e",
+    
+    "QueryBoxBackgroundColor": "Transparent",
+    "QueryBoxTextColor": "#f0f0f0",
+    "QueryBoxFontFamily" :  "Verdana",
+    
+    "ResultBackgroundColor": "#1e1e1e",
+    "ResultSelectedBackgroundColor": "#373737",
+    
+    "ResultTitleColor": "White",
+    "ResultTitleFontFamily": "consolas",
+
+    "ResultSubTitleColor": "#e4e4e4",
+    "ResultSubTitleFontFamily" :  "consolas"
+    
+}
+
