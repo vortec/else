@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Configuration;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -6,10 +8,10 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
+
 using Else.Core;
 using Else.Lib;
 using Else.Views;
-
 
 namespace Else
 {
@@ -18,9 +20,65 @@ namespace Else
         public Engine Engine;
         public HotkeyManager HotkeyManager;
         public LauncherWindow LauncherWindow;
+        public ThemeManager ThemeManager;
+
         private HwndSource _hwndSource;
         private NotifyIcon _trayIcon;
         private Mutex _instanceMutex;
+
+        
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            // quit the app if we could not create the mutex, another instance is already running
+            if (!CreateMutex()) {
+                Current.Shutdown();
+                return;
+            }
+            
+            base.OnStartup(e);
+            InitializeComponent();
+
+            Paths.CreateUserDirectories();
+
+            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            Debug.Print("Local user config path: {0}", config.FilePath);
+
+            // initialize themes and scan the disk for them
+            ThemeManager = new ThemeManager();
+            ThemeManager.ScanForThemes(Paths.GetAppPath("Themes"), false);
+            ThemeManager.ScanForThemes(Paths.GetUserPath("Themes"), true);
+            ThemeManager.ApplyThemeFromSettings();
+            
+            Engine = new Engine();
+            
+            // give PluginCommands (static class) a reference to this
+            PluginCommands.SetDependancy(this);
+
+            SetupTrayIcon();
+
+            LauncherWindow = new LauncherWindow();
+            LauncherWindow.Init(Engine);
+            // show launcher window once, so we can register for window messages and setup hotkeys
+            LauncherWindow.Show();
+            LauncherWindow.Hide();
+
+            SetupWndProc();
+            
+            HotkeyManager = new HotkeyManager(_hwndSource);
+        }
+        
+        protected override void OnExit(ExitEventArgs e)
+        {
+            // ensure tray icon is hidden when the app closes (else it lingers in the tray incompetently)
+            if (_trayIcon != null) {
+                _trayIcon.Visible = false;
+            }
+            // release mutex
+            if (_instanceMutex != null) {
+                _instanceMutex.ReleaseMutex();
+            }
+            base.OnExit(e);
+        }
 
         /// <summary>
         /// Creates a mutex with the Assembly GUID attribute.  We use GUID in the mutex name so we don't risk colliding with other apps.
@@ -41,33 +99,8 @@ namespace Else
             }
             return true;
         }
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            // shutdown the app if we could not create the mutex (this is to prevent multiple instances of the application running)
-            if (!CreateMutex()) {
-                Current.Shutdown();
-                return;
-            }
 
-            base.OnStartup(e);
-            InitializeComponent();
-
-            Engine = new Engine();
-            
-            // give PluginCommands (static class) reference to this
-            PluginCommands.SetDependancy(this);
-
-            SetupTrayIcon();
-
-            LauncherWindow = new LauncherWindow(Engine);
-            // show launcher window once, so we can register for window messages
-            LauncherWindow.Show();
-            LauncherWindow.Hide();
-
-            SetupWndProc();
-            
-            HotkeyManager = new HotkeyManager(_hwndSource);
-        }
+        
         /// <summary>
         /// Setup wndproc handling so we can receive window messages (Win32 stuff)
         /// </summary>
@@ -80,30 +113,14 @@ namespace Else
             }
             _hwndSource.AddHook(HandleMessages);
         }
-        /// <summary>
-        /// When the Application is closed.
-        /// </summary>
-        /// <param name="e">An <see cref="T:System.Windows.ExitEventArgs" /> that contains the event data.</param>
-        protected override void OnExit(ExitEventArgs e)
-        {
-            // ensure tray icon is hidden when the app closes (else it lingers in the tray incompetently)
-            if (_trayIcon != null) {
-                _trayIcon.Visible = false;
-            }
-            // release mutex
-            if (_instanceMutex != null) {
-                _instanceMutex.ReleaseMutex();
-            }
-            base.OnExit(e);
-        }
-
+        
         /// <summary>
         /// Setup tray icon.
         /// </summary>
         private void SetupTrayIcon()
         {
             _trayIcon = new NotifyIcon{
-                Icon = Else.Properties.Resources.TrayIcon,
+                Icon = Else.Properties.Resources.AppIcon,
                 Text = Assembly.GetExecutingAssembly().GetName().Name
             };
             
@@ -130,7 +147,7 @@ namespace Else
                 }
                 else {
                     // show window
-                    var window = new SettingsWindow();
+                    var window = new SettingsWindow(this);
                     window.Show();
                 }
             };
