@@ -6,7 +6,7 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" 
              mc:Ignorable="d" 
             ResizeMode="NoResize"
-             Width="240" Height="285">
+             Width="240" Height="292">
     <Grid>
         <xctk:ColorCanvas x:Name="ColorCanvas" HorizontalAlignment="Center"/>
         
