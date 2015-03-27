@@ -111,6 +111,7 @@ namespace Else.Lib
             var theme = Themes.First(t => t.GUID == guid);
             ApplyTheme(theme);
             SaveSettings();
+            Debug.Print("Applied Theme (GUID={0} Name={1})", theme.GUID, theme.Name);
         }
 
         /// <summary>

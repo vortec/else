@@ -8,6 +8,7 @@
     "ResultBackgroundColor": "White",
     "ResultSelectedBackgroundColor": "#EEEDEF",
     "ResultTitleColor": "Black",
-    "ResultSubTitleColor": "#777777"
+    "ResultSubTitleColor": "#777777",
+    "GUID" : "Light"
 }
 

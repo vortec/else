@@ -16,7 +16,8 @@
     "ResultTitleFontFamily": "consolas",
 
     "ResultSubTitleColor": "#e4e4e4",
-    "ResultSubTitleFontFamily" :  "consolas"
+    "ResultSubTitleFontFamily": "consolas",
+    "GUID" : "Dark"
     
 }
 

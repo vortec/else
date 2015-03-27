@@ -225,9 +225,6 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <Content Include="Themes\longname.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Themes\dark.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
