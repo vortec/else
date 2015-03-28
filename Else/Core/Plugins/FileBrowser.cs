@@ -4,8 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Else.Lib;
+using Else.Extensions;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
 
 namespace Else.Core.Plugins
 {

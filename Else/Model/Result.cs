@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Extensions;
 
 namespace Else.Model
 {

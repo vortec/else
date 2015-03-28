@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
+using Else.Model;
 
 namespace Else.DataTypes
 {
@@ -10,7 +11,7 @@ namespace Else.DataTypes
     /// Only "Reset" event is triggered, so the UI will redraw every element.
     /// </remarks>
     /// </summary>
-    public class BindingResultsList : List<Model.Result>, INotifyCollectionChanged
+    public class BindingResultsList : List<Result>, INotifyCollectionChanged
     {
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
@@ -24,12 +25,12 @@ namespace Else.DataTypes
                 CollectionChanged(this, notification);
             }
         }
-        public new void Add(Model.Result value)
+        public new void Add(Result value)
         {
             value.Index = Count;
             base.Add(value);
         }
-        public void AddRange(List<Model.Result> collection)
+        public void AddRange(List<Result> collection)
         {
             if (collection != null) {
                 var i = 0;

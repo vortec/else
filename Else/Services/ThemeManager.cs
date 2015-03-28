@@ -1,13 +1,13 @@
 ﻿using System;
-using System.CodeDom;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Else.Model;
 using Else.Properties;
 
-namespace Else.Lib
+namespace Else.Services
 {
     public class ThemeManager
     {

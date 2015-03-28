@@ -9,9 +9,10 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
-
+using Autofac;
 using Else.Core;
-using Else.Lib;
+using Else.Helpers;
+using Else.Services;
 using Else.Views;
 
 namespace Else
@@ -39,6 +40,7 @@ namespace Else
             base.OnStartup(e);
             InitializeComponent();
 
+            //SetupIOC();
             try {
                 Paths.Setup();
             }
@@ -73,7 +75,18 @@ namespace Else
             
             HotkeyManager = new HotkeyManager(_hwndSource);
         }
-        
+
+        private void SetupIOC()
+        {
+            var builder = new ContainerBuilder();
+            // register components
+
+            //builder.RegisterInstance(new Engine())
+            //    .As<IEngine>();
+
+            throw new NotImplementedException();
+        }
+
         protected override void OnExit(ExitEventArgs e)
         {
             // ensure tray icon is hidden when the app closes (else it lingers in the tray incompetently)
@@ -148,9 +161,9 @@ namespace Else
             // context menu item 'Settings'
             var settings = new ToolStripMenuItem("Settings");
             settings.Click += (sender, args) => {
-                if (UIHelpers.IsWindowOpen<Window>("Settings")) {
+                if (UI.IsWindowOpen<Window>("Settings")) {
                     // focus window
-                    UIHelpers.FocusWindow<Window>("Settings");
+                    UI.FocusWindow<Window>("Settings");
                 }
                 else {
                     // show window

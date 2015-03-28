@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Input;
 using Else.Core;
-using Else.Lib;
+using Else.Extensions;
 
-namespace Else.Controls
+namespace Else.Views.Controls
 {
     public partial class Launcher
     {

@@ -8,9 +8,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Else.Core;
 using Else.DataTypes;
-using Else.Lib;
+using Else.Helpers;
 
-namespace Else.Controls
+namespace Else.Views.Controls
 {
     /// <summary>
     /// Provides ItemsControl functionality, with additional support for up+down key handling, and launching Result.
@@ -53,8 +53,8 @@ namespace Else.Controls
             ItemsControl.DataContext = this;
             // when ItemsControl is loaded, store references to some of its components
             ItemsControl.Loaded += (sender, args) => {
-                _scrollViewer = UIHelpers.FindChild<ScrollViewer>(ItemsControl, "ScrollViewer");
-                _virtualizingPanel = UIHelpers.FindChild<VirtualizingStackPanel>(ItemsControl, "VirtualizingStackPanel");
+                _scrollViewer = UI.FindChild<ScrollViewer>(ItemsControl, "ScrollViewer");
+                _virtualizingPanel = UI.FindChild<VirtualizingStackPanel>(ItemsControl, "VirtualizingStackPanel");
             };
         }
 

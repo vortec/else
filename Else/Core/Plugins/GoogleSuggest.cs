@@ -7,11 +7,11 @@ using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
 using Flurl;
 using Newtonsoft.Json;
-
 
 namespace Else.Core.Plugins
 {
@@ -19,7 +19,7 @@ namespace Else.Core.Plugins
     {
         private const string Url = "http://suggestqueries.google.com/complete/search";
         private HttpClient _client = new HttpClient();
-        private Lazy<BitmapSource> _icon = UIHelpers.LoadImageFromResources("Icons/google.png");
+        private Lazy<BitmapSource> _icon = UI.LoadImageFromResources("Icons/google.png");
         private ResultProvider _provider;
 
         /// <summary>

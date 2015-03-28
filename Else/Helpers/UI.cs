@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Else.Lib
+namespace Else.Helpers
 {
-    public static class UIHelpers
+    public static class UI
     {
         public static bool IsWindowOpen<T>(string name = "") where T : Window
         {

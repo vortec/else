@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Else.Core.Plugins
 {
     class Console : Plugin
@@ -8,7 +10,7 @@ namespace Else.Core.Plugins
         /// </summary>
         public override void Setup()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }

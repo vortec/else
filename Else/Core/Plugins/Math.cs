@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
 using Jace;
 
 namespace Else.Core.Plugins
@@ -13,7 +14,7 @@ namespace Else.Core.Plugins
     {
         private Regex _isNotMathExpressionRegex = new Regex(@"[^0-9\(\)\^\.\+\*\/\-%<>!= ]", RegexOptions.Compiled);
         private CalculationEngine _calculationEngine = new CalculationEngine();
-        private Lazy<BitmapSource> _icon = UIHelpers.LoadImageFromResources("Icons/calculator.png");
+        private Lazy<BitmapSource> _icon = UI.LoadImageFromResources("Icons/calculator.png");
 
         /// <summary>
         /// Plugin setup

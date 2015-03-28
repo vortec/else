@@ -1,5 +1,5 @@
 ﻿using Else.DataTypes;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
 
 namespace Else.DesignerData
@@ -16,16 +16,16 @@ namespace Else.DesignerData
                     new Result{
                         Title = "Google",
                         SubTitle = "SubTitle Text",
-                        Icon = UIHelpers.LoadImageFromResources("Icons/google.png")
+                        Icon = UI.LoadImageFromResources("Icons/google.png")
                     },
                     new Result{
                         Title = "Wikipedia",
                         SubTitle = "SubTitle Text",
-                        Icon = UIHelpers.LoadImageFromResources("Icons/wiki.png")
+                        Icon = UI.LoadImageFromResources("Icons/wiki.png")
                     },
                     new Result{
                         Title = "No SubTitle",
-                        Icon = UIHelpers.LoadImageFromResources("Icons/google.png")
+                        Icon = UI.LoadImageFromResources("Icons/google.png")
                     },
                 };
             }

@@ -70,6 +70,9 @@
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Flurl">
       <HintPath>..\packages\Flurl.1.0.6\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Flurl.dll</HintPath>
     </Reference>
@@ -110,10 +113,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\ColorPicker.xaml.cs">
+    <Compile Include="Views\Controls\ColorPicker.xaml.cs">
       <DependentUpon>ColorPicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Launcher.xaml.cs">
+    <Compile Include="Views\Controls\Launcher.xaml.cs">
       <DependentUpon>Launcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
@@ -123,30 +126,30 @@
     <Compile Include="Core\ResultProviders\Command.cs" />
     <Compile Include="Core\ResultProvider.cs" />
     <Compile Include="DesignerData\Themes.cs" />
-    <Compile Include="Interfaces\IPickerWindow.cs" />
-    <Compile Include="Lib\ColorPicker.cs" />
+    <Compile Include="Services\Interfaces\IPickerWindow.cs" />
+    <Compile Include="Services\ColorPicker.cs" />
     <Compile Include="Lib\RelayCommand.cs" />
-    <Compile Include="Lib\Paths.cs" />
-    <Compile Include="Lib\PluginCommands.cs" />
+    <Compile Include="Services\Paths.cs" />
+    <Compile Include="Services\PluginCommands.cs" />
     <Compile Include="Interop\Win32.cs" />
-    <Compile Include="Lib\HotkeyManager.cs" />
-    <Compile Include="Lib\Theme.cs" />
-    <Compile Include="Lib\ThemeManager.cs" />
-    <Compile Include="Lib\UIHelpers.cs" />
+    <Compile Include="Services\HotkeyManager.cs" />
+    <Compile Include="Model\Theme.cs" />
+    <Compile Include="Services\ThemeManager.cs" />
+    <Compile Include="Helpers\UI.cs" />
     <Compile Include="DesignerData\ResultsList.cs" />
     <Compile Include="Core\Plugins\Console.cs" />
     <Compile Include="Core\Plugins\Math.cs" />
     <Compile Include="Core\Plugins\SystemCommands.cs" />
     <Compile Include="DataTypes\BindingResultsList.cs" />
-    <Page Include="Controls\ColorPicker.xaml">
+    <Page Include="Views\Controls\ColorPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Launcher.xaml">
+    <Page Include="Views\Controls\Launcher.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ResultsList.xaml">
+    <Page Include="Views\Controls\ResultsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -154,13 +157,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ResultsList.xaml.cs">
+    <Compile Include="Views\Controls\ResultsList.xaml.cs">
       <DependentUpon>ResultsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EqualsConverter.cs" />
     <Compile Include="Core\Engine.cs" />
-    <Compile Include="Lib\Extensions.cs" />
-    <Compile Include="Lib\IconTools.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Helpers\IconTools.cs" />
     <Compile Include="Lib\Utils.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -172,7 +175,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ThemeEditor.xaml">
+    <Page Include="Views\Controls\ThemeEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -200,7 +203,7 @@
     <Compile Include="Views\LauncherWindow.xaml.cs">
       <DependentUpon>LauncherWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ThemeEditor.xaml.cs">
+    <Compile Include="Views\Controls\ThemeEditor.xaml.cs">
       <DependentUpon>ThemeEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsTabs\ThemesTab.xaml.cs">
@@ -295,16 +298,6 @@
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Themes\light.json">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Themes\longname.json">
       <Visible>False</Visible>
       <Group>
       </Group>

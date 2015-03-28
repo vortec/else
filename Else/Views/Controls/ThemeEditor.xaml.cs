@@ -1,10 +1,11 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Else.Lib;
+using Else.Helpers;
+using Else.Services;
 using Else.ViewModels;
 
-namespace Else.Controls
+namespace Else.Views.Controls
 {
 
     /// <summary>
@@ -27,7 +28,7 @@ namespace Else.Controls
 
         public void Init(ThemeManager themeManager)
         {
-            ViewModel = new ThemeEditorViewModel(themeManager, new Else.Lib.ColorPicker());
+            ViewModel = new ThemeEditorViewModel(themeManager, new Services.ColorPicker());
             DataContext = ViewModel;
             
         }
@@ -46,21 +47,21 @@ namespace Else.Controls
             Launcher.QueryInput.HorizontalAlignment = HorizontalAlignment.Left;
 
             // setup interactive components of our wysiwyg style theme editor
-            SetMouseHandlersForElement("QueryBoxTextColor", "Query Box Text Color", UIHelpers.FindChildByTypeName(Launcher.QueryInput, "TextBoxView"));
+            SetMouseHandlersForElement("QueryBoxTextColor", "Query Box Text Color", UI.FindChildByTypeName(Launcher.QueryInput, "TextBoxView"));
             SetMouseHandlersForElement("QueryBoxBackgroundColor", "Query Box Background Color", Launcher.QueryInputContainer);
             SetMouseHandlersForElement("WindowBorderColor", "Window Border Color", Launcher.WindowBorder);
             SetMouseHandlersForElement("WindowBackgroundColor", "Launcher Background Color", Launcher.Container);
 
             // because there are multiple instances of ResultTitle and ResultSubTitle (multiple results), we must add handlers to each one
-            foreach (var element in UIHelpers.FindVisualChildren<TextBlock>(Launcher.ResultsList, "Title")) {
+            foreach (var element in UI.FindVisualChildren<TextBlock>(Launcher.ResultsList, "Title")) {
                 SetMouseHandlersForElement("ResultTitleColor", "Result Title Color", element);
             }
-            foreach (var element in UIHelpers.FindVisualChildren<TextBlock>(Launcher.ResultsList, "SubTitle")) {
+            foreach (var element in UI.FindVisualChildren<TextBlock>(Launcher.ResultsList, "SubTitle")) {
                 SetMouseHandlersForElement("ResultSubTitleColor", "Result SubTitle Color", element);
             }
 
             // add handlers for ResultContainer, detects if it is a selected result (because that uses different styles)
-            foreach (var element in UIHelpers.FindVisualChildren<StackPanel>(Launcher.ResultsList, "ResultContainer")) {
+            foreach (var element in UI.FindVisualChildren<StackPanel>(Launcher.ResultsList, "ResultContainer")) {
                 // check if this element is selected, by checking if the subtitle 
                 if (element.Background.Equals(Application.Current.Resources.MergedDictionaries[1]["ResultSelectedBackgroundColor"])) {
                     SetMouseHandlersForElement("ResultSelectedBackgroundColor", "Result Selected Background Color", element);
@@ -71,8 +72,8 @@ namespace Else.Controls
             }
 
             // seperators between results
-            var separators = UIHelpers.FindVisualChildren<Border>(Launcher.ResultsList, "preResultSeparator").ToList();
-            separators.AddRange(UIHelpers.FindVisualChildren<Border>(Launcher.ResultsList, "postResultSeparator").ToList());
+            var separators = UI.FindVisualChildren<Border>(Launcher.ResultsList, "preResultSeparator").ToList();
+            separators.AddRange(UI.FindVisualChildren<Border>(Launcher.ResultsList, "postResultSeparator").ToList());
 
             foreach (var element in separators) {
                 SetMouseHandlersForElement("ResultSeparatorColor", "Result Separator Color", element);

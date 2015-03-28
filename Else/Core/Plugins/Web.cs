@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Else.Core.ResultProviders;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
 
 namespace Else.Core.Plugins
 {
@@ -50,7 +51,7 @@ namespace Else.Core.Plugins
                 Providers.Add(new Command{
                     Keyword = p.Keyword,
                     Title = p.DisplayText,
-                    Icon = UIHelpers.LoadImageFromResources(p.IconName),
+                    Icon = UI.LoadImageFromResources(p.IconName),
                     Launch = query => {
                         var searchKeywords = query.Keyword.StartsWith(p.Keyword) ? query.Arguments : query.Raw;
                         OpenProviderSearch(p.Url, searchKeywords);

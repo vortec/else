@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Else.Lib
+namespace Else.Services
 {
     /// <summary>
     /// Helpful methods for plugins to invoke.  Avoids dependancy injection in the plugins.

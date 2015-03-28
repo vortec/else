@@ -12,7 +12,6 @@ using Else.Model;
 using Math = Else.Core.Plugins.Math;
 using SystemCommands = Else.Core.Plugins.SystemCommands;
 
-
 namespace Else.Core
 {
     /// <summary>

@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Else.DataTypes;
-using Else.Interfaces;
+using Else.Helpers;
 using Else.Lib;
 using Else.Model;
-
+using Else.Services;
+using Else.Services.Interfaces;
 
 namespace Else.ViewModels
 {

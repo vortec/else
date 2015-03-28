@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using Else.Core.ResultProviders;
-using Else.Lib;
+using Else.Interop;
+using Else.Services;
 
 namespace Else.Core.Plugins
 {
@@ -35,7 +36,7 @@ namespace Else.Core.Plugins
                     Title = "Sleep",
                     Launch = query => {
                         PluginCommands.HideWindow();
-                        Interop.Win32.SetSuspendState(false, true, true);
+                        Win32.SetSuspendState(false, true, true);
                     },
                 },
                 new Command{
@@ -43,7 +44,7 @@ namespace Else.Core.Plugins
                     Title = "Hibernate",
                     Launch = query => {
                         PluginCommands.HideWindow();
-                        Interop.Win32.SetSuspendState(true, true, true);
+                        Win32.SetSuspendState(true, true, true);
                     },
                 },
                 new Command{
@@ -51,7 +52,7 @@ namespace Else.Core.Plugins
                     Title = "Lock",
                     Launch = query => {
                         PluginCommands.HideWindow();
-                        Interop.Win32.LockWorkStation();
+                        Win32.LockWorkStation();
                         // alternative (maybe requires permissions):
                         // Process.Start(@"C:\WINDOWS\system32\rundll32.exe", "user32.dll,LockWorkStation");
                     },
@@ -68,7 +69,7 @@ namespace Else.Core.Plugins
                     Keyword = "logoff",
                     Title = "Log Off",
                     Launch = query => {
-                        Interop.Win32.ExitWindowsEx(0, 0);
+                        Win32.ExitWindowsEx(0, 0);
                     },
                 },
             };

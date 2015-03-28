@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel;
-using Else.Lib;
+using Else.Model;
 
 namespace Else.DesignerData
 {

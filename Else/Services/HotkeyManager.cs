@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Else.Interop;
 
-namespace Else.Lib
+namespace Else.Services
 {
     
     [Flags]
@@ -37,7 +38,7 @@ namespace Else.Lib
         public bool Register(KeyCombo keyCombo, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(keyCombo.Item2);
-            if (Interop.Win32.RegisterHotKey( _hwndSource.Handle, id, (int)keyCombo.Item1, vk)) {
+            if (Win32.RegisterHotKey( _hwndSource.Handle, id, (int)keyCombo.Item1, vk)) {
                 _callbacks[keyCombo] = action;
                 return true;
             }

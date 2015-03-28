@@ -1,8 +1,8 @@
 ﻿<UserControl
-        x:Class="Else.Controls.Launcher"
+        x:Class="Else.Views.Controls.Launcher"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:controls="clr-namespace:Else.Controls"
+    xmlns:controls1="clr-namespace:Else.Views.Controls"
         Height="350" Width="555"
         UseLayoutRounding="True"
         RenderOptions.ClearTypeHint="Enabled"
@@ -37,7 +37,7 @@
                             </TextBox.Resources>
                         </TextBox>
                     </Grid>
-                    <controls:ResultsList x:Name="ResultsList" Grid.Row="1" Margin="0 10 0 0" VerticalAlignment="Top"/>
+                    <controls1:ResultsList x:Name="ResultsList" Grid.Row="1" Margin="0 10 0 0" VerticalAlignment="Top"/>
                 </Grid>
             <!--</Grid>-->
             </Border>

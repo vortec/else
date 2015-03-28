@@ -1,15 +1,15 @@
 ﻿using System.Windows;
-using Else.Interfaces;
+using Else.Services.Interfaces;
 
-namespace Else.Lib
+namespace Else.Services
 {
     public class ColorPicker : IPickerWindow
     {
         public RoutedPropertyChangedEventHandler<object> PropertyChanged { get; set; }
-        private Controls.ColorPicker _window;
+        private Views.Controls.ColorPicker _window;
         public void Show(DependencyObject owner, string title)
         {
-            _window = new Controls.ColorPicker {
+            _window = new Views.Controls.ColorPicker {
                 Owner = Window.GetWindow(owner),
                 Title = title,
                 Topmost = true,

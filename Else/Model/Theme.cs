@@ -4,9 +4,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Else.Services;
 using Newtonsoft.Json;
 
-namespace Else.Lib
+namespace Else.Model
 {
     public class Theme {
 
@@ -102,7 +103,7 @@ namespace Else.Lib
         /// Loads the specified configuration.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        /// <exception cref="Else.Lib.Theme.ParseException">
+        /// <exception cref="Theme.ParseException">
         /// Theme has no 'Name' field
         /// or
         /// Theme has no 'Author' field

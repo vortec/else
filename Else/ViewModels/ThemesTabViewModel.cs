@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Else.Lib;
+using Else.Model;
+using Else.Services;
 using Microsoft.Win32;
 
 namespace Else.ViewModels

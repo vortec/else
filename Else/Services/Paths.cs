@@ -5,8 +5,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-
-namespace Else.Lib
+namespace Else.Services
 {
     /// <summary>
     /// Handles resource paths for the entire app.

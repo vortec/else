@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Else.Lib
+namespace Else.Extensions
 {
     /// <summary>
     /// helpers methods added to base type String

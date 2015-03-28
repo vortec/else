@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Extensions;
 using Else.Model;
+using Else.Services;
 
 namespace Else.Core.ResultProviders
 {

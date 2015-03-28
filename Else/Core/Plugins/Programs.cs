@@ -4,8 +4,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Extensions;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
+using IWshRuntimeLibrary;
+using File = System.IO.File;
 
 /*
  * todo: check memory consumption and possible leakage with icon usage.
@@ -99,8 +103,8 @@ namespace Else.Core.Plugins
         /// <param name="file">The .lnk file.</param>
         void ProcessShortcut(FileInfo file)
         {
-            IWshRuntimeLibrary.WshShell shell = new IWshRuntimeLibrary.WshShell();
-            IWshRuntimeLibrary.IWshShortcut shortcut = shell.CreateShortcut(file.FullName);
+            WshShell shell = new WshShell();
+            IWshShortcut shortcut = shell.CreateShortcut(file.FullName);
             
             var app = new ProgramInfo{
                 ExePath = shortcut.TargetPath,

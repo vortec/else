@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Diagnostics;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
 using Microsoft.Search.Interop;
-
 
 namespace Else.Core.Plugins
 {
