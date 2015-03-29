@@ -25,7 +25,7 @@ namespace Else.Services
         public void Setup()
         {
             // try and find our app data directory
-            if (ApplicationDeployment.IsNetworkDeployed) {
+            if (!Debugger.IsAttached && ApplicationDeployment.IsNetworkDeployed) {
                 // is deployed via click-once
                 AppDataDirectory = Application.UserAppDataPath;
             }

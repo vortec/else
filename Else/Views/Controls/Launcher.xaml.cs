@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Windows.Controls;
 using System.Windows.Input;
+using Autofac;
 using Else.Core;
 using Else.Extensions;
 
@@ -7,30 +9,28 @@ namespace Else.Views.Controls
 {
     public partial class Launcher
     {
-        public Engine Engine;
-        
+        private Engine _engine;
+
         public Launcher()
         {
+            // initialize ui elements
             InitializeComponent();
         }
-
         /// <summary>
         /// Initializes the Launcher and connects it to Engine.
         /// </summary>
         /// <param name="engine">The engine.</param>
         public void Init(Engine engine)
         {
-            Engine = engine;
+            _engine = engine;
             
-            QueryInput.PreviewKeyDown += QueryInput_OnKeyDown;
-            
-            // Notify Engine when the query changes
-            QueryInput.TextChanged += Engine.OnQueryChanged;
-            
-            // bind ResultsList to keyboard input
-            QueryInput.PreviewKeyDown += ResultsList.OnKeyDown;
+            // initialize ResultsList
+            ResultsList.Init(_engine);
 
-            ResultsList.Init(Engine);
+            // bind ResultsList to keyboard input (so it can navigate results when up/down key is pressed)
+            QueryInput.PreviewKeyDown += ResultsList.OnKeyDown;
+            QueryInput.TextChanged += QueryInput_OnTextChanged;
+            QueryInput.PreviewKeyDown += QueryInput_PreviewKeyDown;
         }
 
         /// <summary>
@@ -38,13 +38,13 @@ namespace Else.Views.Controls
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The <see cref="KeyEventArgs"/> instance containing the event data.</param>
-        private void QueryInput_OnKeyDown(object sender, KeyEventArgs e)
+        private void QueryInput_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Back) {
                 // backspace is pressed
                 // if the current query is a filesystem path, and ends with \, remove the last part of the path (e.g. "c:\test\one\" becomes "c:\test\")
-                if (Engine.Query.IsPath) {
-                    var raw = Engine.Query.Raw;
+                if (_engine.Query.IsPath) {
+                    var raw = _engine.Query.Raw;
                     if (!raw.IsEmpty() && raw.EndsWith("\\")) {
                         var n = raw.LastIndexOf("\\", raw.Length-2, StringComparison.Ordinal);
                         var newstr = raw.Substring(0, n+1);
@@ -63,6 +63,15 @@ namespace Else.Views.Controls
         {
             QueryInput.Text = newQuery;
             QueryInput.CaretIndex = QueryInput.Text.Length;
+        }
+
+        private void QueryInput_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Notify Engine when the query changes
+            var textbox = sender as TextBox;
+            if (textbox != null) {
+                _engine.OnQueryChanged(textbox.Text);
+            }
         }
     }
 }

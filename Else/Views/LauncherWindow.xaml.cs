@@ -4,26 +4,23 @@ using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Else.Core;
 using Else.Properties;
+using Else.Views.Controls;
 
 namespace Else.Views
 {
     public partial class LauncherWindow
     {
-        public Engine Engine;
+        public readonly Engine Engine;
 
-        public LauncherWindow()
-        {
-            InitializeComponent();
-        }
+
         /// <summary>
-        /// Initializes the Launcher Window and connects it to Engine.
+        /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
         /// <param name="engine">The engine.</param>
-        public void Init(Engine engine)
+        public LauncherWindow(Engine engine)
         {
             Engine = engine;
-
-            // bind resultslist to engine
+            InitializeComponent();
             LauncherControl.Init(engine);
         }
 

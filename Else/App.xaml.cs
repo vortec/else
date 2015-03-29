@@ -14,8 +14,11 @@ using Else.Core;
 using Else.Helpers;
 using Else.Model;
 using Else.Services;
+using Else.Services.Interfaces;
 using Else.ViewModels;
 using Else.Views;
+using Else.Views.Controls;
+using ColorPicker = Else.Services.ColorPicker;
 
 namespace Else
 {
@@ -30,26 +33,33 @@ namespace Else
         private NotifyIcon _trayIcon;
         private Mutex _instanceMutex;
 
-        private IContainer _container;
+        public static IContainer Container;
 
         private void SetupIOC()
         {
             var builder = new ContainerBuilder();
 
             // register singletons
-            builder.RegisterType<LauncherWindow>().SingleInstance(); 
+            builder.RegisterType<LauncherWindow>().SingleInstance();
+            
             builder.RegisterType<Engine>().SingleInstance();
             builder.RegisterType<ThemeManager>().SingleInstance();
             builder.RegisterType<HotkeyManager>().As<HotkeyManager>().As<IStartable>().SingleInstance();
             builder.RegisterType<Paths>().SingleInstance();
             builder.RegisterType<PluginCommands>().SingleInstance();
+            builder.RegisterType<ColorPicker>().As<IPickerWindow>();
+            
 
             // instances
             builder.RegisterType<Theme>();
+            builder.RegisterType<SettingsWindow>().As<IPickerWindow>();
             
+            // viewmodel locator testing
+            ViewModelLocator.Init(builder);
+
             // register ViewModels
-            builder.RegisterType<ThemeEditorViewModel>();
-            builder.RegisterType<ThemesTabViewModel>();
+            //builder.RegisterType<ThemeEditorViewModel>();
+            //builder.RegisterType<ThemesTabViewModel>();
 
             builder.RegisterInstance(this).As<App>().ExternallyOwned();
             
@@ -62,7 +72,7 @@ namespace Else
                 .As<Plugin>();
             
             // build container
-            _container = builder.Build();
+            Container = builder.Build();
         }
 
         
@@ -79,7 +89,7 @@ namespace Else
             
             SetupIOC();
 
-            using (var scope = _container.BeginLifetimeScope()) {
+            using (var scope = Container.BeginLifetimeScope()) {
                 
                 if (!scope.IsRegistered<HotkeyManager>()) {
                     Debug.Print("NOT REGSISTERD");
@@ -196,7 +206,7 @@ namespace Else
                 }
                 else {
                     // show window
-                    var window = new SettingsWindow(this);
+                    var window = Container.Resolve<SettingsWindow>();
                     window.Show();
                 }
             };
@@ -233,7 +243,7 @@ namespace Else
                 var modifier = (Modifier)(low);
 
                 // relay to hotkey manager
-                using (var scope = _container.BeginLifetimeScope()) {
+                using (var scope = Container.BeginLifetimeScope()) {
                     var hotkeyManager = scope.Resolve<HotkeyManager>();
                     var combo = new KeyCombo(modifier, key);
                     hotkeyManager.HandlePress(combo);

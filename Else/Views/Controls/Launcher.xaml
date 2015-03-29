@@ -20,7 +20,12 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <Grid x:Name="QueryInputContainer" Style="{DynamicResource QueryInputContainer}" RenderOptions.ClearTypeHint="Enabled">
-                        <TextBox Name="QueryInput" Text="Query goes here.." Grid.Row="0" Style="{DynamicResource QueryInput}">
+                        <TextBox 
+                            Name="QueryInput"
+                            Text="Query goes here.."
+                            Grid.Row="0"
+                            
+                            Style="{DynamicResource QueryInput}">
                             <TextBox.Resources>
                                 <!-- hack to make cleartype work.. -->
                                 <Style TargetType="{x:Type ScrollViewer}">

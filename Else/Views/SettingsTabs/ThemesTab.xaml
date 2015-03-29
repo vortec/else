@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:designerData="clr-namespace:Else.DesignerData"
              xmlns:controls="clr-namespace:Else.Views.Controls"
+             DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=ThemesTabViewModel}"
              d:DataContext="clr-namespace:Else.DesignerData.Themes"
              d:DesignHeight="550"
              d:DesignWidth="1000"

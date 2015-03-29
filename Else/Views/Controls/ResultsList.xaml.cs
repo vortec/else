@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -17,7 +18,7 @@ namespace Else.Views.Controls
     /// </summary>
     public partial class ResultsList : INotifyPropertyChanged
     {
-        public Engine Engine;
+        private Engine _engine;
         public event PropertyChangedEventHandler PropertyChanged;
         private ScrollViewer _scrollViewer;
         private VirtualizingPanel _virtualizingPanel;
@@ -52,17 +53,22 @@ namespace Else.Views.Controls
             InitializeComponent();
             ItemsControl.DataContext = this;
             // when ItemsControl is loaded, store references to some of its components
-            ItemsControl.Loaded += (sender, args) => {
-                _scrollViewer = UI.FindChild<ScrollViewer>(ItemsControl, "ScrollViewer");
-                _virtualizingPanel = UI.FindChild<VirtualizingStackPanel>(ItemsControl, "VirtualizingStackPanel");
-            };
         }
+
+        private void ItemsControlOnLoaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            _scrollViewer = UI.FindChild<ScrollViewer>(ItemsControl, "ScrollViewer");
+            _virtualizingPanel = UI.FindChild<VirtualizingStackPanel>(ItemsControl, "VirtualizingStackPanel");
+            // use the ResultsList from _engine to display our results.
+            Items = _engine.ResultsList;
+        }
+
 
         public void Init(Engine engine)
         {
-            Engine = engine;
-            // use the ResultsList from Engine to display our results.
-            Items = engine.ResultsList;
+            _engine = engine;
+            ItemsControl.Loaded += ItemsControlOnLoaded;
+            
         }
 
         /// <summary>
@@ -155,7 +161,7 @@ namespace Else.Views.Controls
                 if (e.Key == Key.Enter || e.Key == Key.Return) {
                     var launch = Items[SelectedIndex].Launch;
                     if (launch != null) {
-                        launch(Engine.Query);
+                        launch(_engine.Query);
                     }
                 }
                 else {

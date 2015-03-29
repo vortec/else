@@ -12,14 +12,5 @@ namespace Else.Views.SettingsTabs
         {
             InitializeComponent();
         }
-
-        private ThemesTabViewModel _viewModel;
-
-        public void Init(ThemeManager themeManager)
-        {
-            ThemeEditor.Init(themeManager);
-            _viewModel = new ThemesTabViewModel(ThemeEditor.ViewModel, themeManager);
-            DataContext = _viewModel;
-        }
     }
 }

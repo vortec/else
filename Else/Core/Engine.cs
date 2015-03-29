@@ -57,6 +57,7 @@ namespace Else.Core
                     Debug.Print("Failed to initialize plugin: {0}", p.GetType());
                 }
             }
+            Debug.Print("Loaded {0} plugins", _plugins.Count);
         }
 
         /// <summary>
@@ -70,13 +71,9 @@ namespace Else.Core
         /// <summary>
         /// Called when [query changed].
         /// </summary>
-        public void OnQueryChanged(object sender, TextChangedEventArgs e)
+        public void OnQueryChanged(string query)
         {
-            var textbox = sender as TextBox;
-            if (textbox != null) {
-                var query = textbox.Text;
-                BeginQuery(query);
-            }
+            BeginQuery(query);
         }
         public async void BeginQuery(string query)
         {

@@ -33,7 +33,8 @@ namespace Else.Views.Controls
         {
             var obj = d as ThemeEditor;
             if (obj != null) {
-                obj.ViewModel.SetTheme(e.NewValue as Theme);
+                var viewModel = obj.DataContext as ThemeEditorViewModel;
+                viewModel.SetTheme(e.NewValue as Theme);
             }
         }
 
@@ -41,6 +42,7 @@ namespace Else.Views.Controls
         {
             Loaded += OnLoaded;
             InitializeComponent();
+            ViewModel = DataContext as ThemeEditorViewModel;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -48,11 +50,7 @@ namespace Else.Views.Controls
             SetupEditBehaviour();
         }
 
-        public void Init(ThemeManager themeManager)
-        {
-            ViewModel = new ThemeEditorViewModel(themeManager, new Services.ColorPicker());
-            DataContext = ViewModel;
-        }
+        
         
 
         /// <summary>
