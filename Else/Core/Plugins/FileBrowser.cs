@@ -89,7 +89,7 @@ namespace Else.Core.Plugins
                                         
                                             if (item.IsDirectory) {
                                                 // rewrite query to navigate to the selected directory
-                                                PluginCommands.RewriteQuery(item.Path + "\\");
+                                                //PluginCommands.RewriteQuery(item.Path + "\\");
                                             }
                                             else {
                                                 // launch the file (could be exe, jpeg, anything)

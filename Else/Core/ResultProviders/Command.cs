@@ -56,7 +56,7 @@ namespace Else.Core.ResultProviders
             if (RequiresArguments) {
                 if (!query.KeywordComplete || query.Arguments.IsEmpty()) {
                     // auto complete the query
-                    PluginCommands.RewriteQuery(Keyword + ' ');
+                    //PluginCommands.RewriteQuery(Keyword + ' ');
                 }
                 else {
                     Launch(query);

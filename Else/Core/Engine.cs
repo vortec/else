@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using Autofac;
 using Else.Core.Plugins;
 using Else.DataTypes;
 using Else.Model;
@@ -26,7 +27,7 @@ namespace Else.Core
         /// <summary>
         /// Activated plugins.
         /// </summary>
-        List<Plugin> _plugins;
+        List<Plugin> _plugins = new List<Plugin>();
         /// <summary>
         /// Parsed version of the current query.
         /// </summary>
@@ -43,21 +44,18 @@ namespace Else.Core
         private string _lastQuery;
 
 
-        public Engine() {
-            // load plugins
-            _plugins = new List<Plugin>{
-                new GoogleSuggest(),
-                new Web(),
-                new Programs(),
-                new Math(),
-                new SystemCommands(),
-                new FileSearch(),
-                new FileBrowser()
-            };
-            
-            // setup plugins
-            foreach (var p in _plugins) {
-                p.Setup();
+        public Engine(ILifetimeScope container)
+        {
+            // todo: replace this container usage
+            var foundPlugins = container.Resolve<IEnumerable<Plugin>>();
+            foreach (var p in foundPlugins) {
+                try {
+                    p.Setup();
+                    _plugins.Add(p);
+                }
+                catch {
+                    Debug.Print("Failed to initialize plugin: {0}", p.GetType());
+                }
             }
         }
 

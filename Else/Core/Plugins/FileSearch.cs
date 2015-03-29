@@ -32,7 +32,7 @@ namespace Else.Core.Plugins
                                     Title = f.ItemDisplayName,
                                     SubTitle = f.ItemPathDisplay,
                                     Launch = query1 => {
-                                        PluginCommands.HideWindow();
+                                        //PluginCommands.HideWindow();
                                         Process.Start(f.ItemUrl);
                                     }
                                 };
@@ -53,7 +53,7 @@ namespace Else.Core.Plugins
                     // otherwise the aqsQuery has not been provided yet, running the action will autocomplete the aqsQuery
                     return new Result{
                         Title = "Open file..",
-                        Launch = query1 => PluginCommands.RewriteQuery(_openProvider.Keyword + ' ')
+                        //Launch = query1 => PluginCommands.RewriteQuery(_openProvider.Keyword + ' ')
                     }.ToList();
                     
                 }

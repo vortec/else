@@ -12,21 +12,58 @@ using System.Windows.Interop;
 using Autofac;
 using Else.Core;
 using Else.Helpers;
+using Else.Model;
 using Else.Services;
+using Else.ViewModels;
 using Else.Views;
 
 namespace Else
 {
     public partial class App
     {
-        public Engine Engine;
-        public HotkeyManager HotkeyManager;
-        public LauncherWindow LauncherWindow;
+        //public Engine Engine;
+        //public HotkeyManager HotkeyManager;
+        //public LauncherWindow LauncherWindow;
         public ThemeManager ThemeManager;
 
         private HwndSource _hwndSource;
         private NotifyIcon _trayIcon;
         private Mutex _instanceMutex;
+
+        private IContainer _container;
+
+        private void SetupIOC()
+        {
+            var builder = new ContainerBuilder();
+
+            // register singletons
+            builder.RegisterType<LauncherWindow>().SingleInstance(); 
+            builder.RegisterType<Engine>().SingleInstance();
+            builder.RegisterType<ThemeManager>().SingleInstance();
+            builder.RegisterType<HotkeyManager>().As<HotkeyManager>().As<IStartable>().SingleInstance();
+            builder.RegisterType<Paths>().SingleInstance();
+            builder.RegisterType<PluginCommands>().SingleInstance();
+
+            // instances
+            builder.RegisterType<Theme>();
+            
+            // register ViewModels
+            builder.RegisterType<ThemeEditorViewModel>();
+            builder.RegisterType<ThemesTabViewModel>();
+
+            builder.RegisterInstance(this).As<App>().ExternallyOwned();
+            
+            // automatically detect and register plugins
+            var assembly = Assembly.GetExecutingAssembly();
+            
+            // register plugins
+            builder.RegisterAssemblyTypes(assembly)
+                .Where(t => t.BaseType == typeof(Plugin))
+                .As<Plugin>();
+            
+            // build container
+            _container = builder.Build();
+        }
 
         
         protected override void OnStartup(StartupEventArgs e)
@@ -39,53 +76,44 @@ namespace Else
             
             base.OnStartup(e);
             InitializeComponent();
+            
+            SetupIOC();
 
-            //SetupIOC();
-            try {
-                Paths.Setup();
+            using (var scope = _container.BeginLifetimeScope()) {
+                
+                if (!scope.IsRegistered<HotkeyManager>()) {
+                    Debug.Print("NOT REGSISTERD");
+                }
+                
+                // ensure data directories exist
+                var paths = scope.Resolve<Paths>();
+                try {
+                    paths.Setup();
+                }
+                catch (FileNotFoundException notFoundE) {
+                    Debug.Fail(notFoundE.Message);
+                    Current.Shutdown();
+                }
+                
+                // print user config path 
+                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+                Debug.Print("Local user config path: {0}", config.FilePath);
+
+                // initialize themes and scan the disk for themes
+                var themeManager = scope.Resolve<ThemeManager>();
+                themeManager.ScanForThemes(paths.GetAppPath("Themes"), false);
+                themeManager.ScanForThemes(paths.GetUserPath("Themes"), true);
+                themeManager.ApplyThemeFromSettings();
+                ThemeManager = themeManager;
+                // create LauncherWindow (we need a window to register Hotkey stuff)
+                var launcherWindow = scope.Resolve<LauncherWindow>();
+                
+                SetupWndProc(launcherWindow);
+                SetupTrayIcon();
             }
-            catch (FileNotFoundException notFoundE) {
-                Debug.Fail(notFoundE.Message);
-                Current.Shutdown();
-            }
-
-            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-            Debug.Print("Local user config path: {0}", config.FilePath);
-
-            // initialize themes and scan the disk for them
-            ThemeManager = new ThemeManager();
-            ThemeManager.ScanForThemes(Paths.GetAppPath("Themes"), false);
-            ThemeManager.ScanForThemes(Paths.GetUserPath("Themes"), true);
-            ThemeManager.ApplyThemeFromSettings();
-            
-            Engine = new Engine();
-            
-            // give PluginCommands (static class) a reference to this
-            PluginCommands.SetDependancy(this);
-
-            SetupTrayIcon();
-
-            LauncherWindow = new LauncherWindow();
-            LauncherWindow.Init(Engine);
-            // show launcher window once, so we can register for window messages and setup hotkeys
-            LauncherWindow.Show();
-            LauncherWindow.Hide();
-
-            SetupWndProc();
-            
-            HotkeyManager = new HotkeyManager(_hwndSource);
         }
 
-        private void SetupIOC()
-        {
-            var builder = new ContainerBuilder();
-            // register components
-
-            //builder.RegisterInstance(new Engine())
-            //    .As<IEngine>();
-
-            throw new NotImplementedException();
-        }
+        
 
         protected override void OnExit(ExitEventArgs e)
         {
@@ -119,15 +147,16 @@ namespace Else
             }
             return true;
         }
-
         
         /// <summary>
         /// Setup wndproc handling so we can receive window messages (Win32 stuff)
         /// </summary>
         /// <exception cref="Exception">Failed to acquire window handle</exception>
-        public void SetupWndProc()
+        public void SetupWndProc(Window window)
         {
-            _hwndSource = PresentationSource.FromVisual(LauncherWindow) as HwndSource;
+            var windowHelper = new WindowInteropHelper(window);
+            windowHelper.EnsureHandle();
+            _hwndSource = HwndSource.FromHwnd(windowHelper.Handle);
             if (_hwndSource == null) {
                 throw new Exception("Failed to acquire window handle");
             }
@@ -146,7 +175,7 @@ namespace Else
             
             // show launcher on double click
             _trayIcon.DoubleClick += (sender, args) => {
-                LauncherWindow.ShowWindow();
+                //LauncherWindow.ShowWindow();
             };
             
             // setup context menu
@@ -204,9 +233,10 @@ namespace Else
                 var modifier = (Modifier)(low);
 
                 // relay to hotkey manager
-                if (HotkeyManager != null) {
+                using (var scope = _container.BeginLifetimeScope()) {
+                    var hotkeyManager = scope.Resolve<HotkeyManager>();
                     var combo = new KeyCombo(modifier, key);
-                    HotkeyManager.HandlePress(combo);
+                    hotkeyManager.HandlePress(combo);
                 }
             }
             return IntPtr.Zero;

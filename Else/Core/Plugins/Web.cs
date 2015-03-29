@@ -68,7 +68,7 @@ namespace Else.Core.Plugins
                         Title = query.Raw,
                         SubTitle = "Open the typed URL",
                         Launch = query1 => {
-                            PluginCommands.HideWindow();
+                            //PluginCommands.HideWindow();
                             OpenBrowser(query1.Raw);
                         }
                     }.ToList();
@@ -87,7 +87,7 @@ namespace Else.Core.Plugins
         /// <param name="url">The URL.</param>
         public static void OpenBrowser(string url)
         {
-            PluginCommands.HideWindow();
+            //PluginCommands.HideWindow();
             Process.Start("chrome.exe", url);
         }
         /// <summary>

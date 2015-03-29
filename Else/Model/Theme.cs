@@ -10,6 +10,8 @@ using Newtonsoft.Json;
 namespace Else.Model
 {
     public class Theme {
+        private readonly Func<Theme> _themeFactory;
+        private readonly Paths _paths;
 
         /// <summary>
         /// Failed to parse the theme JSON (either bad json, or missing required fields)
@@ -67,13 +69,23 @@ namespace Else.Model
             }
         }
 
+        public Theme(){
+
+        }
+
+        public Theme(Func<Theme> themeFactory, Paths paths)
+        {
+            _themeFactory = themeFactory;
+            _paths = paths;
+        }
+
         /// <summary>
         /// Generates a new GUID for this theme, and also a new path based on that GUID.
         /// </summary>
         public void SetupNew()
         {
             GUID = Guid.NewGuid().ToString();
-            FilePath = Paths.GetUserPath(String.Format("themes/{0}.json", GUID));
+            FilePath = _paths.GetUserPath(String.Format("themes/{0}.json", GUID));
         }
 
         /// <summary>
@@ -180,11 +192,10 @@ namespace Else.Model
         /// </summary>
         public Theme Clone()
         {
-            var clone = new Theme {
-                Config = new Dictionary<string, string>(Config),
-                FilePath = FilePath,
-                Editable = Editable
-            };
+            var clone = _themeFactory();
+            clone.Config = new Dictionary<string, string>(Config);
+            clone.FilePath = FilePath;
+            clone.Editable = Editable;
             return clone;
         }
         

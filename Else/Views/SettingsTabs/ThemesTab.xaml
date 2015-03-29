@@ -13,7 +13,8 @@
         <DockPanel>
             <Grid DockPanel.Dock="Right" Width="280">
                 <DockPanel>
-                    <ListView 
+                    <ListView
+                        x:Name="ThemeList"
                         SelectionMode="Single" 
                         DockPanel.Dock="Top"
                         BorderThickness="0"
@@ -71,7 +72,7 @@
                 </DockPanel>
             </Grid>
             <Grid DockPanel.Dock="Left" x:Name="DockLeft" Background="#336699">
-                <controls:ThemeEditor x:Name="ThemeEditor" />
+                <controls:ThemeEditor x:Name="ThemeEditor" ActiveTheme="{Binding SelectedItem, ElementName=ThemeList, UpdateSourceTrigger=PropertyChanged}" />
             </Grid>
         </DockPanel>
     </Grid>

@@ -1,19 +1,41 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Else.Helpers;
+using Else.Model;
 using Else.Services;
 using Else.ViewModels;
 
 namespace Else.Views.Controls
 {
-
+    
     /// <summary>
     /// This control extends the Launcher view with editing behaviour (choosing colors etc)
     /// </summary>
     partial class ThemeEditor
     {
         public ThemeEditorViewModel ViewModel;
+
+        public Theme ActiveTheme {
+            get {
+                return GetValue(ActiveThemeProperty) as Theme;
+            }
+            set{
+                SetValue(ActiveThemeProperty, value);
+                Debug.Print("ActiveTheme = {0}", value.ToString());
+            }
+        }
+        public static readonly DependencyProperty ActiveThemeProperty =
+            DependencyProperty.Register("ActiveTheme", typeof(Theme), typeof(ThemeEditor), new PropertyMetadata(ActiveThemeChanged));
+
+        private static void ActiveThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var obj = d as ThemeEditor;
+            if (obj != null) {
+                obj.ViewModel.SetTheme(e.NewValue as Theme);
+            }
+        }
 
         public ThemeEditor()
         {
@@ -30,8 +52,8 @@ namespace Else.Views.Controls
         {
             ViewModel = new ThemeEditorViewModel(themeManager, new Services.ColorPicker());
             DataContext = ViewModel;
-            
         }
+        
 
         /// <summary>
         /// Because we use the same Launcher as the main app, we must augment its functionality to allow editing.

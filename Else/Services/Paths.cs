@@ -10,19 +10,19 @@ namespace Else.Services
     /// <summary>
     /// Handles resource paths for the entire app.
     /// </summary>
-    public static class Paths
+    public class Paths
     {
         /// <summary>
         /// The user data directory (e.g. %appdata%\Else)
         /// </summary>
-        public static string UserDataDirectory;
+        public string UserDataDirectory;
 
         /// <summary>
         /// Our app data directory
         /// </summary>
-        public static string AppDataDirectory;
+        public string AppDataDirectory;
 
-        public static void Setup()
+        public void Setup()
         {
             // try and find our app data directory
             if (ApplicationDeployment.IsNetworkDeployed) {
@@ -51,17 +51,17 @@ namespace Else.Services
         /// <summary>
         /// Ensures the user directory and sub directories exist, otherwise creates them
         /// </summary>
-        private static void CreateUserDataDirectories()
+        private void CreateUserDataDirectories()
         {
             Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Plugins"));
             Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Themes"));
         }
 
-        public static string GetUserPath(string path)
+        public string GetUserPath(string path)
         {
             return Path.Combine(UserDataDirectory, path);
         }
-        public static string GetAppPath(string path)
+        public string GetAppPath(string path)
         {
             return Path.Combine(AppDataDirectory, path);
         }

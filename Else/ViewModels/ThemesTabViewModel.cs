@@ -25,8 +25,6 @@ namespace Else.ViewModels
             }
             set {
                 if (value != null) {
-                    // trigger _onThemeChanged mehtod
-                    _onThemeChanged(value);
                     _selectedItem = value;
                     // trigger PropertyChanged
                     if (PropertyChanged != null) {
@@ -36,17 +34,6 @@ namespace Else.ViewModels
             }
         }
 
-        /// <summary>
-        /// Called when a new theme is selected.
-        /// </summary>
-        /// <param name="newTheme">The new theme.</param>
-        private void _onThemeChanged(Theme newTheme)
-        {
-            // tell the themeEditor to begin editing the newly selected theme
-            _editorViewModel.SetTheme(newTheme);
-            // persist the theme change to settings
-            _themeManager.SaveSettings();
-        }
 
         /// <summary>
         /// Provides access to the currently loaded themes from the ThemeManager
@@ -109,6 +96,7 @@ namespace Else.ViewModels
         private void Duplicate()
         {
             var clone = SelectedItem.Duplicate();
+            clone.Save();
             _themeManager.RegisterTheme(clone);
             SelectedItem = clone;
         }

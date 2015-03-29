@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Autofac;
 using Else.Interop;
+using Else.Views;
 
 namespace Else.Services
 {
@@ -20,16 +24,29 @@ namespace Else.Services
         public KeyCombo(Modifier modifer, Key key) : base(modifer, key) { }
     }
     
-    public class HotkeyManager
+    public class HotkeyManager : IStartable
     {
         private Dictionary<KeyCombo, Action> _callbacks = new Dictionary<KeyCombo,Action>();
         private HwndSource _hwndSource;
+        private readonly LauncherWindow _window;
+        private readonly PluginCommands _pluginCommands;
 
-        public HotkeyManager(HwndSource hwndSource)
+        public HotkeyManager(LauncherWindow window, PluginCommands pluginCommands)
         {
-            _hwndSource = hwndSource;
-            // register hotkey
-            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, PluginCommands.ShowWindow);
+            _window = window;
+            _pluginCommands = pluginCommands;
+        }
+
+        /// <summary>
+        /// Perform once-off startup processing.
+        /// </summary>
+        public void Start()
+        {
+            var windowHelper = new WindowInteropHelper(_window);
+            windowHelper.EnsureHandle();
+            _hwndSource = HwndSource.FromHwnd(windowHelper.Handle);
+            // register default hotkey (this will need to be moved, and config driven in the future)
+            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, _pluginCommands.ShowWindow);
         }
 
         /// <summary>
@@ -56,5 +73,7 @@ namespace Else.Services
                 _callbacks[combo]();
             }
         }
+
+        
     }
 }

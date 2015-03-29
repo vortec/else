@@ -136,6 +136,7 @@ namespace Else.ViewModels
             _editedTheme = originalTheme.Clone();
             // apply the clone
             _themeManager.ApplyTheme(_editedTheme);
+            _themeManager.SaveSettings();
             // editor state is unchanged (no cancel or save buttons shown)
             HasChanged = false;
         }

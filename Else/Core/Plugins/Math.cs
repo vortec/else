@@ -42,7 +42,7 @@ namespace Else.Core.Plugins
                             Title = strMathResult,
                             SubTitle = "Launch this item to copy this number to the clipboard",
                             Launch = info => {
-                                PluginCommands.HideWindow();
+                                //PluginCommands.HideWindow();
                                 Clipboard.SetText(strMathResult);
                             }
                         };

@@ -35,7 +35,16 @@ namespace Else.Services
         /// </summary>
         public Theme ActiveTheme;
 
-        
+        private readonly Func<Theme> _themeFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        public ThemeManager(Func<Theme> themeFactory)
+        {
+            _themeFactory = themeFactory;
+        }
+
         /// <summary>
         /// Scans a directory for files with a .json extension, and attempts to load them as themes.
         /// </summary>
@@ -43,7 +52,7 @@ namespace Else.Services
         {
             foreach (var path in Directory.EnumerateFiles(directory).Where(s => s.EndsWith(".json"))) {
                 if (File.Exists(path)) {
-                    var theme = new Theme();
+                    var theme = _themeFactory();
                     theme.LoadFromPath(path);
                     theme.Editable = isEditable;
                     RegisterTheme(theme);
@@ -58,7 +67,9 @@ namespace Else.Services
         /// <exception cref="ThemeGuidAlreadyExists">The theme name is already registered</exception>
         public void RegisterTheme(Theme theme)
         {
+            // check if GUID is already registered
             if (Themes.Any(t => t.GUID == theme.GUID)) {
+                // todo: instead of crash, maybe we should just skip the theme
                 throw new ThemeGuidAlreadyExists(theme.GUID);
             }
             Themes.Add(theme);
