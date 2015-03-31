@@ -52,14 +52,19 @@ namespace Else
 
             // instances
             builder.RegisterType<Theme>();
-            builder.RegisterType<SettingsWindow>().As<IPickerWindow>();
-            
-            // viewmodel locator testing
-            ViewModelLocator.Init(builder);
+            builder.RegisterType<SettingsWindow>();
 
             // register ViewModels
-            //builder.RegisterType<ThemeEditorViewModel>();
-            //builder.RegisterType<ThemesTabViewModel>();
+            builder.RegisterType<SettingsWindowViewModel>();
+            builder.RegisterType<ThemeEditorViewModel>();
+            builder.RegisterType<ThemesTabViewModel>();
+            builder.RegisterType<LauncherViewModel>();
+            builder.RegisterType<LauncherWindowViewModel>();
+            builder.RegisterType<ResultsListViewModel>();
+
+
+
+
 
             builder.RegisterInstance(this).As<App>().ExternallyOwned();
             

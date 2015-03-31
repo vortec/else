@@ -39,7 +39,7 @@ namespace Else.Services
         /// <param name="query">The query.</param>
         public void RewriteQuery(string query)
         {
-            _launcherWindow.RewriteQuery(query);
+            //_launcherWindow.RewriteQuery(query);
         }
         /// <summary>
         /// Requests that the Engine executes the last successful query again

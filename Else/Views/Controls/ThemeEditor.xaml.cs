@@ -31,11 +31,11 @@ namespace Else.Views.Controls
 
         private static void ActiveThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var obj = d as ThemeEditor;
-            if (obj != null) {
-                var viewModel = obj.DataContext as ThemeEditorViewModel;
-                viewModel.SetTheme(e.NewValue as Theme);
-            }
+            //var obj = d as ThemeEditor;
+            //if (obj != null) {
+            //    var viewModel = obj.DataContext as ThemeEditorViewModel;
+            //    viewModel.SetTheme(e.NewValue as Theme);
+            //}
         }
 
         public ThemeEditor()

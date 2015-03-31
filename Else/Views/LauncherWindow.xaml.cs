@@ -1,28 +1,39 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Else.Core;
 using Else.Properties;
+using Else.ViewModels;
 using Else.Views.Controls;
 
 namespace Else.Views
 {
     public partial class LauncherWindow
     {
-        public readonly Engine Engine;
-
+        private readonly LauncherWindowViewModel _viewModel;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
-        /// <param name="engine">The engine.</param>
-        public LauncherWindow(Engine engine)
+        /// <param name="viewModel"></param>
+        public LauncherWindow(LauncherWindowViewModel viewModel)
         {
-            Engine = engine;
             InitializeComponent();
-            LauncherControl.Init(engine);
+            _viewModel = viewModel;
+            DataContext = _viewModel;
         }
+        private void LauncherWindow_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var commandBinding = new CommandBinding(_viewModel.WindowVisibilityCommand, ShowWindow);
+        }
+
+        private void ShowWindow(object sender, ExecutedRoutedEventArgs e)
+        {
+//            Debug.Print("ShowWindow");
+        }
+
 
         /// <summary>
         /// Shows the window (wrapper for Show() ), using optional animation dependant on app settings.
@@ -74,12 +85,12 @@ namespace Else.Views
             }
         }
         /// <summary>
-        /// When the window is opened or hidden, clear QueryText.
+        /// When the window is opened or hidden, clear QueryInputText.
         /// </summary>
         private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue) {
-                LauncherControl.QueryInput.Text = "";
+                //LauncherControl.QueryInput.Text = "";
             }
         }
 
@@ -97,18 +108,8 @@ namespace Else.Views
         private void OnDeactivated(object sender, EventArgs e)
         {
             if (Settings.Default.AutoHideLauncher) {
-                //HideWindow();
+                HideWindow();
             }
-        }
-
-        /// <summary>
-        /// Allows a plugin to rewrite the current query.
-        /// </summary>
-        /// <param name="newQuery">The new query.</param>
-        public void RewriteQuery(string newQuery)
-        {
-            LauncherControl.QueryInput.Text = newQuery;
-            LauncherControl.QueryInput.CaretIndex = LauncherControl.QueryInput.Text.Length;
         }
     }
 }

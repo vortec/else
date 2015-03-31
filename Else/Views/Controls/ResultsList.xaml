@@ -4,12 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:designerData="clr-namespace:Else.DesignerData"
-             x:Name="Root"
              mc:Ignorable="d" 
+             DataContext="{Binding ResultsListViewModel}"
              d:DesignHeight="350" d:DesignWidth="555"
+             Loaded="ResultsList_OnLoaded"
              Focusable="False">
     
-    <ItemsControl VirtualizingStackPanel.IsVirtualizing="True" VirtualizingStackPanel.VirtualizationMode="Recycling" ScrollViewer.CanContentScroll="True"  x:Name="ItemsControl" ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance designerData:ResultsList, IsDesignTimeCreatable=True}">
+    <ItemsControl 
+        x:Name="ItemsControl" 
+        ItemsSource="{Binding Items}" 
+        Loaded="ItemsControl_OnLoaded"
+        VirtualizingStackPanel.IsVirtualizing="True" 
+        VirtualizingStackPanel.VirtualizationMode="Recycling" 
+        ScrollViewer.CanContentScroll="True"
+        mc:Ignorable="d" 
+        d:DataContext="{d:DesignInstance designerData:ResultsList, IsDesignTimeCreatable=True}">
         <ItemsControl.Style>
             <Style TargetType="Control">
                 <Setter Property="Focusable" Value="False" />
@@ -51,7 +60,7 @@
                     <DataTrigger Value="True">
                         <DataTrigger.Binding>
                             <MultiBinding Converter="{StaticResource EqualsConverter2}">
-                                <Binding Path="SelectedIndex" ElementName="Root" />
+                                <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type ItemsControl}}" Path="DataContext.SelectedIndex"  />
                                 <Binding Path="Index" />
                             </MultiBinding>
                         </DataTrigger.Binding>

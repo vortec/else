@@ -2,11 +2,12 @@
         x:Class="Else.Views.Controls.Launcher"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls1="clr-namespace:Else.Views.Controls"
+        xmlns:controls1="clr-namespace:Else.Views.Controls"
         Height="350" Width="555"
         UseLayoutRounding="True"
         RenderOptions.ClearTypeHint="Enabled"
-        
+        DataContext="{Binding LauncherViewModel}"
+        Loaded="Launcher_OnLoaded"
         Background="Transparent">
     
     <Border x:Name="WindowBorder" Style="{DynamicResource WindowBorder}">
@@ -22,9 +23,8 @@
                     <Grid x:Name="QueryInputContainer" Style="{DynamicResource QueryInputContainer}" RenderOptions.ClearTypeHint="Enabled">
                         <TextBox 
                             Name="QueryInput"
-                            Text="Query goes here.."
+                            Text="{Binding QueryInputText, UpdateSourceTrigger=PropertyChanged}"
                             Grid.Row="0"
-                            
                             Style="{DynamicResource QueryInput}">
                             <TextBox.Resources>
                                 <!-- hack to make cleartype work.. -->
@@ -42,7 +42,7 @@
                             </TextBox.Resources>
                         </TextBox>
                     </Grid>
-                    <controls1:ResultsList x:Name="ResultsList" Grid.Row="1" Margin="0 10 0 0" VerticalAlignment="Top"/>
+                    <controls1:ResultsList x:Name="ResultsList" Grid.Row="1" Margin="0 10 0 0" VerticalAlignment="Top" />
                 </Grid>
             <!--</Grid>-->
             </Border>

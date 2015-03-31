@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 
 namespace Else.ViewModels
 {
-    class SettingsWindowViewModel
+    public class SettingsWindowViewModel
     {
-        public SettingsWindowViewModel()
+        public ThemesTabViewModel ThemesTabViewModel { get; set; }
+
+
+        public SettingsWindowViewModel(ThemesTabViewModel themesTabViewModel)
         {
-            
+            ThemesTabViewModel = themesTabViewModel;
         }
     }
 }

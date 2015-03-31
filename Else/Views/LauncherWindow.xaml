@@ -17,6 +17,7 @@
         Opacity="0"
         Topmost="True"
         PreviewKeyDown="OnPreviewKeyDown"
+        Loaded="LauncherWindow_OnLoaded"
         Background="Transparent">
     <controls1:Launcher x:Name="LauncherControl" />
 </Window>

@@ -18,8 +18,6 @@
             <!--Converters-->
             <converter:EqualsConverter x:Key="EqualsConverter2"/>
             <converter:LastItemInContainerConverter x:Key="LastItemInContainerConverter"/>
-
-            <vm:ViewModelLocator x:Key="ViewModelLocator"></vm:ViewModelLocator>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

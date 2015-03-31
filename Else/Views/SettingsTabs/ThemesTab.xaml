@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:designerData="clr-namespace:Else.DesignerData"
              xmlns:controls="clr-namespace:Else.Views.Controls"
-             DataContext="{Binding Source={StaticResource ViewModelLocator}, Path=ThemesTabViewModel}"
+             DataContext="{Binding ThemesTabViewModel}"
              d:DataContext="clr-namespace:Else.DesignerData.Themes"
              d:DesignHeight="550"
              d:DesignWidth="1000"
@@ -13,7 +13,7 @@
     <Grid Background="White">
         <DockPanel>
             <Grid DockPanel.Dock="Right" Width="280">
-                <DockPanel>
+                <DockPanel Margin="-145,104,145,-104">
                     <ListView
                         x:Name="ThemeList"
                         SelectionMode="Single" 

@@ -11,6 +11,8 @@ namespace Else.ViewModels
 {
     public class ThemesTabViewModel : INotifyPropertyChanged
     {
+        public ThemeEditorViewModel ThemeEditorViewModel { get; set; }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
@@ -39,10 +41,7 @@ namespace Else.ViewModels
         /// Provides access to the currently loaded themes from the ThemeManager
         /// <remarks>ThemeList control binds to this</remarks>
         /// </summary>
-        public BindingList<Theme> Items
-        {
-            get { return _themeManager.Themes; }
-        }
+        public BindingList<Theme> Items => _themeManager.Themes;
 
         // commands that are bound to xaml buttons
         public ICommand DuplicateCommand { get; set; }
@@ -50,15 +49,17 @@ namespace Else.ViewModels
         public ICommand DeleteCommand { get; set; }
 
         private readonly ThemeManager _themeManager;
-        private ThemeEditorViewModel _editorViewModel;
+        
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ThemesTabViewModel"/> class.
         /// </summary>
-        public ThemesTabViewModel(ThemeEditorViewModel editorViewModel, ThemeManager themeManager)
+        public ThemesTabViewModel(ThemeEditorViewModel themeEditorViewModel, ThemeManager themeManager)
         {
+            ThemeEditorViewModel = themeEditorViewModel;
+
             _themeManager = themeManager;
-            _editorViewModel = editorViewModel;
+            
             
             // select the current theme
             if (themeManager.ActiveTheme != null) {
