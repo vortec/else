@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Else.Core;
 using Else.Properties;
 using Else.ViewModels;
-using Else.Views.Controls;
 
 namespace Else.Views
 {
@@ -84,23 +81,14 @@ namespace Else.Views
                 HideWindow();
             }
         }
+        
         /// <summary>
-        /// When the window is opened or hidden, clear QueryInputText.
+        /// FocusExtension textbox when window is shown
         /// </summary>
-        private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue) {
-                //LauncherControl.QueryInput.Text = "";
-            }
-        }
-
-        /// <summary>
-        /// Focus textbox when window is shown
-        /// </summary>
-        private void OnActivated(object sender, EventArgs e)
-        {
-            LauncherControl.QueryInput.Focus();
-        }
+//        private void OnActivated(object sender, EventArgs e)
+//        {
+//            LauncherControl.QueryInput.FocusExtension();
+//        }
 
         /// <summary>
         /// Hide the launcher when the window loses focus (e.g. clicks on another window)

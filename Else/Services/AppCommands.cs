@@ -1,5 +1,4 @@
-﻿using System;
-using Else.Core;
+﻿using Else.Core;
 using Else.Views;
 
 namespace Else.Services
@@ -7,13 +6,13 @@ namespace Else.Services
     /// <summary>
     /// Helpful methods for plugins to invoke.  Avoids dependancy injection in the plugins.
     /// </summary>
-    public class PluginCommands
+    public class AppCommands
     {
         
-        private LauncherWindow _launcherWindow;
+        private readonly LauncherWindow _launcherWindow;
         private readonly Engine _engine;
 
-        public PluginCommands(LauncherWindow launcherWindow, Engine engine)
+        public AppCommands(LauncherWindow launcherWindow, Engine engine)
         {
             _launcherWindow = launcherWindow;
             _engine = engine;

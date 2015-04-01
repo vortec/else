@@ -18,11 +18,7 @@ namespace Else.ViewModels
         public static readonly DependencyProperty HasChangedProperty =
             DependencyProperty.Register("HasChanged", typeof(bool), typeof(ThemeEditorViewModel), new PropertyMetadata(false));
 
-        /// <summary>
-        /// Sample data used when a preview of the launcher is displayed.
-        /// todo: add more examples here
-        /// </summary>
-        private static BindingResultsList _items = new BindingResultsList{
+        public static BindingResultsList Items { get; } = new BindingResultsList{
             new Result{
                 Title = "Google Chrome",
                 Icon = IconTools.GetBitmapForFile(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"),
@@ -39,13 +35,7 @@ namespace Else.ViewModels
                 SubTitle = @"C:\Program Files\Internet Explorer\iexplore.exe",
             },
         };
-        public static BindingResultsList Items
-        {
-            get {
-                return _items;
-            }
-        }
-        
+
         public ICommand SaveCommand { get; set; }
         public ICommand RevertCommand { get; set; }
 

@@ -5,13 +5,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using Autofac;
-using Else.Core.Plugins;
 using Else.DataTypes;
 using Else.Model;
-using Math = Else.Core.Plugins.Math;
-using SystemCommands = Else.Core.Plugins.SystemCommands;
+using Else.Services;
 
 namespace Else.Core
 {
@@ -27,7 +24,7 @@ namespace Else.Core
         /// <summary>
         /// Activated plugins.
         /// </summary>
-        List<Plugin> _plugins = new List<Plugin>();
+        readonly List<Plugin> _plugins = new List<Plugin>();
         /// <summary>
         /// Parsed version of the current query.
         /// </summary>
@@ -44,12 +41,16 @@ namespace Else.Core
         private string _lastQuery;
 
 
-        public Engine(ILifetimeScope container)
+        public Engine(ILifetimeScope container, AppCommands appCommands)
         {
             // todo: replace this container usage
+            // detect plugins and initiate them
             var foundPlugins = container.Resolve<IEnumerable<Plugin>>();
             foreach (var p in foundPlugins) {
                 try {
+                    // inject appCommands dependancy (do it this way to keep the plugin definition simpler)
+                    p.AppCommands = appCommands;
+                    // give the plugin a chance to initialze
                     p.Setup();
                     _plugins.Add(p);
                 }

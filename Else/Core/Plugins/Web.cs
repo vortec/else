@@ -4,7 +4,6 @@ using System.Diagnostics;
 using Else.Core.ResultProviders;
 using Else.Helpers;
 using Else.Model;
-using Else.Services;
 
 namespace Else.Core.Plugins
 {
@@ -32,7 +31,7 @@ namespace Else.Core.Plugins
         /// <summary>
         /// Define search providers
         /// </summary>
-        List<SearchEngine> _searchProviders = new List<SearchEngine>{
+        private readonly List<SearchEngine> _searchProviders = new List<SearchEngine>{
             new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "Icons/google.png", true),
             new SearchEngine("maps", "Search google maps for '{arguments}'", "http://google.co.uk/maps?q={0}", "Icons/google.png"),
             new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "Icons/google.png"),
@@ -68,7 +67,7 @@ namespace Else.Core.Plugins
                         Title = query.Raw,
                         SubTitle = "Open the typed URL",
                         Launch = query1 => {
-                            //PluginCommands.HideWindow();
+                            AppCommands.HideWindow();
                             OpenBrowser(query1.Raw);
                         }
                     }.ToList();
@@ -87,7 +86,7 @@ namespace Else.Core.Plugins
         /// <param name="url">The URL.</param>
         public static void OpenBrowser(string url)
         {
-            //PluginCommands.HideWindow();
+            //AppCommands.HideWindow();
             Process.Start("chrome.exe", url);
         }
         /// <summary>
@@ -97,7 +96,7 @@ namespace Else.Core.Plugins
         /// <param name="keywords">The search keywords.</param>
         public static void OpenProviderSearch(string providerUrl, string keywords)
         {
-            var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
+            var url = string.Format(providerUrl, Uri.EscapeDataString(keywords));
             OpenBrowser(url);
         }
     }

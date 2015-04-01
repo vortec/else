@@ -50,10 +50,8 @@ namespace Else.Views.Controls
                 _virtualizingPanel.BringIndexIntoViewPublic(index);
                 container = ItemsControl.ItemContainerGenerator.ContainerFromIndex(index) as FrameworkElement;
             }
-            if (container != null) {
-                // scroll container into view
-                container.BringIntoView();
-            }
+            // scroll container into view
+            container?.BringIntoView();
         }
     }
 }

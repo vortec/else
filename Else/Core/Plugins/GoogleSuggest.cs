@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 using Else.Helpers;
 using Else.Model;
-using Else.Services;
 using Flurl;
 using Newtonsoft.Json;
 
@@ -18,8 +17,8 @@ namespace Else.Core.Plugins
     class GoogleSuggest : Plugin
     {
         private const string Url = "http://suggestqueries.google.com/complete/search";
-        private HttpClient _client = new HttpClient();
-        private Lazy<BitmapSource> _icon = UI.LoadImageFromResources("Icons/google.png");
+        private readonly HttpClient _client = new HttpClient();
+        private readonly Lazy<BitmapSource> _icon = UI.LoadImageFromResources("Icons/google.png");
         private ResultProvider _provider;
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace Else.Core.Plugins
                     Title = "Search Google",
                     SubTitle = "Search Google with Suggestions",
                     Icon = _icon,
-                    //Launch = query1 => PluginCommands.RewriteQuery(_provider.Keyword + ' ')
+                    Launch = query1 => AppCommands.RewriteQuery(_provider.Keyword + ' ')
                 }
             };
         }
@@ -102,7 +101,7 @@ namespace Else.Core.Plugins
                 cancelToken.ThrowIfCancellationRequested();
                 
                 MemoryCache.Default.Set(keywords, results, cip);
-                //PluginCommands.RequestUpdate();
+                AppCommands.RequestUpdate();
             }
             catch (HttpRequestException) {
                 // todo: improve error handling here, currently we just show no results.  (perhaps could do retry then fail?)

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Autofac;
@@ -26,15 +24,15 @@ namespace Else.Services
     
     public class HotkeyManager : IStartable
     {
-        private Dictionary<KeyCombo, Action> _callbacks = new Dictionary<KeyCombo,Action>();
+        private readonly Dictionary<KeyCombo, Action> _callbacks = new Dictionary<KeyCombo,Action>();
         private HwndSource _hwndSource;
         private readonly LauncherWindow _window;
-        private readonly PluginCommands _pluginCommands;
+        private readonly AppCommands _appCommands;
 
-        public HotkeyManager(LauncherWindow window, PluginCommands pluginCommands)
+        public HotkeyManager(LauncherWindow window, AppCommands appCommands)
         {
             _window = window;
-            _pluginCommands = pluginCommands;
+            _appCommands = appCommands;
         }
 
         /// <summary>
@@ -46,7 +44,7 @@ namespace Else.Services
             windowHelper.EnsureHandle();
             _hwndSource = HwndSource.FromHwnd(windowHelper.Handle);
             // register default hotkey (this will need to be moved, and config driven in the future)
-            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, _pluginCommands.ShowWindow);
+            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, _appCommands.ShowWindow);
         }
 
         /// <summary>

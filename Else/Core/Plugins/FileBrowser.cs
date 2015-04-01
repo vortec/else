@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using Else.Extensions;
 using Else.Helpers;
 using Else.Model;
-using Else.Services;
 
 namespace Else.Core.Plugins
 {
@@ -19,11 +18,10 @@ namespace Else.Core.Plugins
         /// todo: UNC support?
         /// todo: ~ (home) support
         
-        private Regex _diskPathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
         /// <summary>
         /// List Directories first (like windows), or mix the list (like linux)
         /// </summary>
-        private bool ListDirectoriesFirst = false;
+        private readonly bool ListDirectoriesFirst = false;
 
         class FileSystemEntry {
             public string FileName;
@@ -89,7 +87,7 @@ namespace Else.Core.Plugins
                                         
                                             if (item.IsDirectory) {
                                                 // rewrite query to navigate to the selected directory
-                                                //PluginCommands.RewriteQuery(item.Path + "\\");
+                                                AppCommands.RewriteQuery(item.Path + "\\");
                                             }
                                             else {
                                                 // launch the file (could be exe, jpeg, anything)

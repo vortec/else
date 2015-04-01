@@ -7,7 +7,6 @@ using System.Windows.Media.Imaging;
 using Else.Extensions;
 using Else.Helpers;
 using Else.Model;
-using Else.Services;
 using IWshRuntimeLibrary;
 using File = System.IO.File;
 
@@ -41,7 +40,7 @@ namespace Else.Core.Plugins
         /// <summary>
         /// Store found programs here.
         /// </summary>
-        private List<ProgramInfo> _foundPrograms = new List<ProgramInfo>();
+        private readonly List<ProgramInfo> _foundPrograms = new List<ProgramInfo>();
 
         /// <summary>
         /// Initialize and scan disk for programs.
@@ -71,7 +70,7 @@ namespace Else.Core.Plugins
                                 SubTitle = program.ExePath,
                                 Launch = launchQuery => {
                                     // hide launcher
-                                    //PluginCommands.HideWindow();
+                                    //AppCommands.HideWindow();
                                     // start program
                                     Process.Start(program.ExePath);
                                 }

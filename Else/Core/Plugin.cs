@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Else.Services;
 
 namespace Else.Core
 {
@@ -8,6 +9,7 @@ namespace Else.Core
     public abstract class Plugin
     {
         public List<ResultProvider> Providers = new List<ResultProvider>();
+        public AppCommands AppCommands;
         
         /// <summary>
         /// Plugin setup

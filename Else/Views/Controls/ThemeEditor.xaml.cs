@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using Else.Helpers;
 using Else.Model;
-using Else.Services;
 using Else.ViewModels;
 
 namespace Else.Views.Controls
@@ -23,7 +22,7 @@ namespace Else.Views.Controls
             }
             set{
                 SetValue(ActiveThemeProperty, value);
-                Debug.Print("ActiveTheme = {0}", value.ToString());
+                Debug.Print("ActiveTheme = {0}", value);
             }
         }
         public static readonly DependencyProperty ActiveThemeProperty =

@@ -29,17 +29,7 @@ namespace Else.Model
         /// <summary>
         /// Theme is editable and removable. (default themes are not editable)
         /// </summary>
-        private bool _editable = true;
-
-        /// <summary>
-        /// Theme is editable and removable. (default themes are not editable)
-        /// </summary>
-        public bool Editable
-        {
-            get { return _editable; }
-            set { _editable = value; }
-        }
-
+        public bool Editable { get; set; } = true;
 
         public string Name {
             get {
@@ -158,7 +148,7 @@ namespace Else.Model
         /// <summary>
         /// Color paramaters we can take from the theme config and apply as brush overrides of our Styles.xaml
         /// </summary>
-        private static string[] _colorParams = {
+        private static readonly string[] _colorParams = {
             "WindowBorderColor",
             "WindowBackgroundColor",
             "QueryBoxBackgroundColor",

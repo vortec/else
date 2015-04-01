@@ -15,10 +15,9 @@ namespace Else.Services
                 Topmost = true,
                 ShowInTaskbar = true
             };
-            _window.ColorCanvas.SelectedColorChanged += (sender, args) => {
-                if (PropertyChanged != null) {
-                    PropertyChanged.Invoke(sender, new RoutedPropertyChangedEventArgs<object>(args.OldValue, args.NewValue));
-                }
+            _window.ColorCanvas.SelectedColorChanged += (sender, args) =>
+            {
+                PropertyChanged?.Invoke(sender, new RoutedPropertyChangedEventArgs<object>(args.OldValue, args.NewValue));
             };
             _window.Show();
         }

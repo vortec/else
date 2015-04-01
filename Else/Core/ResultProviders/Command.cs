@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Windows.Media.Imaging;
 using Else.Extensions;
 using Else.Model;
-using Else.Services;
 
 namespace Else.Core.ResultProviders
 {
@@ -56,7 +55,7 @@ namespace Else.Core.ResultProviders
             if (RequiresArguments) {
                 if (!query.KeywordComplete || query.Arguments.IsEmpty()) {
                     // auto complete the query
-                    //PluginCommands.RewriteQuery(Keyword + ' ');
+                    //AppCommands.RewriteQuery(Keyword + ' ');
                 }
                 else {
                     Launch(query);

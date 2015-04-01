@@ -29,9 +29,7 @@ namespace Else.ViewModels
                 if (value != null) {
                     _selectedItem = value;
                     // trigger PropertyChanged
-                    if (PropertyChanged != null) {
-                        PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
-                    }
+                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
                 }
             }
         }

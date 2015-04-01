@@ -17,7 +17,6 @@ using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
 using Else.Views;
-using Else.Views.Controls;
 using ColorPicker = Else.Services.ColorPicker;
 
 namespace Else
@@ -46,7 +45,7 @@ namespace Else
             builder.RegisterType<ThemeManager>().SingleInstance();
             builder.RegisterType<HotkeyManager>().As<HotkeyManager>().As<IStartable>().SingleInstance();
             builder.RegisterType<Paths>().SingleInstance();
-            builder.RegisterType<PluginCommands>().SingleInstance();
+            builder.RegisterType<AppCommands>().SingleInstance();
             builder.RegisterType<ColorPicker>().As<IPickerWindow>();
             
 
@@ -137,9 +136,7 @@ namespace Else
                 _trayIcon.Visible = false;
             }
             // release mutex
-            if (_instanceMutex != null) {
-                _instanceMutex.ReleaseMutex();
-            }
+            _instanceMutex?.ReleaseMutex();
             base.OnExit(e);
         }
 

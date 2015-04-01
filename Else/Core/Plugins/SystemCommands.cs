@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using Else.Core.ResultProviders;
 using Else.Interop;
-using Else.Services;
 
 namespace Else.Core.Plugins
 {
@@ -19,7 +18,7 @@ namespace Else.Core.Plugins
                     Keyword = "shutdown",
                     Title = "Shut down",
                     Launch = query => {
-                        //PluginCommands.HideWindow();
+                        AppCommands.HideWindow();
                         Process.Start(MakeProcessStartInfo("shutdown", "/s /t 0"));
                     },
                 },
@@ -27,7 +26,7 @@ namespace Else.Core.Plugins
                     Keyword = "restart",
                     Title = "Restart",
                     Launch = query => {
-                        //PluginCommands.HideWindow();
+                        AppCommands.HideWindow();
                         Process.Start(MakeProcessStartInfo("shutdown", "/r /t 0"));
                     },
                 },
@@ -35,7 +34,7 @@ namespace Else.Core.Plugins
                     Keyword = "sleep",
                     Title = "Sleep",
                     Launch = query => {
-                        //PluginCommands.HideWindow();
+                        AppCommands.HideWindow();
                         Win32.SetSuspendState(false, true, true);
                     },
                 },
@@ -43,7 +42,7 @@ namespace Else.Core.Plugins
                     Keyword = "hibernate",
                     Title = "Hibernate",
                     Launch = query => {
-                        //PluginCommands.HideWindow();
+                        AppCommands.HideWindow();
                         Win32.SetSuspendState(true, true, true);
                     },
                 },
@@ -51,7 +50,7 @@ namespace Else.Core.Plugins
                     Keyword = "lock",
                     Title = "Lock",
                     Launch = query => {
-                        //PluginCommands.HideWindow();
+                        AppCommands.HideWindow();
                         Win32.LockWorkStation();
                         // alternative (maybe requires permissions):
                         // Process.Start(@"C:\WINDOWS\system32\rundll32.exe", "user32.dll,LockWorkStation");
@@ -61,7 +60,7 @@ namespace Else.Core.Plugins
                     Keyword = "recyclebin",
                     Title = "Recycle Bin",
                     Launch = query => {
-                        //PluginCommands.HideWindow();
+                        AppCommands.HideWindow();
                         Process.Start("explorer.exe", "shell:RecycleBinFolder");
                     },
                 },

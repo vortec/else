@@ -9,26 +9,21 @@ namespace Else.DesignerData
     /// </summary>
     public class ResultsList
     {
-        static public BindingResultsList Items
-        {
-            get {
-                return new BindingResultsList() {
-                    new Result{
-                        Title = "Google",
-                        SubTitle = "SubTitle Text",
-                        Icon = UI.LoadImageFromResources("Icons/google.png")
-                    },
-                    new Result{
-                        Title = "Wikipedia",
-                        SubTitle = "SubTitle Text",
-                        Icon = UI.LoadImageFromResources("Icons/wiki.png")
-                    },
-                    new Result{
-                        Title = "No SubTitle",
-                        Icon = UI.LoadImageFromResources("Icons/google.png")
-                    },
-                };
-            }
-        }
+        static public BindingResultsList Items => new BindingResultsList() {
+            new Result{
+                Title = "Google",
+                SubTitle = "SubTitle Text",
+                Icon = UI.LoadImageFromResources("Icons/google.png")
+            },
+            new Result{
+                Title = "Wikipedia",
+                SubTitle = "SubTitle Text",
+                Icon = UI.LoadImageFromResources("Icons/wiki.png")
+            },
+            new Result{
+                Title = "No SubTitle",
+                Icon = UI.LoadImageFromResources("Icons/google.png")
+            },
+        };
     }
 }

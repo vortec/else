@@ -4,7 +4,6 @@ using System.Data.OleDb;
 using System.Diagnostics;
 using Else.Helpers;
 using Else.Model;
-using Else.Services;
 using Microsoft.Search.Interop;
 
 namespace Else.Core.Plugins
@@ -32,7 +31,7 @@ namespace Else.Core.Plugins
                                     Title = f.ItemDisplayName,
                                     SubTitle = f.ItemPathDisplay,
                                     Launch = query1 => {
-                                        //PluginCommands.HideWindow();
+                                        AppCommands.HideWindow();
                                         Process.Start(f.ItemUrl);
                                     }
                                 };
@@ -53,7 +52,7 @@ namespace Else.Core.Plugins
                     // otherwise the aqsQuery has not been provided yet, running the action will autocomplete the aqsQuery
                     return new Result{
                         Title = "Open file..",
-                        //Launch = query1 => PluginCommands.RewriteQuery(_openProvider.Keyword + ' ')
+                        Launch = query1 => AppCommands.RewriteQuery(_openProvider.Keyword + ' ')
                     }.ToList();
                     
                 }
@@ -88,10 +87,10 @@ namespace Else.Core.Plugins
                 keywords = keywords.Replace(c, "");
             }
             
-            var select = String.Format("SELECT TOP {0} System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl FROM SystemIndex", MaxResults);
+            var select = string.Format("SELECT TOP {0} System.ItemNameDisplay, System.ItemPathDisplay, System.ItemUrl FROM SystemIndex", MaxResults);
             var where = "";
             if (keywords != "*") {
-                where = String.Format(" WHERE (System.Filename LIKE '{0}%' OR CONTAINS (System.ItemNameDisplay, '\"{0}\"'))", keywords);
+                where = string.Format(" WHERE (System.Filename LIKE '{0}%' OR CONTAINS (System.ItemNameDisplay, '\"{0}\"'))", keywords);
             }
             
             var order = " ORDER BY System.Search.Rank DESC";
