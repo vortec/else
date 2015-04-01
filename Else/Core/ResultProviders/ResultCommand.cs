@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Extensions;
 using Else.Model;
 
 namespace Else.Core.ResultProviders
@@ -9,14 +9,14 @@ namespace Else.Core.ResultProviders
     /// <summary>
     /// Helper class for providing results for a single command, with optional arguments support.
     /// </summary>
-    public class Command : ResultProvider
+    public class ResultCommand : ResultProvider
     {
         public string Title;
         public string SubTitle;
         public Action<Query> Launch;
         public Lazy<BitmapSource> Icon;
         public bool RequiresArguments;
-        public Command()
+        public ResultCommand()
         {
             Query = (query, cts) => {
                 var results = new List<Result>();
@@ -55,7 +55,7 @@ namespace Else.Core.ResultProviders
             if (RequiresArguments) {
                 if (!query.KeywordComplete || query.Arguments.IsEmpty()) {
                     // auto complete the query
-                    PluginCommands.RewriteQuery(Keyword + ' ');
+                    //AppCommands.RewriteQuery(Keyword + ' ');
                 }
                 else {
                     Launch(query);

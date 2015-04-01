@@ -3,41 +3,35 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
-using Else.Lib;
+using Else.Extensions;
+using Else.Helpers;
 using Else.Model;
 
 namespace Else.Core.Plugins
 {
-    class FileBrowser : Plugin
+    /// <summary>
+    /// Plugin that provides filesystem browsing functionality.
+    /// </summary>
+    public class FileBrowser : Plugin
     {
-        /// <summary>
-        /// Plugin setup
-        /// </summary>
-        /// todo: UNC support?
-        /// todo: ~ (home) support
-        
-        private Regex _diskPathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
         /// <summary>
         /// List Directories first (like windows), or mix the list (like linux)
         /// </summary>
-        private const bool ListDirectoriesFirst = false;
+        private readonly bool ListDirectoriesFirst = false;
 
-        class FileSystemEntry {
-            public string FileName;
-            public string Path;
-            public bool IsDirectory;
-        }
         public override void Setup()
         {
-            var provider = new ResultProvider{
-                IsInterested = query => {
+            var provider = new ResultProvider
+            {
+                IsInterested = query =>
+                {
                     if (query.IsPath) {
                         return ProviderInterest.Exclusive;
                     }
                     return ProviderInterest.None;
                 },
-                Query = (query, token) => {
+                Query = (query, token) =>
+                {
                     if (!query.Raw.IsEmpty()) {
                         // resolve the path (deal with ".." style stuff)
                         var fullPath = Path.GetFullPath(query.Raw);
@@ -46,19 +40,18 @@ namespace Else.Core.Plugins
                         if (dirName == null && Path.IsPathRooted(fullPath)) {
                             dirName = fullPath;
                         }
-                        var filter = Path.GetFileName(fullPath);  // last part of the path (we filter results with this)
-                        Debug.Print("fullPath = {0}", fullPath);
-                        Debug.Print("dirName = {0}", dirName);
-                        Debug.Print("filter = {0}", filter);
+                        var filter = Path.GetFileName(fullPath); // last part of the path (we filter results with this)
                         if (dirName != null && Directory.Exists(dirName)) {
                             var results = new List<Result>();
                             var entries = new List<FileSystemEntry>();
 
-                            var filterEntry = new Action<string, bool>((path, isDirectory) => {
+                            var filterEntry = new Action<string, bool>((path, isDirectory) =>
+                            {
                                 // strip parent directories from path
                                 var name = Path.GetFileName(path);
                                 if (name != null && name.ToLower().StartsWith(filter.ToLower())) {
-                                    entries.Add(new FileSystemEntry{
+                                    entries.Add(new FileSystemEntry
+                                    {
                                         FileName = name,
                                         Path = path,
                                         IsDirectory = isDirectory
@@ -68,7 +61,7 @@ namespace Else.Core.Plugins
                             try {
                                 foreach (var dir in Directory.EnumerateDirectories(dirName)) {
                                     filterEntry(dir, true);
-                                } 
+                                }
                                 foreach (var file in Directory.EnumerateFiles(dirName)) {
                                     filterEntry(file, false);
                                 }
@@ -81,13 +74,14 @@ namespace Else.Core.Plugins
                                 }
 
                                 foreach (var item in sorted) {
-                                    results.Add(new Result{
+                                    results.Add(new Result
+                                    {
                                         Title = item.FileName,
-                                        Launch = query1 => {
-                                        
+                                        Launch = query1 =>
+                                        {
                                             if (item.IsDirectory) {
                                                 // rewrite query to navigate to the selected directory
-                                                PluginCommands.RewriteQuery(item.Path + "\\");
+                                                AppCommands.RewriteQuery(item.Path + "\\");
                                             }
                                             else {
                                                 // launch the file (could be exe, jpeg, anything)
@@ -99,11 +93,12 @@ namespace Else.Core.Plugins
                                 }
                                 return results;
                             }
-                            // add more exceptions here?
-                            catch(UnauthorizedAccessException) {
+                                // add more exceptions here?
+                            catch (UnauthorizedAccessException) {
                                 // improve
-                                return new Result{
-                                    Title="access denied"
+                                return new Result
+                                {
+                                    Title = "access denied"
                                 }.ToList();
                             }
                         }
@@ -114,5 +109,11 @@ namespace Else.Core.Plugins
             Providers.Add(provider);
         }
 
+        private class FileSystemEntry
+        {
+            public string FileName;
+            public bool IsDirectory;
+            public string Path;
+        }
     }
 }

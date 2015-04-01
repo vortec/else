@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using Else.Lib;
+using Else.Extensions;
 using Else.Model;
 
 namespace Else.Core
@@ -33,13 +33,17 @@ namespace Else.Core
     /// </summary>
     public class ResultProvider
     {
+        /// <summary>
+        /// The keyword that this provider matches (e.g. "google")
+        /// </summary>
         public string Keyword;
         /// <summary>
-        /// Provides results with and without a token.
+        /// Provides results with and without a keyword.
         /// </summary>
         public bool MatchAll;
         /// <summary>
-        /// todo: Provides results when no other plugins provide results. This may become configurable in the settings UI.
+        /// Provides results when no other plugins provide results.
+        /// todo: This may become configurable in the settings UI.
         /// </summary>
         public bool Fallback;
         public Func<Query, ProviderInterest> IsInterested;

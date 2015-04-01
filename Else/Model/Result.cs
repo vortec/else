@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Extensions;
 
 namespace Else.Model
 {
@@ -16,11 +16,8 @@ namespace Else.Model
         public Lazy<BitmapSource> Icon {get; set;}
         // anonymous method that is invoked when the result is selected
         public Action<Query> Launch;
-        public bool HasSubTitle {
-            get {
-                return !SubTitle.IsEmpty();
-            }
-        }
+        public bool HasSubTitle => !SubTitle.IsEmpty();
+
         public List<Result> ToList() {
             return new List<Result>{
                 this

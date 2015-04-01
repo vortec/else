@@ -1,13 +1,12 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Else.DataTypes;
-using Else.Interfaces;
+using Else.Helpers;
 using Else.Lib;
 using Else.Model;
-
+using Else.Services;
+using Else.Services.Interfaces;
 
 namespace Else.ViewModels
 {
@@ -17,40 +16,67 @@ namespace Else.ViewModels
         /// Has the user actually made any changes to the edited theme?
         /// </summary>
         public static readonly DependencyProperty HasChangedProperty =
-            DependencyProperty.Register("HasChanged", typeof(bool), typeof(ThemeEditorViewModel), new PropertyMetadata(false));
+            DependencyProperty.Register("HasChanged", typeof (bool), typeof (ThemeEditorViewModel),
+                new PropertyMetadata(false));
 
         /// <summary>
-        /// Sample data used when a preview of the launcher is displayed.
-        /// todo: add more examples here
+        /// Color picker used when changing element colors.
         /// </summary>
-        private static BindingResultsList _items = new BindingResultsList{
-            new Result{
+        private readonly IPickerWindow _colorPickerWindow;
+
+        private readonly ThemeManager _themeManager;
+
+        /// <summary>
+        /// The picker window that is currently open.
+        /// </summary>
+        private IPickerWindow _activePickerWindow;
+
+        /// <summary>
+        /// Copy of the original theme that is currently being edited (we need this clone so that we can offer Revert to the original later)
+        /// </summary>
+        private Theme _editedTheme;
+
+        /// <summary>
+        /// Reference to the theme we are editing
+        /// </summary>
+        private Theme _originalTheme;
+
+        public ThemeEditorViewModel(ThemeManager themeManager, IPickerWindow colorPickerWindow)
+        {
+            _themeManager = themeManager;
+            _colorPickerWindow = colorPickerWindow;
+            SaveCommand = new RelayCommand(param => Save());
+            RevertCommand = new RelayCommand(param => Revert());
+        }
+
+        /// <summary>
+        /// Example data for showing off the launcher styles.
+        /// </summary>
+        public static BindingResultsList Items { get; } = new BindingResultsList
+        {
+            new Result
+            {
                 Title = "Google Chrome",
                 Icon = IconTools.GetBitmapForFile(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"),
-                SubTitle = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
+                SubTitle = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
             },
-            new Result{
+            new Result
+            {
                 Title = "Notepad",
                 Icon = IconTools.GetBitmapForFile(@"C:\Windows\system32\notepad.exe"),
-                SubTitle = @"C:\Windows\system32\notepad.exe",
+                SubTitle = @"C:\Windows\system32\notepad.exe"
             },
-            new Result{
+            new Result
+            {
                 Title = "Internet Explorer",
                 Icon = IconTools.GetBitmapForFile(@"C:\Program Files\Internet Explorer\iexplore.exe"),
-                SubTitle = @"C:\Program Files\Internet Explorer\iexplore.exe",
-            },
-        };
-        public static BindingResultsList Items
-        {
-            get {
-                return _items;
+                SubTitle = @"C:\Program Files\Internet Explorer\iexplore.exe"
             }
-        }
-        
+        };
+
         public ICommand SaveCommand { get; set; }
         public ICommand RevertCommand { get; set; }
 
-        
         /// <summary>
         /// Gets a value indicating whether this <see cref="Theme"/> is editable.
         /// </summary>
@@ -59,9 +85,7 @@ namespace Else.ViewModels
         /// </value>
         public bool Editable
         {
-            get {
-                return _editedTheme.Editable;
-            }
+            get { return _editedTheme.Editable; }
         }
 
         /// <summary>
@@ -72,33 +96,8 @@ namespace Else.ViewModels
         /// </value>
         public bool HasChanged
         {
-            get { return (bool)GetValue(HasChangedProperty); }
+            get { return (bool) GetValue(HasChangedProperty); }
             set { SetValue(HasChangedProperty, value); }
-        }
-
-        /// <summary>
-        /// Reference to the theme we are editing
-        /// </summary>
-        private Theme _originalTheme;
-        /// <summary>
-        /// Copy of the original theme that is currently being edited (we need this clone so that we can offer Revert to the original later)
-        /// </summary>
-        private Theme _editedTheme;
-        
-        private readonly IPickerWindow _colorPickerWindow;
-        /// <summary>
-        /// The picker window that is currently open.
-        /// </summary>
-        private IPickerWindow _activePickerWindow;
-
-        private readonly ThemeManager _themeManager;
-
-        public ThemeEditorViewModel(ThemeManager themeManager, IPickerWindow colorPickerWindow)
-        {
-            _themeManager = themeManager;
-            _colorPickerWindow = colorPickerWindow;
-            SaveCommand = new RelayCommand(param => Save());
-            RevertCommand = new RelayCommand(param => Revert());
         }
 
         /// <summary>
@@ -137,6 +136,7 @@ namespace Else.ViewModels
             _editedTheme = originalTheme.Clone();
             // apply the clone
             _themeManager.ApplyTheme(_editedTheme);
+            _themeManager.SaveSettings();
             // editor state is unchanged (no cancel or save buttons shown)
             HasChanged = false;
         }
@@ -178,7 +178,7 @@ namespace Else.ViewModels
             _themeManager.SaveSettings();
             HasChanged = false;
         }
-        
+
         public void HidePickerWindow()
         {
             if (_activePickerWindow != null) {
@@ -196,8 +196,9 @@ namespace Else.ViewModels
         public void ShowColorPicker(Window parentWindow, string windowTitle, string themeKey)
         {
             // update the theme when the color is changed
-            _colorPickerWindow.PropertyChanged += (sender, e) => {
-                var newBrush = new SolidColorBrush((Color)e.NewValue).ToString();
+            _colorPickerWindow.PropertyChanged += (sender, e) =>
+            {
+                var newBrush = new SolidColorBrush((Color) e.NewValue).ToString();
                 SetConfigParam(themeKey, newBrush);
             };
             // hide any currently open picker window

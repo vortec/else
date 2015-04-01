@@ -1,12 +1,14 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Else.Lib;
+using Else.Helpers;
+using Else.Model;
 using Else.ViewModels;
 
-namespace Else.Controls
+namespace Else.Views.Controls
 {
-
+    
     /// <summary>
     /// This control extends the Launcher view with editing behaviour (choosing colors etc)
     /// </summary>
@@ -14,10 +16,32 @@ namespace Else.Controls
     {
         public ThemeEditorViewModel ViewModel;
 
+        public Theme ActiveTheme {
+            get {
+                return GetValue(ActiveThemeProperty) as Theme;
+            }
+            set{
+                SetValue(ActiveThemeProperty, value);
+                Debug.Print("ActiveTheme = {0}", value);
+            }
+        }
+        public static readonly DependencyProperty ActiveThemeProperty =
+            DependencyProperty.Register("ActiveTheme", typeof(Theme), typeof(ThemeEditor), new PropertyMetadata(ActiveThemeChanged));
+
+        private static void ActiveThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            //var obj = d as ThemeEditor;
+            //if (obj != null) {
+            //    var viewModel = obj.DataContext as ThemeEditorViewModel;
+            //    viewModel.SetTheme(e.NewValue as Theme);
+            //}
+        }
+
         public ThemeEditor()
         {
             Loaded += OnLoaded;
             InitializeComponent();
+            ViewModel = DataContext as ThemeEditorViewModel;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
@@ -25,12 +49,8 @@ namespace Else.Controls
             SetupEditBehaviour();
         }
 
-        public void Init(ThemeManager themeManager)
-        {
-            ViewModel = new ThemeEditorViewModel(themeManager, new Else.Lib.ColorPicker());
-            DataContext = ViewModel;
-            
-        }
+        
+        
 
         /// <summary>
         /// Because we use the same Launcher as the main app, we must augment its functionality to allow editing.
@@ -46,21 +66,21 @@ namespace Else.Controls
             Launcher.QueryInput.HorizontalAlignment = HorizontalAlignment.Left;
 
             // setup interactive components of our wysiwyg style theme editor
-            SetMouseHandlersForElement("QueryBoxTextColor", "Query Box Text Color", UIHelpers.FindChildByTypeName(Launcher.QueryInput, "TextBoxView"));
+            SetMouseHandlersForElement("QueryBoxTextColor", "Query Box Text Color", UI.FindChildByTypeName(Launcher.QueryInput, "TextBoxView"));
             SetMouseHandlersForElement("QueryBoxBackgroundColor", "Query Box Background Color", Launcher.QueryInputContainer);
             SetMouseHandlersForElement("WindowBorderColor", "Window Border Color", Launcher.WindowBorder);
             SetMouseHandlersForElement("WindowBackgroundColor", "Launcher Background Color", Launcher.Container);
 
             // because there are multiple instances of ResultTitle and ResultSubTitle (multiple results), we must add handlers to each one
-            foreach (var element in UIHelpers.FindVisualChildren<TextBlock>(Launcher.ResultsList, "Title")) {
+            foreach (var element in UI.FindVisualChildren<TextBlock>(Launcher.ResultsList, "Title")) {
                 SetMouseHandlersForElement("ResultTitleColor", "Result Title Color", element);
             }
-            foreach (var element in UIHelpers.FindVisualChildren<TextBlock>(Launcher.ResultsList, "SubTitle")) {
+            foreach (var element in UI.FindVisualChildren<TextBlock>(Launcher.ResultsList, "SubTitle")) {
                 SetMouseHandlersForElement("ResultSubTitleColor", "Result SubTitle Color", element);
             }
 
             // add handlers for ResultContainer, detects if it is a selected result (because that uses different styles)
-            foreach (var element in UIHelpers.FindVisualChildren<StackPanel>(Launcher.ResultsList, "ResultContainer")) {
+            foreach (var element in UI.FindVisualChildren<StackPanel>(Launcher.ResultsList, "ResultContainer")) {
                 // check if this element is selected, by checking if the subtitle 
                 if (element.Background.Equals(Application.Current.Resources.MergedDictionaries[1]["ResultSelectedBackgroundColor"])) {
                     SetMouseHandlersForElement("ResultSelectedBackgroundColor", "Result Selected Background Color", element);
@@ -71,8 +91,8 @@ namespace Else.Controls
             }
 
             // seperators between results
-            var separators = UIHelpers.FindVisualChildren<Border>(Launcher.ResultsList, "preResultSeparator").ToList();
-            separators.AddRange(UIHelpers.FindVisualChildren<Border>(Launcher.ResultsList, "postResultSeparator").ToList());
+            var separators = UI.FindVisualChildren<Border>(Launcher.ResultsList, "preResultSeparator").ToList();
+            separators.AddRange(UI.FindVisualChildren<Border>(Launcher.ResultsList, "postResultSeparator").ToList());
 
             foreach (var element in separators) {
                 SetMouseHandlersForElement("ResultSeparatorColor", "Result Separator Color", element);

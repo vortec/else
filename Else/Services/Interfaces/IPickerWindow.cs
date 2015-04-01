@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Else.Interfaces
+namespace Else.Services.Interfaces
 {
     public interface IPickerWindow {
         RoutedPropertyChangedEventHandler<object> PropertyChanged { get; set; }

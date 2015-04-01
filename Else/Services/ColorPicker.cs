@@ -1,24 +1,23 @@
 ﻿using System.Windows;
-using Else.Interfaces;
+using Else.Services.Interfaces;
 
-namespace Else.Lib
+namespace Else.Services
 {
     public class ColorPicker : IPickerWindow
     {
         public RoutedPropertyChangedEventHandler<object> PropertyChanged { get; set; }
-        private Controls.ColorPicker _window;
+        private Views.Controls.ColorPicker _window;
         public void Show(DependencyObject owner, string title)
         {
-            _window = new Controls.ColorPicker {
+            _window = new Views.Controls.ColorPicker {
                 Owner = Window.GetWindow(owner),
                 Title = title,
                 Topmost = true,
                 ShowInTaskbar = true
             };
-            _window.ColorCanvas.SelectedColorChanged += (sender, args) => {
-                if (PropertyChanged != null) {
-                    PropertyChanged.Invoke(sender, new RoutedPropertyChangedEventArgs<object>(args.OldValue, args.NewValue));
-                }
+            _window.ColorCanvas.SelectedColorChanged += (sender, args) =>
+            {
+                PropertyChanged?.Invoke(sender, new RoutedPropertyChangedEventArgs<object>(args.OldValue, args.NewValue));
             };
             _window.Show();
         }

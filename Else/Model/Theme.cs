@@ -4,11 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Else.Services;
 using Newtonsoft.Json;
 
-namespace Else.Lib
+namespace Else.Model
 {
     public class Theme {
+        private readonly Func<Theme> _themeFactory;
+        private readonly Paths _paths;
 
         /// <summary>
         /// Failed to parse the theme JSON (either bad json, or missing required fields)
@@ -26,17 +29,7 @@ namespace Else.Lib
         /// <summary>
         /// Theme is editable and removable. (default themes are not editable)
         /// </summary>
-        private bool _editable = true;
-
-        /// <summary>
-        /// Theme is editable and removable. (default themes are not editable)
-        /// </summary>
-        public bool Editable
-        {
-            get { return _editable; }
-            set { _editable = value; }
-        }
-
+        public bool Editable { get; set; } = true;
 
         public string Name {
             get {
@@ -66,13 +59,23 @@ namespace Else.Lib
             }
         }
 
+        public Theme(){
+
+        }
+
+        public Theme(Func<Theme> themeFactory, Paths paths)
+        {
+            _themeFactory = themeFactory;
+            _paths = paths;
+        }
+
         /// <summary>
         /// Generates a new GUID for this theme, and also a new path based on that GUID.
         /// </summary>
         public void SetupNew()
         {
             GUID = Guid.NewGuid().ToString();
-            FilePath = Paths.GetUserPath(String.Format("themes/{0}.json", GUID));
+            FilePath = _paths.GetUserPath(String.Format("themes/{0}.json", GUID));
         }
 
         /// <summary>
@@ -102,7 +105,7 @@ namespace Else.Lib
         /// Loads the specified configuration.
         /// </summary>
         /// <param name="config">The configuration.</param>
-        /// <exception cref="Else.Lib.Theme.ParseException">
+        /// <exception cref="Theme.ParseException">
         /// Theme has no 'Name' field
         /// or
         /// Theme has no 'Author' field
@@ -145,7 +148,7 @@ namespace Else.Lib
         /// <summary>
         /// Color paramaters we can take from the theme config and apply as brush overrides of our Styles.xaml
         /// </summary>
-        private static string[] _colorParams = {
+        private static readonly string[] _colorParams = {
             "WindowBorderColor",
             "WindowBackgroundColor",
             "QueryBoxBackgroundColor",
@@ -179,11 +182,10 @@ namespace Else.Lib
         /// </summary>
         public Theme Clone()
         {
-            var clone = new Theme {
-                Config = new Dictionary<string, string>(Config),
-                FilePath = FilePath,
-                Editable = Editable
-            };
+            var clone = _themeFactory();
+            clone.Config = new Dictionary<string, string>(Config);
+            clone.FilePath = FilePath;
+            clone.Editable = Editable;
             return clone;
         }
         

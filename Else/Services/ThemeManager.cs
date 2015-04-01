@@ -1,13 +1,13 @@
 ﻿using System;
-using System.CodeDom;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Else.Model;
 using Else.Properties;
 
-namespace Else.Lib
+namespace Else.Services
 {
     public class ThemeManager
     {
@@ -35,7 +35,16 @@ namespace Else.Lib
         /// </summary>
         public Theme ActiveTheme;
 
-        
+        private readonly Func<Theme> _themeFactory;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        public ThemeManager(Func<Theme> themeFactory)
+        {
+            _themeFactory = themeFactory;
+        }
+
         /// <summary>
         /// Scans a directory for files with a .json extension, and attempts to load them as themes.
         /// </summary>
@@ -43,7 +52,7 @@ namespace Else.Lib
         {
             foreach (var path in Directory.EnumerateFiles(directory).Where(s => s.EndsWith(".json"))) {
                 if (File.Exists(path)) {
-                    var theme = new Theme();
+                    var theme = _themeFactory();
                     theme.LoadFromPath(path);
                     theme.Editable = isEditable;
                     RegisterTheme(theme);
@@ -58,7 +67,9 @@ namespace Else.Lib
         /// <exception cref="ThemeGuidAlreadyExists">The theme name is already registered</exception>
         public void RegisterTheme(Theme theme)
         {
+            // check if GUID is already registered
             if (Themes.Any(t => t.GUID == theme.GUID)) {
+                // todo: instead of crash, maybe we should just skip the theme
                 throw new ThemeGuidAlreadyExists(theme.GUID);
             }
             Themes.Add(theme);

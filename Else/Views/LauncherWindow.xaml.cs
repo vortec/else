@@ -2,29 +2,22 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Else.Core;
 using Else.Properties;
+using Else.ViewModels;
 
 namespace Else.Views
 {
     public partial class LauncherWindow
     {
-        public Engine Engine;
-
-        public LauncherWindow()
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
+        /// </summary>
+        /// <param name="viewModel"></param>
+        public LauncherWindow(LauncherWindowViewModel viewModel)
         {
             InitializeComponent();
-        }
-        /// <summary>
-        /// Initializes the Launcher Window and connects it to Engine.
-        /// </summary>
-        /// <param name="engine">The engine.</param>
-        public void Init(Engine engine)
-        {
-            Engine = engine;
-
-            // bind resultslist to engine
-            LauncherControl.Init(engine);
+            DataContext = viewModel;
         }
 
         /// <summary>
@@ -76,23 +69,6 @@ namespace Else.Views
                 HideWindow();
             }
         }
-        /// <summary>
-        /// When the window is opened or hidden, clear QueryText.
-        /// </summary>
-        private void OnVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue) {
-                LauncherControl.QueryInput.Text = "";
-            }
-        }
-
-        /// <summary>
-        /// Focus textbox when window is shown
-        /// </summary>
-        private void OnActivated(object sender, EventArgs e)
-        {
-            LauncherControl.QueryInput.Focus();
-        }
 
         /// <summary>
         /// Hide the launcher when the window loses focus (e.g. clicks on another window)
@@ -100,18 +76,8 @@ namespace Else.Views
         private void OnDeactivated(object sender, EventArgs e)
         {
             if (Settings.Default.AutoHideLauncher) {
-                //HideWindow();
+                HideWindow();
             }
-        }
-
-        /// <summary>
-        /// Allows a plugin to rewrite the current query.
-        /// </summary>
-        /// <param name="newQuery">The new query.</param>
-        public void RewriteQuery(string newQuery)
-        {
-            LauncherControl.QueryInput.Text = newQuery;
-            LauncherControl.QueryInput.CaretIndex = LauncherControl.QueryInput.Text.Length;
         }
     }
 }

@@ -1,14 +1,16 @@
 ﻿
+using Else.ViewModels;
+
 namespace Else.Views
 {
     public partial class SettingsWindow
     {
-        public App App;
-        public SettingsWindow(App app)
+        
+
+        public SettingsWindow(SettingsWindowViewModel viewModel)
         {
-            App = app;
             InitializeComponent();
-            ThemesTab.Init(app.ThemeManager);
+            DataContext = viewModel;
         }
     }
 }

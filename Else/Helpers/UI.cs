@@ -5,9 +5,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Else.Lib
+namespace Else.Helpers
 {
-    public static class UIHelpers
+    public static class UI
     {
         public static bool IsWindowOpen<T>(string name = "") where T : Window
         {
@@ -123,8 +123,11 @@ namespace Else.Lib
             return foundChild;
         }
 
-        
-
+        /// <summary>
+        /// Returns a lazy BitmapSource for a given path within the Resources directory.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static Lazy<BitmapSource> LoadImageFromResources(string path)
         {
             return new Lazy<BitmapSource>(() => {

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows.Interop;
+using Autofac;
+using Else.Interop;
+using Else.Views;
 
-namespace Else.Lib
+namespace Else.Services
 {
     
     [Flags]
@@ -19,16 +22,29 @@ namespace Else.Lib
         public KeyCombo(Modifier modifer, Key key) : base(modifer, key) { }
     }
     
-    public class HotkeyManager
+    public class HotkeyManager : IStartable
     {
-        private Dictionary<KeyCombo, Action> _callbacks = new Dictionary<KeyCombo,Action>();
+        private readonly Dictionary<KeyCombo, Action> _callbacks = new Dictionary<KeyCombo,Action>();
         private HwndSource _hwndSource;
+        private readonly LauncherWindow _window;
+        private readonly AppCommands _appCommands;
 
-        public HotkeyManager(HwndSource hwndSource)
+        public HotkeyManager(LauncherWindow window, AppCommands appCommands)
         {
-            _hwndSource = hwndSource;
-            // register hotkey
-            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, PluginCommands.ShowWindow);
+            _window = window;
+            _appCommands = appCommands;
+        }
+
+        /// <summary>
+        /// Perform once-off startup processing.
+        /// </summary>
+        public void Start()
+        {
+            var windowHelper = new WindowInteropHelper(_window);
+            windowHelper.EnsureHandle();
+            _hwndSource = HwndSource.FromHwnd(windowHelper.Handle);
+            // register default hotkey (this will need to be moved, and config driven in the future)
+            Register(new KeyCombo(Modifier.Ctrl, Key.Space), 1, _appCommands.ShowWindow);
         }
 
         /// <summary>
@@ -37,7 +53,7 @@ namespace Else.Lib
         public bool Register(KeyCombo keyCombo, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(keyCombo.Item2);
-            if (Interop.Win32.RegisterHotKey( _hwndSource.Handle, id, (int)keyCombo.Item1, vk)) {
+            if (Win32.RegisterHotKey( _hwndSource.Handle, id, (int)keyCombo.Item1, vk)) {
                 _callbacks[keyCombo] = action;
                 return true;
             }
@@ -55,5 +71,7 @@ namespace Else.Lib
                 _callbacks[combo]();
             }
         }
+
+        
     }
 }

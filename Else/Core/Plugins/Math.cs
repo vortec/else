@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
 using Jace;
 
 namespace Else.Core.Plugins
 {
+    /// <summary>
+    /// Plugin that provides math expression functionality.
+    /// </summary>
     class Math : Plugin
     {
-        private Regex _isNotMathExpressionRegex = new Regex(@"[^0-9\(\)\^\.\+\*\/\-%<>!= ]", RegexOptions.Compiled);
-        private CalculationEngine _calculationEngine = new CalculationEngine();
-        private Lazy<BitmapSource> _icon = UIHelpers.LoadImageFromResources("Icons/calculator.png");
+        private readonly Regex _isNotMathExpressionRegex = new Regex(@"[^0-9\(\)\^\.\+\*\/\-%<>!= ]", RegexOptions.Compiled);
+        private readonly CalculationEngine _calculationEngine = new CalculationEngine();
+        private readonly Lazy<BitmapSource> _icon = UI.LoadImageFromResources("Icons/calculator.png");
 
         /// <summary>
         /// Plugin setup
@@ -41,7 +44,7 @@ namespace Else.Core.Plugins
                             Title = strMathResult,
                             SubTitle = "Launch this item to copy this number to the clipboard",
                             Launch = info => {
-                                PluginCommands.HideWindow();
+                                AppCommands.HideWindow();
                                 Clipboard.SetText(strMathResult);
                             }
                         };

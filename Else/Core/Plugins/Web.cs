@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using Else.Core.ResultProviders;
-using Else.Lib;
+using Else.Helpers;
 using Else.Model;
+using Else.Services;
 
 namespace Else.Core.Plugins
 {
+    /// <summary>
+    /// Plugin that enables opening of the browser at a specific URL, or searching from different providers.
+    /// </summary>
     class Web : Plugin
     {
+
         /// <summary>
         /// Data for a web provider (e.g. google)
         /// </summary>
@@ -31,7 +36,7 @@ namespace Else.Core.Plugins
         /// <summary>
         /// Define search providers
         /// </summary>
-        List<SearchEngine> _searchProviders = new List<SearchEngine>{
+        private readonly List<SearchEngine> _searchProviders = new List<SearchEngine>{
             new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "Icons/google.png", true),
             new SearchEngine("maps", "Search google maps for '{arguments}'", "http://google.co.uk/maps?q={0}", "Icons/google.png"),
             new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "Icons/google.png"),
@@ -40,17 +45,20 @@ namespace Else.Core.Plugins
             new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "Icons/wiki.png", true)
         };
 
+        
+
+
         /// <summary>
-        /// Plugin setup
+        /// Plugin setup, creates commands for the registered 'search providers'.
         /// </summary>
         public override void Setup()
         {
             // convert searchProviders to Commands
             foreach (var p in _searchProviders) {
-                Providers.Add(new Command{
+                Providers.Add(new ResultCommand{
                     Keyword = p.Keyword,
                     Title = p.DisplayText,
-                    Icon = UIHelpers.LoadImageFromResources(p.IconName),
+                    Icon = UI.LoadImageFromResources(p.IconName),
                     Launch = query => {
                         var searchKeywords = query.Keyword.StartsWith(p.Keyword) ? query.Arguments : query.Raw;
                         OpenProviderSearch(p.Url, searchKeywords);
@@ -67,7 +75,7 @@ namespace Else.Core.Plugins
                         Title = query.Raw,
                         SubTitle = "Open the typed URL",
                         Launch = query1 => {
-                            PluginCommands.HideWindow();
+                            AppCommands.HideWindow();
                             OpenBrowser(query1.Raw);
                         }
                     }.ToList();
@@ -86,7 +94,6 @@ namespace Else.Core.Plugins
         /// <param name="url">The URL.</param>
         public static void OpenBrowser(string url)
         {
-            PluginCommands.HideWindow();
             Process.Start("chrome.exe", url);
         }
         /// <summary>
@@ -96,7 +103,7 @@ namespace Else.Core.Plugins
         /// <param name="keywords">The search keywords.</param>
         public static void OpenProviderSearch(string providerUrl, string keywords)
         {
-            var url = String.Format(providerUrl, Uri.EscapeDataString(keywords));
+            var url = string.Format(providerUrl, Uri.EscapeDataString(keywords));
             OpenBrowser(url);
         }
     }

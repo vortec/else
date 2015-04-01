@@ -55,10 +55,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>EC22243757D848BB4BD87A535D895FC282AB7901</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>CB4398645629150165D69A9DCF1F7ABC50CC4643</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>wpfmenu_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Else_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -70,6 +70,9 @@
     <ApplicationIcon>Resources\AppIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Autofac">
+      <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    </Reference>
     <Reference Include="Flurl">
       <HintPath>..\packages\Flurl.1.0.6\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Flurl.dll</HintPath>
     </Reference>
@@ -77,6 +80,10 @@
       <HintPath>..\packages\Jace.0.8.7\lib\net40\Jace.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>C:\Users\James\Repos\Else\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Search.Interop">
       <HintPath>dll\Microsoft.Search.Interop.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
@@ -93,6 +100,10 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>C:\Users\James\Repos\Else\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml">
@@ -110,43 +121,52 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Controls\ColorPicker.xaml.cs">
+    <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
+    <Compile Include="Behaviours\FocusExtension.cs" />
+    <Compile Include="Core\PluginManager.cs" />
+    <Compile Include="Lib\ObservableObject.cs" />
+    <Compile Include="Properties\Annotations.cs" />
+    <Compile Include="ViewModels\LauncherViewModel.cs" />
+    <Compile Include="ViewModels\LauncherWindowViewModel.cs" />
+    <Compile Include="ViewModels\ResultsListViewModel.cs" />
+    <Compile Include="ViewModels\SettingsWindowViewModel.cs" />
+    <Compile Include="Views\Controls\ColorPicker.xaml.cs">
       <DependentUpon>ColorPicker.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\Launcher.xaml.cs">
+    <Compile Include="Views\Controls\Launcher.xaml.cs">
       <DependentUpon>Launcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
     <Compile Include="Core\Plugins\FileBrowser.cs" />
     <Compile Include="Core\Plugins\FileSearch.cs" />
     <Compile Include="Core\Plugins\GoogleSuggest.cs" />
-    <Compile Include="Core\ResultProviders\Command.cs" />
+    <Compile Include="Core\ResultProviders\ResultCommand.cs" />
     <Compile Include="Core\ResultProvider.cs" />
     <Compile Include="DesignerData\Themes.cs" />
-    <Compile Include="Interfaces\IPickerWindow.cs" />
-    <Compile Include="Lib\ColorPicker.cs" />
+    <Compile Include="Services\Interfaces\IPickerWindow.cs" />
+    <Compile Include="Services\ColorPicker.cs" />
     <Compile Include="Lib\RelayCommand.cs" />
-    <Compile Include="Lib\Paths.cs" />
-    <Compile Include="Lib\PluginCommands.cs" />
+    <Compile Include="Services\Paths.cs" />
+    <Compile Include="Services\AppCommands.cs" />
     <Compile Include="Interop\Win32.cs" />
-    <Compile Include="Lib\HotkeyManager.cs" />
-    <Compile Include="Lib\Theme.cs" />
-    <Compile Include="Lib\ThemeManager.cs" />
-    <Compile Include="Lib\UIHelpers.cs" />
+    <Compile Include="Services\HotkeyManager.cs" />
+    <Compile Include="Model\Theme.cs" />
+    <Compile Include="Services\ThemeManager.cs" />
+    <Compile Include="Helpers\UI.cs" />
     <Compile Include="DesignerData\ResultsList.cs" />
     <Compile Include="Core\Plugins\Console.cs" />
     <Compile Include="Core\Plugins\Math.cs" />
     <Compile Include="Core\Plugins\SystemCommands.cs" />
     <Compile Include="DataTypes\BindingResultsList.cs" />
-    <Page Include="Controls\ColorPicker.xaml">
+    <Page Include="Views\Controls\ColorPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\Launcher.xaml">
+    <Page Include="Views\Controls\Launcher.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Controls\ResultsList.xaml">
+    <Page Include="Views\Controls\ResultsList.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -154,13 +174,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Controls\ResultsList.xaml.cs">
+    <Compile Include="Views\Controls\ResultsList.xaml.cs">
       <DependentUpon>ResultsList.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\EqualsConverter.cs" />
     <Compile Include="Core\Engine.cs" />
-    <Compile Include="Lib\Extensions.cs" />
-    <Compile Include="Lib\IconTools.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Helpers\IconTools.cs" />
     <Compile Include="Lib\Utils.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -172,7 +192,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\ThemeEditor.xaml">
+    <Page Include="Views\Controls\ThemeEditor.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -200,7 +220,7 @@
     <Compile Include="Views\LauncherWindow.xaml.cs">
       <DependentUpon>LauncherWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Controls\ThemeEditor.xaml.cs">
+    <Compile Include="Views\Controls\ThemeEditor.xaml.cs">
       <DependentUpon>ThemeEditor.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsTabs\ThemesTab.xaml.cs">
@@ -217,6 +237,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Else_1_TemporaryKey.pfx" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -295,16 +316,6 @@
       <FileType>File</FileType>
     </PublishFile>
     <PublishFile Include="Themes\light.json">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>DataFile</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Themes\longname.json">
       <Visible>False</Visible>
       <Group>
       </Group>

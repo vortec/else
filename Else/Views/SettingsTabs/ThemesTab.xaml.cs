@@ -1,6 +1,4 @@
-﻿using Else.Lib;
-using Else.ViewModels;
-
+﻿
 namespace Else.Views.SettingsTabs
 {
     /// <summary>
@@ -11,15 +9,6 @@ namespace Else.Views.SettingsTabs
         public ThemesTab()
         {
             InitializeComponent();
-        }
-
-        private ThemesTabViewModel _viewModel;
-
-        public void Init(ThemeManager themeManager)
-        {
-            ThemeEditor.Init(themeManager);
-            _viewModel = new ThemesTabViewModel(ThemeEditor.ViewModel, themeManager);
-            DataContext = _viewModel;
         }
     }
 }

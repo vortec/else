@@ -9,7 +9,7 @@ using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
-namespace Else.Lib
+namespace Else.Helpers
 {
     /// <summary>
     /// Defines a set of utility methods for extracting icons for files and file types.
