@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Else.Services;
 
 namespace Else.Core
@@ -8,9 +9,9 @@ namespace Else.Core
     /// </summary>
     public abstract class Plugin
     {
+        public AppCommands AppCommands { get; set; }
         public List<ResultProvider> Providers = new List<ResultProvider>();
-        public AppCommands AppCommands;
-        
+
         /// <summary>
         /// Plugin setup
         /// </summary>

@@ -41,12 +41,13 @@ namespace Else
             // register singletons
             builder.RegisterType<LauncherWindow>().SingleInstance();
             
-            builder.RegisterType<Engine>().SingleInstance();
+            builder.RegisterType<Engine>().SingleInstance().As<IStartable>().AsSelf();
             builder.RegisterType<ThemeManager>().SingleInstance();
-            builder.RegisterType<HotkeyManager>().As<HotkeyManager>().As<IStartable>().SingleInstance();
+            builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
             builder.RegisterType<Paths>().SingleInstance();
             builder.RegisterType<AppCommands>().SingleInstance();
             builder.RegisterType<ColorPicker>().As<IPickerWindow>();
+            builder.RegisterType<PluginManager>().SingleInstance();
             
 
             // instances

@@ -4,11 +4,13 @@ using System.Diagnostics;
 using Else.Core.ResultProviders;
 using Else.Helpers;
 using Else.Model;
+using Else.Services;
 
 namespace Else.Core.Plugins
 {
     class Web : Plugin
     {
+
         /// <summary>
         /// Data for a web provider (e.g. google)
         /// </summary>
@@ -39,6 +41,9 @@ namespace Else.Core.Plugins
             new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "Icons/google.png"),
             new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "Icons/wiki.png", true)
         };
+
+        
+
 
         /// <summary>
         /// Plugin setup
@@ -86,7 +91,6 @@ namespace Else.Core.Plugins
         /// <param name="url">The URL.</param>
         public static void OpenBrowser(string url)
         {
-            //AppCommands.HideWindow();
             Process.Start("chrome.exe", url);
         }
         /// <summary>

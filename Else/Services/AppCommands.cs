@@ -1,4 +1,5 @@
-﻿using Else.Core;
+﻿using System;
+using Else.Core;
 using Else.Views;
 
 namespace Else.Services
@@ -10,9 +11,10 @@ namespace Else.Services
     {
         
         private readonly LauncherWindow _launcherWindow;
-        private readonly Engine _engine;
+        private readonly Lazy<Engine> _engine;
 
-        public AppCommands(LauncherWindow launcherWindow, Engine engine)
+
+        public AppCommands(LauncherWindow launcherWindow, Lazy<Engine> engine)
         {
             _launcherWindow = launcherWindow;
             _engine = engine;
@@ -45,7 +47,7 @@ namespace Else.Services
         /// </summary>
         public void RequestUpdate()
         {
-            _engine.RequestUpdate();
+            _engine.Value.RequestUpdate();
         }
     }
 }

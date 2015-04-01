@@ -123,6 +123,7 @@
     </ApplicationDefinition>
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
+    <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\LauncherViewModel.cs" />
