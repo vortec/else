@@ -47,9 +47,6 @@ namespace Else.Core.Plugins
                             dirName = fullPath;
                         }
                         var filter = Path.GetFileName(fullPath);  // last part of the path (we filter results with this)
-                        Debug.Print("fullPath = {0}", fullPath);
-                        Debug.Print("dirName = {0}", dirName);
-                        Debug.Print("filter = {0}", filter);
                         if (dirName != null && Directory.Exists(dirName)) {
                             var results = new List<Result>();
                             var entries = new List<FileSystemEntry>();

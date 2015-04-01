@@ -47,13 +47,11 @@ namespace Else.Core
         public Engine(Lazy<PluginManager> pluginManager)
         {
             _pluginManager = pluginManager;
-            
         }
 
         public void Start()
         {
             _pluginManager.Value.Load();
-            
         }
 
         /// <summary>
