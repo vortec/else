@@ -9,6 +9,9 @@ using Jace;
 
 namespace Else.Core.Plugins
 {
+    /// <summary>
+    /// Plugin that provides math expression functionality.
+    /// </summary>
     class Math : Plugin
     {
         private readonly Regex _isNotMathExpressionRegex = new Regex(@"[^0-9\(\)\^\.\+\*\/\-%<>!= ]", RegexOptions.Compiled);

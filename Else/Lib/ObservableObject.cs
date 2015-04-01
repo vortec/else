@@ -4,6 +4,9 @@ using System.Runtime.CompilerServices;
 
 namespace Else.Lib
 {
+    /// <summary>
+    /// INotifyPropertyChanged helper class.
+    /// </summary>
     public class ObservableObject : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
@@ -16,6 +19,9 @@ namespace Else.Lib
             }
         }
 
+        /// <summary>
+        /// Sets a property and raises PropertyChanged event.
+        /// </summary>
         protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
         {
             if (Equals(storage, value)) {

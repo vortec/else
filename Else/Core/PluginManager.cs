@@ -6,6 +6,9 @@ using Else.Services;
 
 namespace Else.Core
 {
+    /// <summary>
+    /// Loads and stores plugins.
+    /// </summary>
     public class PluginManager
     {
         private readonly ILifetimeScope _container;
@@ -24,7 +27,7 @@ namespace Else.Core
             var foundPlugins = _container.Resolve<IEnumerable<Plugin>>();
             foreach (var p in foundPlugins) {
                 try {
-                    // give the plugin a chance to initialze
+                    // initialize the plugin
                     p.AppCommands = _appCommands.Value;
                     p.Setup();
                     Plugins.Add(p);

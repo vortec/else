@@ -9,14 +9,14 @@ namespace Else.Core.ResultProviders
     /// <summary>
     /// Helper class for providing results for a single command, with optional arguments support.
     /// </summary>
-    public class Command : ResultProvider
+    public class ResultCommand : ResultProvider
     {
         public string Title;
         public string SubTitle;
         public Action<Query> Launch;
         public Lazy<BitmapSource> Icon;
         public bool RequiresArguments;
-        public Command()
+        public ResultCommand()
         {
             Query = (query, cts) => {
                 var results = new List<Result>();

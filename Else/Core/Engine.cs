@@ -18,7 +18,6 @@ namespace Else.Core
     {
         private readonly Lazy<PluginManager> _pluginManager;
 
-
         /// <summary>
         /// Activated plugins
         /// </summary>
@@ -48,7 +47,9 @@ namespace Else.Core
         {
             _pluginManager = pluginManager;
         }
-
+        /// <summary>
+        /// Lazy load the pluginManager dependancy (to prevent circular dependancy)
+        /// </summary>
         public void Start()
         {
             _pluginManager.Value.Load();

@@ -7,13 +7,23 @@ namespace Else.Extensions
     /// </summary>
     public static class StringExtension
     {
+        /// <summary>
+        /// Returns the string wrapped in single quotes
+        /// </summary>
+        /// <param name="str"></param>
+        
         public static string SingleQuote(this String str)
         {
             return "'" + str + "'";
         }
-        public static bool IsEmpty(this String str)
+
+        /// <summary>
+        /// Returns true if the string is null or empty.
+        /// </summary>
+        /// <param name="str"></param>
+        public static bool IsEmpty(this string str)
         {
-            return String.IsNullOrEmpty(str);
+            return string.IsNullOrEmpty(str);
         }
     }
 }

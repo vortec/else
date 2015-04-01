@@ -140,7 +140,7 @@
     <Compile Include="Core\Plugins\FileBrowser.cs" />
     <Compile Include="Core\Plugins\FileSearch.cs" />
     <Compile Include="Core\Plugins\GoogleSuggest.cs" />
-    <Compile Include="Core\ResultProviders\Command.cs" />
+    <Compile Include="Core\ResultProviders\ResultCommand.cs" />
     <Compile Include="Core\ResultProvider.cs" />
     <Compile Include="DesignerData\Themes.cs" />
     <Compile Include="Services\Interfaces\IPickerWindow.cs" />

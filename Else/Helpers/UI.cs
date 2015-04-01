@@ -123,8 +123,11 @@ namespace Else.Helpers
             return foundChild;
         }
 
-        
-
+        /// <summary>
+        /// Returns a lazy BitmapSource for a given path within the Resources directory.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static Lazy<BitmapSource> LoadImageFromResources(string path)
         {
             return new Lazy<BitmapSource>(() => {

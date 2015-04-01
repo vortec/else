@@ -14,6 +14,9 @@ using Newtonsoft.Json;
 
 namespace Else.Core.Plugins
 {
+    /// <summary>
+    /// Plugin that provides Google search suggestions using a google web API
+    /// </summary>
     class GoogleSuggest : Plugin
     {
         private const string Url = "http://suggestqueries.google.com/complete/search";
@@ -21,9 +24,6 @@ namespace Else.Core.Plugins
         private readonly Lazy<BitmapSource> _icon = UI.LoadImageFromResources("Icons/google.png");
         private ResultProvider _provider;
 
-        /// <summary>
-        /// Plugin setup
-        /// </summary>
         public override void Setup()
         {
             _provider = new ResultProvider{

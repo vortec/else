@@ -11,14 +11,14 @@ using IWshRuntimeLibrary;
 using File = System.IO.File;
 
 /*
- * todo: check memory consumption and possible leakage with icon usage.
  * todo: use displayName from shgetfileinfo?
  * todo: make control panel items available (https://msdn.microsoft.com/en-us/library/windows/desktop/cc144191%28v=vs.85%29.aspx)
 */
 namespace Else.Core.Plugins
 {
     /// <summary>
-    /// Provides ability to launch installed programs.
+    /// Plugin that provides program launching functionality
+    /// <remarks>This plugin scans the startmenu to find programs at plugin startup.</remarks>
     /// </summary>
     class Programs : Plugin
     {
@@ -48,10 +48,8 @@ namespace Else.Core.Plugins
         public override void Setup()
         {
             // recursively scan certain directories and process any .lnk files (shortcuts to applications)
-            Debug.Print("Scanning for programs..");
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
-            Debug.Print("done ({0} results)", _foundPrograms.Count);
 
             Providers.Add(new ResultProvider{
                 Keyword = "launch",

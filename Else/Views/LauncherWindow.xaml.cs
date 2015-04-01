@@ -9,8 +9,7 @@ namespace Else.Views
 {
     public partial class LauncherWindow
     {
-        private readonly LauncherWindowViewModel _viewModel;
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
@@ -18,19 +17,8 @@ namespace Else.Views
         public LauncherWindow(LauncherWindowViewModel viewModel)
         {
             InitializeComponent();
-            _viewModel = viewModel;
-            DataContext = _viewModel;
+            DataContext = viewModel;
         }
-        private void LauncherWindow_OnLoaded(object sender, RoutedEventArgs e)
-        {
-            var commandBinding = new CommandBinding(_viewModel.WindowVisibilityCommand, ShowWindow);
-        }
-
-        private void ShowWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-//            Debug.Print("ShowWindow");
-        }
-
 
         /// <summary>
         /// Shows the window (wrapper for Show() ), using optional animation dependant on app settings.
@@ -81,14 +69,6 @@ namespace Else.Views
                 HideWindow();
             }
         }
-        
-        /// <summary>
-        /// FocusExtension textbox when window is shown
-        /// </summary>
-//        private void OnActivated(object sender, EventArgs e)
-//        {
-//            LauncherControl.QueryInput.FocusExtension();
-//        }
 
         /// <summary>
         /// Hide the launcher when the window loses focus (e.g. clicks on another window)

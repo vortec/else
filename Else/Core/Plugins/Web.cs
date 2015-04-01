@@ -8,6 +8,9 @@ using Else.Services;
 
 namespace Else.Core.Plugins
 {
+    /// <summary>
+    /// Plugin that enables opening of the browser at a specific URL, or searching from different providers.
+    /// </summary>
     class Web : Plugin
     {
 
@@ -46,13 +49,13 @@ namespace Else.Core.Plugins
 
 
         /// <summary>
-        /// Plugin setup
+        /// Plugin setup, creates commands for the registered 'search providers'.
         /// </summary>
         public override void Setup()
         {
             // convert searchProviders to Commands
             foreach (var p in _searchProviders) {
-                Providers.Add(new Command{
+                Providers.Add(new ResultCommand{
                     Keyword = p.Keyword,
                     Title = p.DisplayText,
                     Icon = UI.LoadImageFromResources(p.IconName),

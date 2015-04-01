@@ -3,6 +3,7 @@
 namespace Else.Behaviours
 {
     /// <summary>
+    /// Allows binding of IsFocused to a dependancy property
     /// <see cref="http://stackoverflow.com/a/1356781"/>
     /// </summary>
     public static class FocusExtension

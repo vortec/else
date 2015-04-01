@@ -7,8 +7,9 @@ using System.Windows.Interactivity;
 namespace Else.Behaviours
 {
     /// <summary>
-    /// Behavior that will connect an UI event to a viewmodel Command,
+    /// Behavior that will connect an UI event to a viewmodel ResultCommand,
     /// allowing the event arguments to be passed as the CommandParameter.
+    /// <see cref="http://stackoverflow.com/a/16317999"/>
     /// </summary>
     public class EventToCommandBehavior : Behavior<FrameworkElement>
     {
@@ -72,7 +73,7 @@ namespace Else.Behaviours
         }
 
         /// <summary>
-        /// Executes the Command
+        /// Executes the ResultCommand
         /// </summary>
         private void ExecuteCommand(object sender, EventArgs e)
         {

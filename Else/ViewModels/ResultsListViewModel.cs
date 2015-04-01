@@ -10,18 +10,7 @@ namespace Else.ViewModels
     public class ResultsListViewModel : ObservableObject
     {
         private readonly Engine _engine;
-        public RelayCommand PreviewKeyDown { get; set; }
-        public BindingResultsList Items => _engine.ResultsList;
-
         private int _selectedIndex;
-        public int SelectedIndex
-        {
-            get { return _selectedIndex; }
-            set {
-                SetProperty(ref _selectedIndex, value);
-            }
-        }
-
 
         public ResultsListViewModel(Engine engine)
         {
@@ -30,11 +19,25 @@ namespace Else.ViewModels
             Items.CollectionChanged += ItemsOnCollectionChanged;
         }
 
-        private void ItemsOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
+        public RelayCommand PreviewKeyDown { get; set; }
+        public BindingResultsList Items => _engine.ResultsList;
+
+        public int SelectedIndex
+        {
+            get { return _selectedIndex; }
+            set { SetProperty(ref _selectedIndex, value); }
+        }
+
+        private void ItemsOnCollectionChanged(object sender,
+            NotifyCollectionChangedEventArgs notifyCollectionChangedEventArgs)
         {
             SelectIndex(0);
         }
 
+        /// <summary>
+        /// Handle navigation between items, and return key for execute.
+        /// </summary>
+        /// <param name="o"></param>
         private void OnPreviewKeyDown(object o)
         {
             var e = o as KeyEventArgs;
@@ -47,19 +50,24 @@ namespace Else.ViewModels
             }
             else {
                 if (e.Key == Key.Up) {
-                    IncrementIndex(-1, wrap:true);
+                    IncrementIndex(-1, true);
                 }
                 if (e.Key == Key.Down) {
-                    IncrementIndex(1, wrap:true);
+                    IncrementIndex(1, true);
                 }
                 if (e.Key == Key.PageUp) {
-                    IncrementIndex(-6, wrap:false);
+                    IncrementIndex(-6, false);
                 }
                 if (e.Key == Key.PageDown) {
-                    IncrementIndex(6, wrap:false);
+                    IncrementIndex(6, false);
                 }
             }
         }
+
+        /// <summary>
+        /// Selects an item while preventing out-of-bounds.
+        /// </summary>
+        /// <param name="index"></param>
         private void SelectIndex(int index)
         {
             if (index >= 0 && index < Items.Count) {
@@ -67,6 +75,11 @@ namespace Else.ViewModels
             }
         }
 
+        /// <summary>
+        /// Change the selected item by an amount.
+        /// </summary>
+        /// <param name="increment">Positive or negative amount to change the SelectedIndex</param>
+        /// <param name="wrap">Wrap top->bottom and bottom->top.</param>
         private void IncrementIndex(int increment, bool wrap)
         {
             if (increment != 0) {
@@ -94,7 +107,5 @@ namespace Else.ViewModels
                 SelectIndex(newIndex);
             }
         }
-
-        
     }
 }

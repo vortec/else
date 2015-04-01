@@ -1,9 +1,8 @@
-﻿
-using System;
+﻿using System;
 
 namespace Else.Core.Plugins
 {
-    class Console : Plugin
+    public class Console : Plugin
     {
         /// <summary>
         /// Plugin setup

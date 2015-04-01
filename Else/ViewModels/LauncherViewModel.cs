@@ -28,14 +28,16 @@ namespace Else.ViewModels
             set
             {
                 SetProperty(ref _queryInputText, value);
-                OnQueryChanged(_queryInputText);
+                // Notify Engine
+                _engine.OnQueryChanged(_queryInputText);
             }
         }
+
         /// <summary>
         /// Bound to QueryInput.IsFocused, we ensure it is automatically focused.
         /// </summary>
         public bool IsQueryInputFocused => true;
-        
+
         public RelayCommand QueryInputPreviewKeyDown { get; private set; }
         public RelayCommand RewriteQueryCommand { get; set; }
         public RelayCommand VisibilityChangedCommand { get; set; }
@@ -63,15 +65,13 @@ namespace Else.ViewModels
             ResultsListViewModel?.PreviewKeyDown.Execute(e);
         }
 
+        /// <summary>
+        /// Ensure QueryInputText is empty when visiblity changes.
+        /// </summary>
+        /// <param name="o"></param>
         private void OnVisibilityChanged(object o)
         {
             QueryInputText = "";
-        }
-
-        private void OnQueryChanged(string text)
-        {
-            // Notify Engine when the query changes
-            _engine.OnQueryChanged(text);
         }
     }
 }
