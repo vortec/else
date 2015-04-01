@@ -39,18 +39,15 @@ namespace Else.Views.Controls
 
         public ThemeEditor()
         {
-            Loaded += OnLoaded;
             InitializeComponent();
-            ViewModel = DataContext as ThemeEditorViewModel;
+            Loaded += OnLoaded;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
         {
+            ViewModel = DataContext as ThemeEditorViewModel;
             SetupEditBehaviour();
         }
-
-        
-        
 
         /// <summary>
         /// Because we use the same Launcher as the main app, we must augment its functionality to allow editing.

@@ -17,22 +17,15 @@ using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
 using Else.Views;
-using ColorPicker = Else.Services.ColorPicker;
 
 namespace Else
 {
     public partial class App
     {
-        //public Engine Engine;
-        //public HotkeyManager HotkeyManager;
-        //public LauncherWindow LauncherWindow;
-        public ThemeManager ThemeManager;
-
-        private HwndSource _hwndSource;
-        private NotifyIcon _trayIcon;
-        private Mutex _instanceMutex;
-
         public static IContainer Container;
+        private HwndSource _hwndSource;
+        private Mutex _instanceMutex;
+        private NotifyIcon _trayIcon;
 
         private void SetupIOC()
         {
@@ -40,15 +33,15 @@ namespace Else
 
             // register singletons
             builder.RegisterType<LauncherWindow>().SingleInstance();
-            
+
             builder.RegisterType<Engine>().SingleInstance().As<IStartable>().AsSelf();
             builder.RegisterType<ThemeManager>().SingleInstance();
             builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
             builder.RegisterType<Paths>().SingleInstance();
             builder.RegisterType<AppCommands>().SingleInstance();
-            builder.RegisterType<ColorPicker>().As<IPickerWindow>();
+            builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
             builder.RegisterType<PluginManager>().SingleInstance();
-            
+
 
             // instances
             builder.RegisterType<Theme>();
@@ -63,24 +56,20 @@ namespace Else
             builder.RegisterType<ResultsListViewModel>();
 
 
-
-
-
             builder.RegisterInstance(this).As<App>().ExternallyOwned();
-            
+
             // automatically detect and register plugins
             var assembly = Assembly.GetExecutingAssembly();
-            
+
             // register plugins
             builder.RegisterAssemblyTypes(assembly)
-                .Where(t => t.BaseType == typeof(Plugin))
+                .Where(t => t.BaseType == typeof (Plugin))
                 .As<Plugin>();
-            
+
             // build container
             Container = builder.Build();
         }
 
-        
         protected override void OnStartup(StartupEventArgs e)
         {
             // quit the app if we could not create the mutex, another instance is already running
@@ -88,28 +77,25 @@ namespace Else
                 Current.Shutdown();
                 return;
             }
-            
+
             base.OnStartup(e);
             InitializeComponent();
-            
+
             SetupIOC();
 
             using (var scope = Container.BeginLifetimeScope()) {
-                
-                if (!scope.IsRegistered<HotkeyManager>()) {
-                    Debug.Print("NOT REGSISTERD");
-                }
-                
                 // ensure data directories exist
                 var paths = scope.Resolve<Paths>();
                 try {
                     paths.Setup();
                 }
                 catch (FileNotFoundException notFoundE) {
+                    // paths not found (e.g. %appdata%\Else could not be found)
+                    // fatal error
                     Debug.Fail(notFoundE.Message);
                     Current.Shutdown();
                 }
-                
+
                 // print user config path 
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
                 Debug.Print("Local user config path: {0}", config.FilePath);
@@ -119,16 +105,14 @@ namespace Else
                 themeManager.ScanForThemes(paths.GetAppPath("Themes"), false);
                 themeManager.ScanForThemes(paths.GetUserPath("Themes"), true);
                 themeManager.ApplyThemeFromSettings();
-                ThemeManager = themeManager;
+
                 // create LauncherWindow (we need a window to register Hotkey stuff)
                 var launcherWindow = scope.Resolve<LauncherWindow>();
-                
+
                 SetupWndProc(launcherWindow);
                 SetupTrayIcon();
             }
         }
-
-        
 
         protected override void OnExit(ExitEventArgs e)
         {
@@ -148,9 +132,10 @@ namespace Else
         private bool CreateMutex()
         {
             // get GUID
-            var attribute = (GuidAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), true)[0];
+            var attribute =
+                (GuidAttribute) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (GuidAttribute), true)[0];
             var guid = attribute.Value;
-            
+
             bool createdNew;
             var mutexName = @"Global\" + guid;
             _instanceMutex = new Mutex(true, mutexName, out createdNew);
@@ -160,7 +145,7 @@ namespace Else
             }
             return true;
         }
-        
+
         /// <summary>
         /// Setup wndproc handling so we can receive window messages (Win32 stuff)
         /// </summary>
@@ -175,34 +160,35 @@ namespace Else
             }
             _hwndSource.AddHook(HandleMessages);
         }
-        
+
         /// <summary>
         /// Setup tray icon.
         /// </summary>
         private void SetupTrayIcon()
         {
-            _trayIcon = new NotifyIcon{
+            _trayIcon = new NotifyIcon
+            {
                 Icon = Else.Properties.Resources.AppIcon,
                 Text = Assembly.GetExecutingAssembly().GetName().Name
             };
-            
+
             // show launcher on double click
-            _trayIcon.DoubleClick += (sender, args) => {
+            _trayIcon.DoubleClick += (sender, args) =>
+            {
                 //LauncherWindow.ShowWindow();
             };
-            
+
             // setup context menu
             _trayIcon.ContextMenuStrip = new ContextMenuStrip();
 
             // context menu item 'Exit'
             var exit = new ToolStripMenuItem("Exit");
-            exit.Click += (sender, args) => {
-                Current.Shutdown();
-            };
-            
+            exit.Click += (sender, args) => { Current.Shutdown(); };
+
             // context menu item 'Settings'
             var settings = new ToolStripMenuItem("Settings");
-            settings.Click += (sender, args) => {
+            settings.Click += (sender, args) =>
+            {
                 if (UI.IsWindowOpen<Window>("Settings")) {
                     // focus window
                     UI.FocusWindow<Window>("Settings");
@@ -213,7 +199,7 @@ namespace Else
                     window.Show();
                 }
             };
-            
+
             // add menu items to context menu
             _trayIcon.ContextMenuStrip.Items.Add(settings);
             _trayIcon.ContextMenuStrip.Items.Add(exit);
@@ -228,22 +214,22 @@ namespace Else
         private IntPtr HandleMessages(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             //Debug.Print("msg={0} wParam={1} lParam={2} handled={3}", msg, wParam, lParam, handled);
-            
+
             // WM_HOTKEY (we relay this to HotkeyManager)
             if (msg == 0x0312) {
                 // hotkey id, supplied upon registration
-                int id = (int)wParam;
-                
+                var id = (int) wParam;
+
                 // convert lParam to int, and split into high+low
-                int lpInt = (int)lParam;
-                int low = lpInt & 0xFFFF;
-                int high = lpInt >> 16;
-                
+                var lpInt = (int) lParam;
+                var low = lpInt & 0xFFFF;
+                var high = lpInt >> 16;
+
                 // get virtual key code from high
                 var key = KeyInterop.KeyFromVirtualKey(high);
-                
+
                 // get modifier from low
-                var modifier = (Modifier)(low);
+                var modifier = (Modifier) (low);
 
                 // relay to hotkey manager
                 using (var scope = Container.BeginLifetimeScope()) {

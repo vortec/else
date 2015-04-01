@@ -13,7 +13,7 @@
 	<Grid Background="White">
 		<DockPanel>
 			<Grid DockPanel.Dock="Right" Width="280">
-				<DockPanel Margin="-145,104,145,-104">
+				<DockPanel>
 					<ListView
 						x:Name="ThemeList"
 						SelectionMode="Single"

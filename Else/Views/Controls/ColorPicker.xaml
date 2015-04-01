@@ -3,12 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:pickers="clr-namespace:ColorPickerControls.Pickers;assembly=ColorPickerControls"
         mc:Ignorable="d"
         ResizeMode="NoResize"
-        Width="240" Height="292">
+        WindowStyle="SingleBorderWindow"
+        SizeToContent="WidthAndHeight">
 	<Grid>
-		<xctk:ColorCanvas x:Name="ColorCanvas" HorizontalAlignment="Center" />
-
+		<pickers:ColorPickerStandardWithAlpha VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="Picker"
+		                                      Margin="10 7 0 8" />
 	</Grid>
 </Window>
