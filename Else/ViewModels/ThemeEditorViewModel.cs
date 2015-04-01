@@ -1,6 +1,5 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using Else.DataTypes;
 using Else.Helpers;
 using Else.Lib;
@@ -19,17 +18,13 @@ namespace Else.ViewModels
             DependencyProperty.Register("HasChanged", typeof (bool), typeof (ThemeEditorViewModel),
                 new PropertyMetadata(false));
 
+        private readonly IColorPickerWindow _colorPickerWindow;
+
         /// <summary>
         /// Color picker used when changing element colors.
         /// </summary>
-        private readonly IPickerWindow _colorPickerWindow;
-
+        //        private readonly IPickerWindow _colorPickerWindow;
         private readonly ThemeManager _themeManager;
-
-        /// <summary>
-        /// The picker window that is currently open.
-        /// </summary>
-        private IPickerWindow _activePickerWindow;
 
         /// <summary>
         /// Copy of the original theme that is currently being edited (we need this clone so that we can offer Revert to the original later)
@@ -41,13 +36,17 @@ namespace Else.ViewModels
         /// </summary>
         private Theme _originalTheme;
 
-        public ThemeEditorViewModel(ThemeManager themeManager, IPickerWindow colorPickerWindow)
+        public ThemeEditorViewModel(ThemeManager themeManager, LauncherViewModel launcherViewModel,
+            IColorPickerWindow colorPickerWindow)
         {
+            LauncherViewModel = launcherViewModel;
             _themeManager = themeManager;
             _colorPickerWindow = colorPickerWindow;
             SaveCommand = new RelayCommand(param => Save());
             RevertCommand = new RelayCommand(param => Revert());
         }
+
+        public LauncherViewModel LauncherViewModel { get; set; }
 
         /// <summary>
         /// Example data for showing off the launcher styles.
@@ -168,8 +167,9 @@ namespace Else.ViewModels
         /// </summary>
         public void Revert()
         {
-            // ensure popup is closed
+            // ensure existing window is closed
             HidePickerWindow();
+
             // restore _originalTheme
             SetTheme(_originalTheme);
 
@@ -181,10 +181,7 @@ namespace Else.ViewModels
 
         public void HidePickerWindow()
         {
-            if (_activePickerWindow != null) {
-                _activePickerWindow.Close();
-                _activePickerWindow = null;
-            }
+            _colorPickerWindow.Close();
         }
 
         /// <summary>
@@ -195,18 +192,9 @@ namespace Else.ViewModels
         /// <param name="themeKey">The theme key.</param>
         public void ShowColorPicker(Window parentWindow, string windowTitle, string themeKey)
         {
-            // update the theme when the color is changed
-            _colorPickerWindow.PropertyChanged += (sender, e) =>
-            {
-                var newBrush = new SolidColorBrush((Color) e.NewValue).ToString();
-                SetConfigParam(themeKey, newBrush);
-            };
-            // hide any currently open picker window
             HidePickerWindow();
-            // show the color picker window
+            _colorPickerWindow.ColorChanged += (sender, color) => { SetConfigParam(themeKey, color); };
             _colorPickerWindow.Show(parentWindow, windowTitle);
-            // mark is active
-            _activePickerWindow = _colorPickerWindow;
         }
     }
 }

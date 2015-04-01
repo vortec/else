@@ -44,6 +44,9 @@ namespace Else.ViewModels
 
         public ThemeEditorViewModel ThemeEditorViewModel { get; set; }
 
+        /// <summary>
+        /// Selected theme
+        /// </summary>
         public Theme SelectedItem
         {
             get { return _selectedItem; }
@@ -53,6 +56,8 @@ namespace Else.ViewModels
                     _selectedItem = value;
                     // trigger PropertyChanged
                     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+                    // notify ThemeEditorViewModel
+                    ThemeEditorViewModel.SetTheme(_selectedItem);
                 }
             }
         }
