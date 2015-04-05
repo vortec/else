@@ -9,7 +9,7 @@ namespace Else.Services
     {
         private Views.Controls.ColorPicker _window;
         public event EventHandler<string> ColorChanged;
-        public void Show(Window owner, string title)
+        public void Show(Window owner, string title, Color initialColor)
         {
             // create window
             _window = new Views.Controls.ColorPicker
@@ -17,10 +17,11 @@ namespace Else.Services
                 Title = title,
                 Owner = owner
             };
+            _window.Picker.InitialColor = initialColor;
             // bind to color change event
             _window.Picker.SelectedColorChanged += (sender, args) =>
             {
-                var x = args as ColorPicker.EventArgs<Color>;
+                var x = args;
                 if (x != null) {
                     var newBrush = new SolidColorBrush(x.Value).ToString();
                     ColorChanged?.Invoke(this, newBrush);

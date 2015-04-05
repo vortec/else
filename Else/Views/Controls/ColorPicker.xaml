@@ -9,7 +9,9 @@
         WindowStyle="SingleBorderWindow"
         SizeToContent="WidthAndHeight">
 	<Grid>
-		<pickers:ColorPickerStandardWithAlpha VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="Picker"
+        <pickers:ColorPickerStandardWithAlpha x:Name="Picker"
+                                              VerticalAlignment="Top"
+                                              HorizontalAlignment="Left"
 		                                      Margin="10 7 0 8" />
 	</Grid>
 </Window>

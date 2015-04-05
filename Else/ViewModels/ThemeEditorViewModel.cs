@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Else.DataTypes;
 using Else.Lib;
 using Else.Model;
@@ -189,9 +190,18 @@ namespace Else.ViewModels
         /// <param name="themeKey">The theme key.</param>
         public void ShowColorPicker(Window parentWindow, string windowTitle, string themeKey)
         {
+            var existingColor = ColorConverter.ConvertFromString(_editedTheme.Config[themeKey]);
+            Color currentColor;
+            if (existingColor != null) {
+                currentColor = (Color) existingColor;
+            }
+            else {
+                // default
+                currentColor = Colors.DarkSlateGray;
+            }
             HidePickerWindow();
             _colorPickerWindow.ColorChanged += (sender, color) => { SetConfigParam(themeKey, color); };
-            _colorPickerWindow.Show(parentWindow, windowTitle);
+            _colorPickerWindow.Show(parentWindow, windowTitle, currentColor);
         }
     }
 }
