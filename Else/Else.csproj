@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Else</RootNamespace>
     <AssemblyName>Else</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -39,17 +39,18 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Build\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
+    <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\Build\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -77,31 +78,21 @@
     <Reference Include="ColorPickerControls">
       <HintPath>dll\ColorPickerControls.dll</HintPath>
     </Reference>
-    <Reference Include="Flurl">
-      <HintPath>..\packages\Flurl.1.0.6\lib\portable-net40+sl50+win+wpa81+wp80+MonoAndroid10+MonoTouch10\Flurl.dll</HintPath>
-    </Reference>
-    <Reference Include="Jace">
-      <HintPath>..\packages\Jace.0.8.7\lib\net40\Jace.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>C:\Users\James\Repos\Else\packages\System.Windows.Interactivity.WPF.2.0.20525\lib\net40\Microsoft.Expression.Interactions.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Search.Interop">
-      <HintPath>dll\Microsoft.Search.Interop.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="presentationframework.aero2" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -125,6 +116,7 @@
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
     <Compile Include="Core\PluginManager.cs" />
+    <Compile Include="Core\PluginAssemblyWrapper.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\LauncherViewModel.cs" />
@@ -138,11 +130,6 @@
       <DependentUpon>Launcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
-    <Compile Include="Core\Plugins\FileBrowser.cs" />
-    <Compile Include="Core\Plugins\FileSearch.cs" />
-    <Compile Include="Core\Plugins\GoogleSuggest.cs" />
-    <Compile Include="Core\ResultProviders\ResultCommand.cs" />
-    <Compile Include="Core\ResultProvider.cs" />
     <Compile Include="DesignerData\Themes.cs" />
     <Compile Include="Services\Interfaces\IColorPickerWindow.cs" />
     <Compile Include="Services\ColorPickerWindow.cs" />
@@ -155,10 +142,11 @@
     <Compile Include="Services\ThemeManager.cs" />
     <Compile Include="Helpers\UI.cs" />
     <Compile Include="DesignerData\ResultsList.cs" />
-    <Compile Include="Core\Plugins\Console.cs" />
-    <Compile Include="Core\Plugins\Math.cs" />
-    <Compile Include="Core\Plugins\SystemCommands.cs" />
     <Compile Include="DataTypes\BindingResultsList.cs" />
+    <Page Include="Resources\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Controls\ColorPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -181,7 +169,6 @@
     <Compile Include="Converter\EqualsConverter.cs" />
     <Compile Include="Core\Engine.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Helpers\IconTools.cs" />
     <Compile Include="Lib\Utils.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -211,11 +198,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Query.cs" />
-    <Compile Include="Model\Result.cs" />
-    <Compile Include="Core\Plugin.cs" />
-    <Compile Include="Core\Plugins\Programs.cs" />
-    <Compile Include="Core\Plugins\Web.cs" />
     <Compile Include="ViewModels\ThemeEditorViewModel.cs" />
     <Compile Include="ViewModels\ThemesTabViewModel.cs" />
     <Compile Include="Views\LauncherWindow.xaml.cs">
@@ -264,17 +246,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="IWshRuntimeLibrary">
-      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Icons\google.png" />
@@ -326,6 +297,12 @@
       <IncludeHash>True</IncludeHash>
       <FileType>File</FileType>
     </PublishFile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Else.Extensibility\Else.Extensibility.csproj">
+      <Project>{76ab3b71-aa48-4f3b-8cf5-025972d95d44}</Project>
+      <Name>Else.Extensibility</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

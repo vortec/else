@@ -22,6 +22,11 @@ namespace Else.Services
         /// </summary>
         public string AppDataDirectory;
 
+        /// <summary>
+        /// We were able to find paths
+        /// </summary>
+        public bool PathsOk;
+
         public void Setup()
         {
             // try and find our app data directory
@@ -44,10 +49,9 @@ namespace Else.Services
             // create UserData directories if they do not exist
             CreateUserDataDirectories();
 
-            Debug.Print("App Data Directory = {0}", AppDataDirectory);
-            Debug.Print("User Data Directory = {0}", UserDataDirectory);
-            
+            PathsOk = true;
         }
+
         /// <summary>
         /// Ensures the user directory and sub directories exist, otherwise creates them
         /// </summary>

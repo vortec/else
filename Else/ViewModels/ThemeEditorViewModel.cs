@@ -1,9 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Else.DataTypes;
-using Else.Helpers;
 using Else.Lib;
 using Else.Model;
+using Else.Extensibility;
 using Else.Services;
 using Else.Services.Interfaces;
 
@@ -82,10 +83,7 @@ namespace Else.ViewModels
         /// <value>
         ///   <c>true</c> if editable; otherwise, <c>false</c>.
         /// </value>
-        public bool Editable
-        {
-            get { return _editedTheme.Editable; }
-        }
+        public bool Editable => _editedTheme.Editable;
 
         /// <summary>
         /// Gets or sets a value indicating whether the theme has been edited.
@@ -192,9 +190,18 @@ namespace Else.ViewModels
         /// <param name="themeKey">The theme key.</param>
         public void ShowColorPicker(Window parentWindow, string windowTitle, string themeKey)
         {
+            var existingColor = ColorConverter.ConvertFromString(_editedTheme.Config[themeKey]);
+            Color currentColor;
+            if (existingColor != null) {
+                currentColor = (Color) existingColor;
+            }
+            else {
+                // default
+                currentColor = Colors.DarkSlateGray;
+            }
             HidePickerWindow();
             _colorPickerWindow.ColorChanged += (sender, color) => { SetConfigParam(themeKey, color); };
-            _colorPickerWindow.Show(parentWindow, windowTitle);
+            _colorPickerWindow.Show(parentWindow, windowTitle, currentColor);
         }
     }
 }

@@ -5,23 +5,20 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Autofac;
 using Else.DataTypes;
-using Else.Model;
+using Else.Extensibility;
 
 namespace Else.Core
 {
     /// <summary>
     /// Handles parsing of the query and querying plugins for results.
     /// </summary>
-    public class Engine : IStartable
+    public class Engine
     {
-        private readonly Lazy<PluginManager> _pluginManager;
-
         /// <summary>
         /// Activated plugins
         /// </summary>
-        public List<Plugin> Plugins => _pluginManager.Value.Plugins;
+        public List<Plugin> Plugins => _pluginManager.Plugins;
 
         /// <summary>
         /// The cancellation token of the currently executing query.
@@ -43,16 +40,11 @@ namespace Else.Core
         /// </summary>
         public BindingResultsList ResultsList = new BindingResultsList();
 
-        public Engine(Lazy<PluginManager> pluginManager)
+        private readonly PluginManager _pluginManager;
+
+        public Engine(PluginManager pluginManager)
         {
             _pluginManager = pluginManager;
-        }
-        /// <summary>
-        /// Lazy load the pluginManager dependancy (to prevent circular dependancy)
-        /// </summary>
-        public void Start()
-        {
-            _pluginManager.Value.Load();
         }
 
         /// <summary>
@@ -94,7 +86,12 @@ namespace Else.Core
             _cancelTokenSource = new CancellationTokenSource();
 
             // execute the query in a new thread
-            await Task.Factory.StartNew(async () => { await ExecuteQuery(query); }, _cancelTokenSource.Token);
+            try {
+                await Task.Factory.StartNew(async () => { await ExecuteQuery(query); }, _cancelTokenSource.Token);
+            }
+            catch (TaskCanceledException) {
+                Debug.Print("caught exception");
+            }
         }
 
         /// <summary>
@@ -104,13 +101,13 @@ namespace Else.Core
         private async Task ExecuteQuery(string query)
         {
             // determine which providers are able to respond to this query, and sort them into groups
-            var exclusive = new List<ResultProvider>(); // todo: consider removing exclusive
-            var shared = new List<ResultProvider>();
-            var fallback = new List<ResultProvider>();
+            var exclusive = new List<BaseProvider>(); // todo: consider removing exclusive
+            var shared = new List<BaseProvider>();
+            var fallback = new List<BaseProvider>();
             foreach (var p in Plugins) {
                 foreach (var c in p.Providers) {
-                    if (c.IsInterested != null) {
-                        var x = c.IsInterested(Query);
+                    if (c.IsInterestedFunc != null) {
+                        var x = c.IsInterestedFunc(Query);
                         if (x == ProviderInterest.Exclusive) {
                             exclusive.Add(c);
                         }
@@ -156,14 +153,21 @@ namespace Else.Core
             }
         }
 
-        private async Task<List<Result>> ProcessProviderQueryAsync(List<ResultProvider> providers)
+        private async Task<List<Result>> ProcessProviderQueryAsync(List<BaseProvider> providers)
         {
             // invoke Query() on each provider, collect the returned Task() objects
-            var tasks = providers
-                .Where(p => p != null)
-                .Select(
-                    p => Task.Factory.StartNew(() => p.Query(Query, _cancelTokenSource.Token), _cancelTokenSource.Token))
-                .ToList();
+            var tasks = new List<Task<List<Result>>>();
+            foreach (var provider in providers) {
+                if (provider != null) {
+                    try {
+                        var task = Task.Factory.StartNew(() => provider.QueryFunc(Query, _cancelTokenSource.Token), _cancelTokenSource.Token);
+                        tasks.Add(task);
+                    }
+                    catch {
+                        Debug.Print("Failed to start provider");
+                    }
+                }
+            }
 
             // process each task as it finishes
             var results = new List<Result>();

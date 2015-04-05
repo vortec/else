@@ -1,0 +1,6 @@
+Visual Studio project template for Else Plugin
+
+To install:
+1. Create a .zip file containing all of the template files.
+2. Copy .zip file to "C:\Users\<username>\Documents\Visual Studio 2015\Templates\ProjectTemplates\Visual C#\Test" folder.
+
