@@ -25,7 +25,7 @@ namespace Else.Core
         public void LoadAssembly(string path)
         {
             // load the assembly
-            var assembly = Assembly.LoadFile(path);
+            var assembly = Assembly.LoadFrom(path);
             // discover any types that derive from the base Plugin type
             var plugins = assembly.GetTypes().Where(x => x.BaseType == typeof (Plugin)).ToList();
             if (!plugins.Any()) {

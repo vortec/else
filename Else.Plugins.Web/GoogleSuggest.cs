@@ -18,7 +18,7 @@ namespace Else.Plugin.Web
         private const string Url = "http://suggestqueries.google.com/complete/search";
         private const string Keyword = "g";
         private readonly HttpClient _client = new HttpClient();
-        private readonly Lazy<BitmapSource> _icon = Helper.LoadImageFromResources("Icons/google.png");
+        private readonly Lazy<BitmapSource> _icon = Helper.LoadImageFromResources("google.png");
 
         public override void Setup()
         {

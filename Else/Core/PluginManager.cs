@@ -49,8 +49,8 @@ namespace Else.Core
                     p.Setup();
                     Plugins.Add(p);
                 }
-                catch {
-                    Debug.Print("Failed to initialize plugin: {0}", p.GetType());
+                catch (Exception e) {
+                    Debug.Print("Failed to initialize plugin: {0} ({1})", p.GetType(), e.Message);
                 }
             }
             Debug.Print("Loaded {0} plugins", Plugins.Count);
