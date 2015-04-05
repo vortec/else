@@ -8,13 +8,13 @@ namespace Else.Extensibility
     {
         public ResultProviderBuilder IsInterested(Func<Query, ProviderInterest> isInterestedFunc)
         {
-            _IsInterestedFunc = isInterestedFunc;
+            IsInterestedFunc = isInterestedFunc;
             return this;
         }
 
         public ResultProviderBuilder Query(Func<Query, CancellationToken, List<Result>> queryFunc)
         {
-            _QueryFunc = queryFunc;
+            QueryFunc = queryFunc;
             return this;
         }
 

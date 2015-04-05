@@ -21,7 +21,7 @@ namespace Else.Extensibility
         public CommandProvider(IAppCommands appCommands)
         {
             _appCommands = appCommands;
-            _QueryFunc = (query, cts) =>
+            QueryFunc = (query, cts) =>
             {
                 var results = new List<Result>();
 
@@ -50,7 +50,7 @@ namespace Else.Extensibility
                 results.Add(result);
                 return results;
             };
-            _IsInterestedFunc = query =>
+            IsInterestedFunc = query =>
             {
                 if (!string.IsNullOrEmpty(query.Keyword)) {
                     if (query.KeywordComplete && _keyword == query.Keyword) {

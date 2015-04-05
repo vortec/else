@@ -5,9 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using Autofac;
 using Else.DataTypes;
-using Else.Model;
 using Else.Extensibility;
 
 namespace Else.Core
@@ -108,8 +106,8 @@ namespace Else.Core
             var fallback = new List<BaseProvider>();
             foreach (var p in Plugins) {
                 foreach (var c in p.Providers) {
-                    if (c._IsInterestedFunc != null) {
-                        var x = c._IsInterestedFunc(Query);
+                    if (c.IsInterestedFunc != null) {
+                        var x = c.IsInterestedFunc(Query);
                         if (x == ProviderInterest.Exclusive) {
                             exclusive.Add(c);
                         }
@@ -162,7 +160,7 @@ namespace Else.Core
             foreach (var provider in providers) {
                 if (provider != null) {
                     try {
-                        var task = Task.Factory.StartNew(() => provider._QueryFunc(Query, _cancelTokenSource.Token), _cancelTokenSource.Token);
+                        var task = Task.Factory.StartNew(() => provider.QueryFunc(Query, _cancelTokenSource.Token), _cancelTokenSource.Token);
                         tasks.Add(task);
                     }
                     catch {

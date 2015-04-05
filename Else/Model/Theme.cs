@@ -148,7 +148,7 @@ namespace Else.Model
         /// <summary>
         /// Color paramaters we can take from the theme config and apply as brush overrides of our Styles.xaml
         /// </summary>
-        private static readonly string[] _colorParams = {
+        private static readonly string[] ColorParams = {
             "WindowBorderColor",
             "WindowBackgroundColor",
             "QueryBoxBackgroundColor",
@@ -167,7 +167,7 @@ namespace Else.Model
         {
             var resourceDict = new ResourceDictionary();
             // process color settings
-            foreach (var param in _colorParams) {
+            foreach (var param in ColorParams) {
                 if (Config.ContainsKey(param)) {
                     var value = Config[param];
                     var brush = new BrushConverter().ConvertFromString(value);

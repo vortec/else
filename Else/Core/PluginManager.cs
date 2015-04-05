@@ -73,33 +73,5 @@ namespace Else.Core
             }
             return foundPlugins;
         }
-
-        /// <summary>
-        /// Loads an assembly and returns instances of any types that implement Plugin.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private List<Plugin> LoadPluginFromAssembly(string path)
-        {
-            var loaded = new List<Plugin>();
-            var assembly = Assembly.LoadFile(path);
-
-            // find any Plugin types from the assembly
-            var plugins = assembly.GetTypes().Where(x => x.BaseType == typeof (Plugin));
-            if (!plugins.Any()) {
-                throw new Exception("No Plugin types found.");
-            }
-            foreach (var p in plugins) {
-                // instantiate any plugins
-                var instance = Activator.CreateInstance(p) as Plugin;
-                if (instance != null) {
-                    // add to our return list
-                    loaded.Add(instance);
-                    Debug.Print("loaded plugin: {0}", instance.GetType().Name);
-                }
-            }
-            // return list
-            return loaded;
-        }
     }
 }

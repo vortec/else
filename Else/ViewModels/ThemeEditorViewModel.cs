@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 using Else.DataTypes;
-using Else.Helpers;
 using Else.Lib;
 using Else.Model;
 using Else.Extensibility;
@@ -83,10 +82,7 @@ namespace Else.ViewModels
         /// <value>
         ///   <c>true</c> if editable; otherwise, <c>false</c>.
         /// </value>
-        public bool Editable
-        {
-            get { return _editedTheme.Editable; }
-        }
+        public bool Editable => _editedTheme.Editable;
 
         /// <summary>
         /// Gets or sets a value indicating whether the theme has been edited.

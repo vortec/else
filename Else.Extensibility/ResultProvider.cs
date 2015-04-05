@@ -8,7 +8,7 @@ namespace Else.Extensibility
 
         public ResultProvider()
         {
-            _IsInterestedFunc = query =>
+            IsInterestedFunc = query =>
             {
                 if (!string.IsNullOrEmpty(query.Keyword) && !string.IsNullOrEmpty(_keyword)) {
                     if (query.KeywordComplete && _keyword == query.Keyword) {
