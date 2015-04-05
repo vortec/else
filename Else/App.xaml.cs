@@ -34,10 +34,10 @@ namespace Else
             // register singletons
             builder.RegisterType<LauncherWindow>().SingleInstance();
 
-            builder.RegisterType<Engine>().SingleInstance().As<IStartable>().AsSelf();
+            builder.RegisterType<Paths>().SingleInstance().AsSelf();
+            builder.RegisterType<Engine>().SingleInstance();
             builder.RegisterType<ThemeManager>().SingleInstance();
             builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
-            builder.RegisterType<Paths>().SingleInstance();
             builder.RegisterType<AppCommands>().SingleInstance();
             builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
             builder.RegisterType<PluginManager>().SingleInstance();
@@ -46,6 +46,7 @@ namespace Else
             // instances
             builder.RegisterType<Theme>();
             builder.RegisterType<SettingsWindow>();
+            builder.RegisterType<PluginAssemblyWrapper>();
 
             // register ViewModels
             builder.RegisterType<SettingsWindowViewModel>();
@@ -57,14 +58,6 @@ namespace Else
 
 
             builder.RegisterInstance(this).As<App>().ExternallyOwned();
-
-            // automatically detect and register plugins
-            var assembly = Assembly.GetExecutingAssembly();
-
-            // register plugins
-            builder.RegisterAssemblyTypes(assembly)
-                .Where(t => t.BaseType == typeof (Plugin))
-                .As<Plugin>();
 
             // build container
             Container = builder.Build();
@@ -89,10 +82,10 @@ namespace Else
                 try {
                     paths.Setup();
                 }
-                catch (FileNotFoundException notFoundE) {
+                catch (FileNotFoundException notFound) {
                     // paths not found (e.g. %appdata%\Else could not be found)
                     // fatal error
-                    Debug.Fail(notFoundE.Message);
+                    Debug.Fail(notFound.Message);
                     Current.Shutdown();
                 }
 
@@ -105,6 +98,9 @@ namespace Else
                 themeManager.ScanForThemes(paths.GetAppPath("Themes"), false);
                 themeManager.ScanForThemes(paths.GetUserPath("Themes"), true);
                 themeManager.ApplyThemeFromSettings();
+
+                var pluginManager = scope.Resolve<PluginManager>();
+                pluginManager.Load();
 
                 // create LauncherWindow (we need a window to register Hotkey stuff)
                 var launcherWindow = scope.Resolve<LauncherWindow>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using Else.Core;
+using Else.Extensibility;
 using Else.Views;
 
 namespace Else.Services
@@ -7,7 +8,7 @@ namespace Else.Services
     /// <summary>
     /// Helpful methods for plugins to invoke.  Avoids dependancy injection in the plugins.
     /// </summary>
-    public class AppCommands
+    public class AppCommands : IAppCommands
     {
         
         private readonly LauncherWindow _launcherWindow;
@@ -50,4 +51,5 @@ namespace Else.Services
             _engine.Value.RequestUpdate();
         }
     }
+    
 }

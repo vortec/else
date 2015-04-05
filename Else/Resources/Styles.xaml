@@ -28,7 +28,7 @@
     <!--Core styles now, these cannot be overriden by theme, but they reference theme elements above)-->
     
     <!-- Default Element Styles -->
-    <Style TargetType="Button">
+    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="Padding" Value="10 3"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>

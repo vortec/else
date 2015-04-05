@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
+using Autofac;
 
 namespace Else.Services
 {
@@ -21,6 +22,11 @@ namespace Else.Services
         /// Our app data directory
         /// </summary>
         public string AppDataDirectory;
+
+        /// <summary>
+        /// We were able to find paths
+        /// </summary>
+        public bool PathsOk;
 
         public void Setup()
         {
@@ -44,10 +50,9 @@ namespace Else.Services
             // create UserData directories if they do not exist
             CreateUserDataDirectories();
 
-            Debug.Print("App Data Directory = {0}", AppDataDirectory);
-            Debug.Print("User Data Directory = {0}", UserDataDirectory);
-            
+            PathsOk = true;
         }
+
         /// <summary>
         /// Ensures the user directory and sub directories exist, otherwise creates them
         /// </summary>
