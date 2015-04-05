@@ -59,9 +59,6 @@ namespace Else.ViewModels
                     }
                 }
             }
-            if (e.Key == Key.K) {
-                e.Handled = true;
-            }
             ResultsListViewModel?.PreviewKeyDown.Execute(e);
         }
 
