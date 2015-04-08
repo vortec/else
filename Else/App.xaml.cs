@@ -100,7 +100,7 @@ namespace Else
                 themeManager.ApplyThemeFromSettings();
 
                 var pluginManager = scope.Resolve<PluginManager>();
-                pluginManager.Load();
+                pluginManager.DiscoverPlugins();
 
                 // create LauncherWindow (we need a window to register Hotkey stuff)
                 var launcherWindow = scope.Resolve<LauncherWindow>();
