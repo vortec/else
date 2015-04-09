@@ -27,7 +27,7 @@ namespace Else.Plugin.Web
                 .Query(Query);
         }
 
-        private List<Result> Query(Query query, CancellationToken cancelToken)
+        private List<Result> Query(Query query, ITokenSource cancelToken)
         {
             if (query.KeywordComplete && query.HasArguments) {
                 // check the cache for a matching result
@@ -41,7 +41,7 @@ namespace Else.Plugin.Web
                         var results = cachedSuggestions.Select(suggestion => new Result
                         {
                             Title = suggestion,
-                            Icon = _icon,
+//                            Icon = _icon,
                             SubTitle = "Search google for " + suggestion,
                             Launch = query1 =>
                             {
@@ -56,19 +56,19 @@ namespace Else.Plugin.Web
                         new Result
                         {
                             Title = "No search suggestions found.",
-                            Icon = _icon
+//                            Icon = _icon
                         }
                     };
                 }
 
                 // Cache miss, begin the background query to fill the cache
-                var x = GetSuggestionsAsync(query.Arguments, cancelToken);
+                var x = GetSuggestionsAsync(query.Arguments, cancelToken.Token);
                 return new List<Result>
                 {
                     new Result
                     {
                         Title = "Retrieving search suggestions...",
-                        Icon = _icon
+//                        Icon = _icon
                     }
                 };
             }
@@ -79,7 +79,7 @@ namespace Else.Plugin.Web
                 {
                     Title = "Search Google",
                     SubTitle = "Search Google with Suggestions",
-                    Icon = _icon,
+//                    Icon = _icon,
                     Launch = query1 => AppCommands.RewriteQuery(Keyword + ' ')
                 }
             };

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Else.Extensibility;
 
 namespace Else.Helpers
 {
@@ -12,15 +13,17 @@ namespace Else.Helpers
         public static bool IsWindowOpen<T>(string name = "") where T : Window
         {
             return string.IsNullOrEmpty(name)
-               ? Application.Current.Windows.OfType<T>().Any()
-               : Application.Current.Windows.OfType<T>().Any(w => w.Name.Equals(name));
+                ? Application.Current.Windows.OfType<T>().Any()
+                : Application.Current.Windows.OfType<T>().Any(w => w.Name.Equals(name));
         }
-        public static Window GetWindow<T>(string name="") where T : Window
+
+        public static Window GetWindow<T>(string name = "") where T : Window
         {
             var window = Application.Current.Windows.OfType<T>().FirstOrDefault(w => w.Name.Equals(name));
             return window;
         }
-        public static bool FocusWindow<T>(string name="") where T : Window
+
+        public static bool FocusWindow<T>(string name = "") where T : Window
         {
             var window = GetWindow<T>(name);
             if (window != null) {
@@ -29,6 +32,7 @@ namespace Else.Helpers
             }
             return false;
         }
+
         /// <summary>
         /// Finds a Child of a given item in the visual tree. 
         /// </summary>
@@ -40,17 +44,17 @@ namespace Else.Helpers
         /// a null parent is being returned.</returns>
         /// <remarks><see cref="http://stackoverflow.com/a/1759923"/></remarks>
         public static T FindChild<T>(DependencyObject parent, string childName) where T : DependencyObject
-        {    
+        {
             // Confirm parent and childName are valid. 
             if (parent == null) return null;
 
             T foundChild = null;
 
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++) {
+            var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < childrenCount; i++) {
                 var child = VisualTreeHelper.GetChild(parent, i);
                 // If the child is not of the request child type child
-                T childType = child as T;
+                var childType = child as T;
                 if (childType == null) {
                     // recursively drill down the tree
                     foundChild = FindChild<T>(child, childName);
@@ -63,29 +67,30 @@ namespace Else.Helpers
                     // If the child's name is set for search
                     if (frameworkElement != null && frameworkElement.Name == childName) {
                         // if the child's name is of the request name
-                        foundChild = (T)child;
+                        foundChild = (T) child;
                         break;
                     }
                 }
                 else {
                     // child element found.
-                    foundChild = (T)child;
+                    foundChild = (T) child;
                     break;
                 }
             }
 
             return foundChild;
         }
-        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj, string childName=null) where T : DependencyObject
+
+        public static IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj, string childName = null) where T : DependencyObject
         {
             if (depObj != null) {
                 for (var i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++) {
                     var child = VisualTreeHelper.GetChild(depObj, i);
-                    var name = (string)child.GetValue(FrameworkElement.NameProperty);
+                    var name = (string) child.GetValue(FrameworkElement.NameProperty);
 
                     if (child is T) {
                         if (string.IsNullOrEmpty(childName) || name == childName) {
-                            yield return (T)child;
+                            yield return (T) child;
                         }
                     }
 
@@ -95,6 +100,7 @@ namespace Else.Helpers
                 }
             }
         }
+
         public static UIElement FindChildByTypeName(DependencyObject parent, string typeName)
         {
             // Confirm parent and childName are valid. 
@@ -102,12 +108,12 @@ namespace Else.Helpers
 
             UIElement foundChild = null;
 
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++) {
+            var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < childrenCount; i++) {
                 var child = VisualTreeHelper.GetChild(parent, i);
 
                 // If the child is not of the request child type child
-                UIElement childElement = child as UIElement;
+                var childElement = child as UIElement;
                 if (childElement != null && childElement.GetType().Name == typeName) {
                     foundChild = childElement;
                 }
@@ -130,9 +136,36 @@ namespace Else.Helpers
         /// <returns></returns>
         public static Lazy<BitmapSource> LoadImageFromResources(string path)
         {
-            return new Lazy<BitmapSource>(() => {
+            return new Lazy<BitmapSource>(() =>
+            {
                 var uri = new Uri("pack://application:,,,/Else;component/Resources/" + path);
                 return new BitmapImage(uri);
+            });
+        }
+
+        public static Lazy<BitmapSource> LoadImageFromPath(string uri)
+        {
+            const string iconScheme = "GetFileIcon://";
+
+            return new Lazy<BitmapSource>(() =>
+            {
+                if (string.IsNullOrEmpty(uri)) {
+                    // return blank image
+                    var image = BitmapSource.Create(2, 2, 32, 32, PixelFormats.Indexed1, new BitmapPalette(new List<Color> {Colors.Transparent}),
+                        new byte[] {0, 0, 0, 0}, 1);
+                    return image;
+                }
+                if (uri.StartsWith(iconScheme)) {
+                    var iconpath = uri.Substring(iconScheme.Length);
+                    return IconTools.GetBitmapForFile(iconpath).Value;
+                }
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.UriSource = new Uri(uri, UriKind.RelativeOrAbsolute);
+                bi.CreateOptions = BitmapCreateOptions.DelayCreation;
+                bi.CacheOption = BitmapCacheOption.Default;
+                bi.EndInit();
+                return bi;
             });
         }
     }

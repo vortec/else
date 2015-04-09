@@ -41,8 +41,7 @@ namespace Else.Plugin.FileSystem
                                     }
                                 };
                                 // attempt to get icon
-                                result.Icon = IconTools.GetBitmapForFile(f.ItemPathDisplay);
-
+                                result.Icon = "GetFileIcon://" + f.ItemPathDisplay;
                                 results.Add(result);
                             }
                             return results;

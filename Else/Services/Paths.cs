@@ -45,27 +45,21 @@ namespace Else.Services
             if (!Directory.Exists(AppDataDirectory)) {
                 throw new FileNotFoundException(string.Format("Failed to find App Data directory (expected: {0})", AppDataDirectory));
             }
-            
-            // create UserData directories if they do not exist
-            CreateUserDataDirectories();
+
+            // create default user directories (more to check that we can create them)
+            GetUserPath("Plugins");
+            GetUserPath("Themes");
 
             PathsOk = true;
         }
 
-        /// <summary>
-        /// Ensures the user directory and sub directories exist, otherwise creates them
-        /// </summary>
-        private void CreateUserDataDirectories()
+        public string GetUserPath(string path="")
         {
-            Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Plugins"));
-            Directory.CreateDirectory(Path.Combine(UserDataDirectory, "Themes"));
+            path = Path.Combine(UserDataDirectory, path);
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            return path;
         }
-
-        public string GetUserPath(string path)
-        {
-            return Path.Combine(UserDataDirectory, path);
-        }
-        public string GetAppPath(string path)
+        public string GetAppPath(string path="")
         {
             return Path.Combine(AppDataDirectory, path);
         }

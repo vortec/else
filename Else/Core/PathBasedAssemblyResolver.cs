@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Else.Core
 {
@@ -15,7 +11,6 @@ namespace Else.Core
 
         public Assembly Resolve(object sender, ResolveEventArgs args)
         {
-            Debug.Print("HERE");
             var name = new AssemblyName(args.Name);
             foreach (var path in Paths) {
                 var dllPath = Path.Combine(path, string.Format("{0}.dll", name.Name));

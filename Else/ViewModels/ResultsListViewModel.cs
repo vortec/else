@@ -45,8 +45,8 @@ namespace Else.ViewModels
             if (!Items.Any()) return;
 
             if (e.Key == Key.Enter || e.Key == Key.Return) {
-                var launch = Items[SelectedIndex].Launch;
-                launch?.Invoke(_engine.Query);
+                var item = Items[SelectedIndex];
+                item.LaunchDelegateWrapper?.Invoke(_engine.Query);
             }
             else {
                 if (e.Key == Key.Up) {

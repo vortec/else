@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Else.Extensibility
 {
-    public abstract class Plugin
+    public abstract class Plugin : MarshalByRefObject
     {
+        public string RootDir;
         public IAppCommands AppCommands;
         public List<BaseProvider> Providers = new List<BaseProvider>();
 
@@ -33,6 +36,11 @@ namespace Else.Extensibility
             var builder = new ResultProviderBuilder();
             Providers.Add(builder);
             return builder;
+        }
+
+        public string GetPath(string filename)
+        {
+            return Path.Combine(RootDir, filename);
         }
     }
 }

@@ -63,6 +63,9 @@ namespace Else.Extensibility
         [DllImport("Shell32.dll")]
         public extern static int ExtractIconEx(string libName, int iconIndex, IntPtr[] largeIcon, IntPtr[] smallIcon, uint nIcons);
 
+        [DllImport("user32.dll", SetLastError=true)]
+        static extern bool DestroyIcon(IntPtr hIcon);
+
         /// <summary>
         /// Contains information about a file object.
         /// </summary>
@@ -113,6 +116,8 @@ namespace Else.Extensibility
                     // convert the Icon to a BitmapImage
                     var bitmapSource = Imaging.CreateBitmapSourceFromHIcon(icon.Handle, new Int32Rect(0, 0, icon.Width, icon.Height), BitmapSizeOptions.FromEmptyOptions());
                     bitmapSource.Freeze();
+                    // release icon
+                    DestroyIcon(icon.Handle);
                     return bitmapSource;
                 }
                 catch {

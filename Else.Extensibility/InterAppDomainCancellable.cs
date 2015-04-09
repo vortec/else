@@ -10,26 +10,23 @@ namespace Else.Extensibility
 
     public class InterAppDomainCancellable : MarshalByRefObject, ITokenSource, IDisposable
     {
-        private readonly CancellationTokenSource cts;
+        private readonly CancellationTokenSource _cts;
 
         public InterAppDomainCancellable()
         {
-            cts = new CancellationTokenSource();
+            _cts = new CancellationTokenSource();
         }
 
         public void Dispose()
         {
-            cts.Dispose();
+            _cts.Dispose();
         }
 
         public void Cancel()
         {
-            cts.Cancel();
+            _cts.Cancel();
         }
 
-        CancellationToken ITokenSource.Token
-        {
-            get { return cts.Token; }
-        }
+        CancellationToken ITokenSource.Token => _cts.Token;
     }
 }

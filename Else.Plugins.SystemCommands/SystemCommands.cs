@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
-using Else.Extensibility;
+using Else.Plugins.SystemCommands;
 
-namespace Else.Plugins.SystemCommands
+namespace Else.Plugin.SystemCommands
 {
-    public class SystemCommands : Plugin
+    public class SystemCommands : Extensibility.Plugin
     {
         public override void Setup()
         {

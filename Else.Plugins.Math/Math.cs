@@ -55,7 +55,7 @@ namespace Else.Plugin.Math
                             SubTitle = "Please enter a valid expression"
                         };
                     }
-                    result.Icon = _icon;
+//                    result.Icon = _icon;
                     var results = new List<Result> {result};
                     return results;
                 });

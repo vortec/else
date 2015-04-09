@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Media.Imaging;
 
 namespace Else.Extensibility
 {
@@ -11,7 +10,7 @@ namespace Else.Extensibility
     {
         private readonly IAppCommands _appCommands;
         protected bool _fallback;
-        protected Lazy<BitmapSource> _icon;
+        protected string _icon;
         protected string _keyword;
         protected Action<Query> _launch;
         protected bool _requiresArguments;

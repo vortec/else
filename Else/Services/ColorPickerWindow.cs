@@ -15,9 +15,9 @@ namespace Else.Services
             _window = new Views.Controls.ColorPicker
             {
                 Title = title,
-                Owner = owner
+                Owner = owner,
+                Picker = {InitialColor = initialColor}
             };
-            _window.Picker.InitialColor = initialColor;
             // bind to color change event
             _window.Picker.SelectedColorChanged += (sender, args) =>
             {

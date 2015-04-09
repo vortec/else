@@ -12,7 +12,8 @@ namespace Else.Views.Controls
     public partial class ResultsList
     {
         private VirtualizingPanel _virtualizingPanel;
-
+        // lock object for synchronization (http://stackoverflow.com/a/16367902)
+        
         public ResultsList()
         {
             InitializeComponent();
