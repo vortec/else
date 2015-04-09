@@ -19,7 +19,7 @@ namespace Else.Core
         /// <summary>
         ///  lock for synchronization of ResultsList
         /// </summary>
-        private static readonly object _syncLock = new object();
+        private static readonly object SyncLock = new object();
 
         private readonly PluginManager _pluginManager;
 
@@ -47,7 +47,7 @@ namespace Else.Core
         {
             _pluginManager = pluginManager;
 
-            BindingOperations.EnableCollectionSynchronization(ResultsList, _syncLock);
+            BindingOperations.EnableCollectionSynchronization(ResultsList, SyncLock);
         }
 
         /// <summary>

@@ -103,7 +103,6 @@ namespace Else.Extensibility
         /// </summary>
         /// <param name="path">The path to the file or directory.</param>
         /// <param name="size">The icon size.</param>
-        /// <returns>Lazy<BitmapSource>, which will load the icon from disk when accessed.</returns>
         public static Lazy<BitmapSource> GetBitmapForFile(string path, ShellIconSize size=ShellIconSize.LargeIcon)
         {
             return new Lazy<BitmapSource>(() => {

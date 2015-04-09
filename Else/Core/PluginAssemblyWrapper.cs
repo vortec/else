@@ -7,34 +7,33 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
+using System.Runtime.Serialization;
 using Else.Extensibility;
 using Else.Services;
 
 namespace Else.Core
 {
     /// <summary>
-    /// Represents a plugin assembly.
+    /// Load a plugin assembly and manage the remote instance.
     /// </summary>
     public class PluginAssemblyWrapper
     {
-        private readonly PluginManager _manager;
+        
         private readonly Paths _paths;
-        private AppDomain _appDomain;
-        private string _guid;
-        public List<Plugin> Loaded = new List<Plugin>();
         private readonly ClientSponsor _sponsor = new ClientSponsor();
+        private AppDomain _appDomain;
+        public List<Plugin> Loaded = new List<Plugin>();
+        private PathBasedAssemblyResolver _assemblyResolver;
 
-        public PluginAssemblyWrapper(PluginManager manager, Paths paths)
+        public PluginAssemblyWrapper(Paths paths)
         {
-            _manager = manager;
             _paths = paths;
         }
 
         public void LoadAssembly(string path)
         {
-            Debug.Print("LoadAssembly ({0})", path);
-
-            var assemblyResolver = new PathBasedAssemblyResolver
+            // custom assembly resolver for dependancies
+            _assemblyResolver = new PathBasedAssemblyResolver
             {
                 Paths = new List<string>
                 {
@@ -42,47 +41,60 @@ namespace Else.Core
                     _paths.GetAppPath()
                 }
             };
-            AppDomain.CurrentDomain.AssemblyResolve += assemblyResolver.Resolve;
+            AppDomain.CurrentDomain.AssemblyResolve += _assemblyResolver.Resolve;
 
             // load the assembly
             var assembly = Assembly.LoadFrom(path);
 
-            // create appdomain for this assembly
+            // create appdomain to contain the plugin
             var appDomainSetup = new AppDomainSetup
             {
                 CachePath = _paths.GetUserPath("PluginCache"),
                 ShadowCopyFiles = "true",
-                ShadowCopyDirectories = Path.GetDirectoryName(path),
-//                ApplicationBase = Path.GetDirectoryName(path)
+                ShadowCopyDirectories = Path.GetDirectoryName(path)
             };
-            Debug.Print("ApplicationBase = {0}", Path.GetDirectoryName(path));
             _appDomain = AppDomain.CreateDomain(string.Format("plugin_{0}", GetType().Name), AppDomain.CurrentDomain.Evidence, appDomainSetup);
 
-            
-            _appDomain.AssemblyResolve += assemblyResolver.Resolve;
+            // add custom resolver
+            _appDomain.AssemblyResolve += _assemblyResolver.Resolve;
 
             // discover any types that derive from the base Plugin type
             var plugins = assembly.GetTypes().Where(x => x.BaseType == typeof (Plugin)).ToList();
             if (!plugins.Any()) {
-                throw new Exception("No Plugin types found.");
+                throw new PluginLoadException("No Plugin types found");
             }
             // get the guid
-            var attribute = (GuidAttribute) assembly.GetCustomAttributes(typeof (GuidAttribute)).First();
-            _guid = attribute.Value;
+            // var attribute = (GuidAttribute) assembly.GetCustomAttributes(typeof (GuidAttribute)).First();
 
-
+            // instantiate any plugins
             foreach (var p in plugins) {
-                // instantiate any plugins
                 try {
                     var instance = _appDomain.CreateInstanceFromAndUnwrap(path, p.FullName) as Plugin;
                     if (instance != null) {
                         Loaded.Add(instance);
                     }
                     // setup lifetime sponsor (prevent the remote object from being disconnected)
-                    ILease lease = (ILease)RemotingServices.GetLifetimeService(instance);
+                    var lease = (ILease) RemotingServices.GetLifetimeService(instance);
                     lease.Register(_sponsor);
                 }
+                catch (Exception e) {
+                    Debug.Print("Failed to register plugin {0} - {1}", p.FullName, e);
+                }
             }
+            if (!Loaded.Any()) {
+                throw new PluginLoadException("No Plugin types found");
+            }
+        }
+
+        /// <summary>
+        /// Failed to load any plugins from the assembly.
+        /// </summary>
+        public class PluginLoadException : Exception
+        {
+            public PluginLoadException() {}
+            public PluginLoadException(string message) : base(message) {}
+            public PluginLoadException(string message, Exception inner) : base(message, inner) {}
+            protected PluginLoadException(SerializationInfo info, StreamingContext context) : base(info, context) {}
         }
     }
 }

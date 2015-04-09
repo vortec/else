@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using Else.Plugins.SystemCommands;
 
 namespace Else.Plugin.SystemCommands
 {

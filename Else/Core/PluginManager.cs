@@ -27,6 +27,9 @@ namespace Else.Core
             _paths = paths;
         }
 
+        /// <summary>
+        /// Scan for plugins and try to load them.
+        /// </summary>
         public void DiscoverPlugins()
         {
             var directory = _paths.GetAppPath("Plugins");
@@ -34,23 +37,10 @@ namespace Else.Core
             foreach (var subdir in Directory.EnumerateDirectories(directory)) {
                 LoadPluginFromDirectory(subdir);
             }
-
-//            foreach (var path in Directory.EnumerateFiles(directory).Where(s => s.EndsWith(".dll"))) {
-//                try {
-//                    var assemblyWrapper = _pluginAssemblyWrapperFactory();
-//                    assemblyWrapper.LoadAssembly(path);
-//                    foreach (var plugin in assemblyWrapper.Loaded) {
-//                        LoadPluginFromDirectory(plugin);
-//                    }
-//                }
-//                catch {
-//                    Debug.Print("failed to load assembly: {0}", path);
-//                }
-//            }
         }
 
         /// <summary>
-        /// Loads the plugin.
+        /// Loads a plugin from its directory.
         /// </summary>
         /// <param name="pluginDirectory">The plugin directory (e.g. %appdata%\Else\Plugin\FileSystem.</param>
         private void LoadPluginFromDirectory(string pluginDirectory)
@@ -66,10 +56,15 @@ namespace Else.Core
                     if (Path.GetExtension(file) == ".dll") {
                         // e.g. "FileSystem.dll"
                         var assemblyWrapper = _pluginAssemblyWrapperFactory();
-                        assemblyWrapper.LoadAssembly(file);
-                        foreach (var plugin in assemblyWrapper.Loaded) {
-                            plugin.RootDir = pluginDirectory;
-                            InitializePlugin(plugin);
+                        try {
+                            assemblyWrapper.LoadAssembly(file);
+                            foreach (var plugin in assemblyWrapper.Loaded) {
+                                plugin.RootDir = pluginDirectory;
+                                InitializePlugin(plugin);
+                            }
+                        }
+                        catch (PluginAssemblyWrapper.PluginLoadException e) {
+                            Debug.Print("Failed to load plugins from assembly '{0}' - {1}", file, e.Message);
                         }
                     }
                 }

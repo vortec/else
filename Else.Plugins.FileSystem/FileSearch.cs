@@ -38,10 +38,10 @@ namespace Else.Plugin.FileSystem
                                     {
                                         AppCommands.HideWindow();
                                         Process.Start(f.ItemUrl);
-                                    }
+                                    },
+                                    Icon = "GetFileIcon://" + f.ItemPathDisplay
                                 };
                                 // attempt to get icon
-                                result.Icon = "GetFileIcon://" + f.ItemPathDisplay;
                                 results.Add(result);
                             }
                             return results;
