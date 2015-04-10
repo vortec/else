@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Autofac.Features.Indexed;
 using Else.Extensibility;
 using Else.Services;
 
@@ -14,15 +15,15 @@ namespace Else.Core
     {
         private readonly Lazy<AppCommands> _appCommands;
         private readonly Paths _paths;
-        private readonly Func<PluginAssemblyWrapper> _pluginAssemblyWrapperFactory;
+        private readonly IIndex<string, Func<BasePluginWrapper>> _pluginWrapperFunc;
         public readonly List<Plugin> Plugins = new List<Plugin>();
 
         public PluginManager(
-            Func<PluginAssemblyWrapper> pluginAssemblyWrapperFactory,
+            IIndex<string, Func<BasePluginWrapper>> pluginWrapperFunc,
             Lazy<AppCommands> appCommands,
             Paths paths)
         {
-            _pluginAssemblyWrapperFactory = pluginAssemblyWrapperFactory;
+            _pluginWrapperFunc = pluginWrapperFunc;
             _appCommands = appCommands;
             _paths = paths;
         }
@@ -32,10 +33,16 @@ namespace Else.Core
         /// </summary>
         public void DiscoverPlugins()
         {
-            var directory = _paths.GetAppPath("Plugins");
+            var sources = new[]
+            {
+                _paths.GetAppPath("Plugins"),
+                _paths.GetUserPath("Plugins")
+            };
 
-            foreach (var subdir in Directory.EnumerateDirectories(directory)) {
-                LoadPluginFromDirectory(subdir);
+            foreach (var sourceDirectory in sources) {
+                foreach (var subdir in Directory.EnumerateDirectories(sourceDirectory)) {
+                    LoadPluginFromDirectory(subdir);
+                }
             }
         }
 
@@ -51,20 +58,18 @@ namespace Else.Core
             foreach (var file in Directory.EnumerateFiles(pluginDirectory)) {
                 if (Path.GetFileNameWithoutExtension(file) == pluginName) {
                     // e.g. "FileSystem.ext"
-                    // todo: this is where we need to detect the type of the plugin file (e.g. c#, python, lua, php), and instantiate the correct plugin handler class
-                    // currently we only care about c# .dll plugins.
-                    if (Path.GetExtension(file) == ".dll") {
-                        // e.g. "FileSystem.dll"
-                        var assemblyWrapper = _pluginAssemblyWrapperFactory();
-                        try {
-                            assemblyWrapper.LoadAssembly(file);
-                            foreach (var plugin in assemblyWrapper.Loaded) {
-                                plugin.RootDir = pluginDirectory;
-                                InitializePlugin(plugin);
-                            }
-                        }
-                        catch (PluginAssemblyWrapper.PluginLoadException e) {
-                            Debug.Print("Failed to load plugins from assembly '{0}' - {1}", file, e.Message);
+                    var extension = Path.GetExtension(file);
+                    // get the wrapper type for the extension (e.g. .py gets PythonPluginWrapper)
+                    Func<BasePluginWrapper> wrapperFactory;
+                    if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory)) {
+                        // load the plugin via the wrapper
+                        var wrapper = _pluginWrapperFunc[extension]();
+                        wrapper.Load(file);
+                        // iterate newly created plugin instances and initialize them
+                        foreach (var plugin in wrapper.Loaded) {
+                            // set plugin directory
+                            plugin.RootDir = pluginDirectory;
+                            InitializePlugin(plugin);
                         }
                     }
                 }
@@ -80,7 +85,7 @@ namespace Else.Core
             plugin.AppCommands = _appCommands.Value;
             plugin.Setup();
             Plugins.Add(plugin);
-            Debug.Print("Loaded Plugin: {0}", plugin.GetType().Name);
+            Debug.Print("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
         }
     }
 }

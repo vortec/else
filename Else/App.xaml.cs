@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using Autofac;
 using Else.Core;
+using Else.Extensibility;
 using Else.Helpers;
 using Else.Model;
 using Else.Services;
@@ -38,15 +39,20 @@ namespace Else
             builder.RegisterType<Engine>().SingleInstance();
             builder.RegisterType<ThemeManager>().SingleInstance();
             builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
-            builder.RegisterType<AppCommands>().SingleInstance();
+            builder.RegisterType<AppCommands>().AsSelf().As<IAppCommands>().SingleInstance();
             builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
             builder.RegisterType<PluginManager>().SingleInstance();
+
+            // plugin wrappers
+            builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
+            builder.RegisterType<AssemblyPluginWrapper>().Keyed<BasePluginWrapper>(".dll");
+
 
 
             // instances
             builder.RegisterType<Theme>();
             builder.RegisterType<SettingsWindow>();
-            builder.RegisterType<PluginAssemblyWrapper>();
+            builder.RegisterType<AssemblyPluginWrapper>();
 
             // register ViewModels
             builder.RegisterType<SettingsWindowViewModel>();
