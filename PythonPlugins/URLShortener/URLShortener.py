@@ -1,15 +1,13 @@
 import time
 import clr
 import bitly_api
+import pdb
 
-clr.AddReferenceToFileAndPath("c:\\users\\james\\repos\\else\\build\\debug\\Else.Extensibility.dll")  # yes i will fix this nasty shit
+#clr.AddReferenceToFileAndPath("c:\\users\\james\\repos\\else\\build\\debug\\Else.Extensibility.dll")  # yes i will fix this nasty shit
 from Else.Extensibility import Plugin, Query
 
 clr.AddReference('System.Windows.Forms')
 from System.Windows.Forms import Clipboard
-
-
-
 
 class URLShortener(Plugin):
     def Setup(self):
@@ -26,5 +24,6 @@ class URLShortener(Plugin):
     # use bitly url shortening service..
     def shorten(self, url):
         bitly = bitly_api.Connection(access_token="0a862e797f9cd03f5d2ba1a9a6a85a3d691e23d1")
+        pdb.set_trace()
         return bitly.shorten(url)
         
