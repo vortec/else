@@ -43,7 +43,12 @@ namespace Else.Extensibility
                         arguments = query.Raw;
                     }
                     var argSub = string.IsNullOrEmpty(arguments) ? "..." : arguments;
-                    result.Title = result.Title.Replace("{arguments}", argSub);
+                    if (!string.IsNullOrEmpty(result.Title)) {
+                        result.Title = result.Title.Replace("{arguments}", argSub);
+                    }
+                    if (!string.IsNullOrEmpty(result.SubTitle)) {
+                        result.SubTitle = result.SubTitle.Replace("{arguments}", argSub);
+                    }
                 }
 
                 results.Add(result);

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using Else.Extensibility;
 using IronPython.Hosting;
 using IronPython.Runtime.Operations;
@@ -18,6 +19,11 @@ namespace Else.Core
         public override void Load(string path)
         {
             var engine = Python.CreateEngine();
+            
+            var paths = engine.GetSearchPaths();
+            paths.Add(Path.GetDirectoryName(path));
+            paths.Add(@"C:\Program Files (x86)\IronPython 2.7\Lib");
+            engine.SetSearchPaths(paths);
             var scope = engine.CreateScope();
             var source = engine.CreateScriptSourceFromFile(path);
             var compiled = source.Compile();

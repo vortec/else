@@ -6,7 +6,6 @@ from Else.Extensibility import Plugin, Query
 # simple python plugin that provides 1 command, the command prints "GO PYTHON GO!"
 class TestPlugin(Plugin):
 	def Setup(self):
-		print "PYTHON SETUP"
 		self.AddCommand("testpython2").Title("Test Python Command").Launch(self.launchCommand)
 		
 		

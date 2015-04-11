@@ -71,6 +71,8 @@ namespace Else.Core
                             plugin.RootDir = pluginDirectory;
                             InitializePlugin(plugin);
                         }
+                        // we found a plugin, so we exit this loop
+                        break;
                     }
                 }
             }
