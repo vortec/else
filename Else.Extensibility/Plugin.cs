@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using NLog;
+using NLog.Common;
 
 namespace Else.Extensibility
 {
@@ -30,6 +32,11 @@ namespace Else.Extensibility
         /// Providers available for querying (these are the objects that respond to a query with results)
         /// </summary>
         public List<BaseProvider> Providers = new List<BaseProvider>();
+
+        /// <summary>
+        /// The logger
+        /// </summary>
+        public RemoteLogger Logger;
 
         /// <summary>
         /// Plugin setup

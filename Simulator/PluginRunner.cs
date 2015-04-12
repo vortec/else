@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Autofac;
 using Else;
 using Else.Core;
 using Else.Services;
 using Else.Views;
+using NLog;
 
 namespace Simulator
 {
@@ -15,6 +17,7 @@ namespace Simulator
     public class PluginRunner
     {
         private App _app;
+        private Logger _logger;
 
         /// <summary>
         /// Starts the Else application in a seperate thread.
@@ -37,10 +40,12 @@ namespace Simulator
         /// <param name="path">The plugin path.</param>
         public void Run(SimulatorOptions options)
         {
+            _logger = LogManager.GetLogger("Simulator");
             if (!Directory.Exists(options.PluginDirectory)) {
-                Console.Error.WriteLine("Error: Directory does not exist [{0}]", options.PluginDirectory);
+                _logger.Fatal("Directory does not exist [{0}]", options.PluginDirectory);
                 return;
             }
+
             // start main Else app
             StartApp((sender, args) =>
             {
@@ -50,9 +55,21 @@ namespace Simulator
                         // attempt to load the plugin
                         var pluginManager = scope.Resolve<PluginManager>();
                         pluginManager.LoadPluginFromDirectory(options.PluginDirectory);
+                        
+                        // check if any plugins were successfully loaded
+                        if (!pluginManager.Plugins.Any()) {
+                            // failure
+                            _logger.Fatal("No plugins found"); 
+                            _app.Shutdown();
+                            return;
+
+                        }
+                        // display the launcher window
                         var launcherWindow = scope.Resolve<LauncherWindow>();
                         var appCommands = scope.Resolve<AppCommands>();
                         launcherWindow.ShowWindow();
+
+                        // if a query was provided via the commandline, use it
                         if (!string.IsNullOrEmpty(options.Query)) {
                             appCommands.RewriteQuery(options.Query);
                         }

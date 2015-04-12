@@ -40,7 +40,6 @@ namespace Simulator
                 // we cannot mark PluginDirectory option as Required=True, so we manually check here and show help if it is missing.
                 if (string.IsNullOrWhiteSpace(options.PluginDirectory)) {
                     Console.Write(options.GetUsage());
-
                 }
                 else {
                     // all seems good, execute the PluginRunner
@@ -56,8 +55,8 @@ namespace Simulator
 
             var consoleTarget = new ColoredConsoleTarget();
             config.AddTarget("console", consoleTarget);
-
             consoleTarget.Layout = @"${message}";
+            consoleTarget.UseDefaultRowHighlightingRules = true;
 
             var rule1 = new LoggingRule("*", LogLevel.Debug, consoleTarget);
             config.LoggingRules.Add(rule1);

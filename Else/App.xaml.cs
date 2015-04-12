@@ -77,18 +77,19 @@ namespace Else
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // create logger
+            _logger = LogManager.GetLogger("app");
+            
             // quit the app if we could not create the mutex, another instance is already running
             if (!CreateMutex()) {
+                _logger.Fatal("Refusing to start, another instance is already running");
                 Current.Shutdown();
                 return;
             }
 
             base.OnStartup(e);
             InitializeComponent();
-
-            // create logger
-            _logger = LogManager.GetLogger("app");
-
+            
             // setup dependancies
             SetupAutoFac();
 

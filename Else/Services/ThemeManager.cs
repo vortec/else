@@ -129,7 +129,7 @@ namespace Else.Services
             var theme = Themes.First(t => t.GUID == guid);
             ApplyTheme(theme);
             SaveSettings();
-            _logger.Info("Applied Theme (GUID={0} Name={1})", theme.GUID, theme.Name);
+            _logger.Debug("Applied Theme (GUID={0} Name={1})", theme.GUID, theme.Name);
         }
 
         /// <summary>

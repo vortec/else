@@ -1,7 +1,8 @@
 import time
 import clr
 import bitly_api
-
+#import pdb
+#pdb.set_trace()
 #clr.AddReferenceToFileAndPath("c:\\users\\james\\repos\\else\\build\\debug\\Else.Extensibility.dll")  # yes i will fix this nasty shit
 from Else.Extensibility import Plugin, Query
 
@@ -22,7 +23,11 @@ class URLShortener(Plugin):
 
     # use bitly url shortening service..
     def shorten(self, url):
+        raise Exception("BLAH BLAH BLAH")
         bitly = bitly_api.Connection(access_token="0a862e797f9cd03f5d2ba1a9a6a85a3d691e23d1")
-        
+        #self.Logger.Error("Error, something went wrong, omg.")
+        #self.Logger.Warn("this is just a warning")
+        #self.Logger.Debug("Standard Debug message..")
+        #self.Logger.Info("this is informational message")
         return bitly.shorten(url)
         

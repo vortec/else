@@ -5,6 +5,7 @@ using Autofac.Extras.NLog;
 using Autofac.Features.Indexed;
 using Else.Extensibility;
 using Else.Services;
+using NLog;
 
 namespace Else.Core
 {
@@ -88,6 +89,7 @@ namespace Else.Core
         private void InitializePlugin(Plugin plugin)
         {
             plugin.AppCommands = _appCommands.Value;
+            plugin.Logger = new Extensibility.RemoteLogger(plugin.Name);
             plugin.Setup();
             Plugins.Add(plugin);
             _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);

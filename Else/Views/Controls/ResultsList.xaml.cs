@@ -7,12 +7,11 @@ using Else.ViewModels;
 namespace Else.Views.Controls
 {
     /// <summary>
-    /// Provides ItemsControl functionality, with additional support for up+down key handling, and launching Result.
+    /// Provides ItemsControl functionality, with additional support for up+down key handling
     /// </summary>
     public partial class ResultsList
     {
         private VirtualizingPanel _virtualizingPanel;
-        // lock object for synchronization (http://stackoverflow.com/a/16367902)
         
         public ResultsList()
         {
