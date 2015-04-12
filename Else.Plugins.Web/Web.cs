@@ -5,31 +5,33 @@ using Else.Extensibility;
 
 namespace Else.Plugin.Web
 {
-    class Web : Extensibility.Plugin
+    internal class Web : Extensibility.Plugin
     {
         /// <summary>
         /// Define search providers
         /// </summary>
-        private readonly List<SearchEngine> _searchProviders = new List<SearchEngine>
-        {
-            new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "google.png", true),
-            new SearchEngine("maps", "Search google maps for '{arguments}'", "http://google.co.uk/maps?q={0}", "google.png"),
-            new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "google.png"),
-            new SearchEngine("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "google.png"),
-            new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "google.png"),
-            new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "wiki.png", true)
-        };
+        private List<SearchEngine> _searchProviders;
 
         /// <summary>
         /// Plugin setup, creates commands for the registered 'search providers'.
         /// </summary>
         public override void Setup()
         {
+            _searchProviders = new List<SearchEngine>
+            {
+                new SearchEngine("google", "Search google for '{arguments}'", "http://google.co.uk/search?q={0}", "Resources\\google.png", true),
+                new SearchEngine("maps", "Search google maps for '{arguments}'", "http://google.co.uk/maps?q={0}", "Resources\\google.png"),
+                new SearchEngine("kat", "Search kickasstorrents for '{arguments}'", "http://kickass.to/usearch/{0}/", "Resources\\google.png"),
+                new SearchEngine("youtube", "Search youtube for '{arguments}'", "https://www.youtube.com/results?search_query={0}", "Resources\\google.png"),
+                new SearchEngine("images", "Search google images for '{arguments}'", "http://google.co.uk/search?tbm=isch&q={0}", "Resources\\google.png"),
+                new SearchEngine("wiki", "Search wikipedia for '{arguments}'", "https://en.wikipedia.org/wiki/Special:Search?search={0}", "Resources\\wiki.png", true)
+            };
             // convert searchProviders to Commands
             foreach (var p in _searchProviders) {
                 AddCommand(p.Keyword)
                     .Title(p.DisplayText)
-                    .Icon(Helper.LoadImageFromResources(p.IconName))
+                    .Icon(GetPath(p.IconName))
+                    //                    .Icon(Helper.LoadImageFromResources(p.IconName))
                     .Launch(query =>
                     {
                         var searchKeywords = query.Keyword.StartsWith(p.Keyword) ? query.Arguments : query.Raw;

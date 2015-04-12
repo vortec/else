@@ -10,26 +10,34 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Autofac;
+using Autofac.Extras.NLog;
 using Else.Core;
+using Else.Extensibility;
 using Else.Helpers;
 using Else.Model;
 using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
 using Else.Views;
+using NLog;
 
 namespace Else
 {
     public partial class App
     {
-        public static IContainer Container;
         private HwndSource _hwndSource;
         private Mutex _instanceMutex;
+        private Logger _logger;
         private NotifyIcon _trayIcon;
+        public IContainer Container;
+        public event EventHandler OnStartupComplete;
 
-        private void SetupIOC()
+        public void SetupAutoFac()
         {
             var builder = new ContainerBuilder();
+
+            // modules
+            builder.RegisterModule<NLogModule>();
 
             // register singletons
             builder.RegisterType<LauncherWindow>().SingleInstance();
@@ -38,15 +46,19 @@ namespace Else
             builder.RegisterType<Engine>().SingleInstance();
             builder.RegisterType<ThemeManager>().SingleInstance();
             builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
-            builder.RegisterType<AppCommands>().SingleInstance();
+            builder.RegisterType<AppCommands>().AsSelf().As<IAppCommands>().SingleInstance();
             builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
             builder.RegisterType<PluginManager>().SingleInstance();
 
+            // plugin wrappers
+            builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
+            builder.RegisterType<AssemblyPluginWrapper>().Keyed<BasePluginWrapper>(".dll");
+
 
             // instances
-            builder.RegisterType<Theme>();
+            builder.RegisterType<Theme>().UsingConstructor(typeof(ILogger));
             builder.RegisterType<SettingsWindow>();
-            builder.RegisterType<PluginAssemblyWrapper>();
+            builder.RegisterType<AssemblyPluginWrapper>();
 
             // register ViewModels
             builder.RegisterType<SettingsWindowViewModel>();
@@ -65,16 +77,21 @@ namespace Else
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            // create logger
+            _logger = LogManager.GetLogger("app");
+            
             // quit the app if we could not create the mutex, another instance is already running
             if (!CreateMutex()) {
+                _logger.Fatal("Refusing to start, another instance is already running");
                 Current.Shutdown();
                 return;
             }
 
             base.OnStartup(e);
             InitializeComponent();
-
-            SetupIOC();
+            
+            // setup dependancies
+            SetupAutoFac();
 
             using (var scope = Container.BeginLifetimeScope()) {
                 // ensure data directories exist
@@ -88,10 +105,10 @@ namespace Else
                     Debug.Fail(notFound.Message);
                     Current.Shutdown();
                 }
-
+                
                 // print user config path 
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-                Debug.Print("Local user config path: {0}", config.FilePath);
+                _logger.Info("Local user config path: {0}", config.FilePath);
 
                 // initialize themes and scan the disk for themes
                 var themeManager = scope.Resolve<ThemeManager>();
@@ -99,15 +116,18 @@ namespace Else
                 themeManager.ScanForThemes(paths.GetUserPath("Themes"), true);
                 themeManager.ApplyThemeFromSettings();
 
-                var pluginManager = scope.Resolve<PluginManager>();
-                pluginManager.DiscoverPlugins();
-
-                // create LauncherWindow (we need a window to register Hotkey stuff)
+                // create LauncherWindow (we create it now because we need its window handle to register hotkeys and create the tray icon)
                 var launcherWindow = scope.Resolve<LauncherWindow>();
-
                 SetupWndProc(launcherWindow);
-                SetupTrayIcon();
+
+
+                if (Assembly.GetExecutingAssembly() == Assembly.GetEntryAssembly()) {
+                    var pluginManager = scope.Resolve<PluginManager>();
+                    pluginManager.DiscoverPlugins();
+                    SetupTrayIcon();
+                }
             }
+            OnStartupComplete?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -171,7 +191,7 @@ namespace Else
             // show launcher on double click
             _trayIcon.DoubleClick += (sender, args) =>
             {
-                //LauncherWindow.ShowWindow();
+                //                LauncherWindow.ShowWindow();
             };
 
             // setup context menu

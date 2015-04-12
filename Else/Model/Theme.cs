@@ -4,12 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Autofac.Extras.NLog;
 using Else.Services;
 using Newtonsoft.Json;
 
 namespace Else.Model
 {
     public class Theme {
+        private readonly ILogger _logger;
         private readonly Func<Theme> _themeFactory;
         private readonly Paths _paths;
 
@@ -59,8 +61,14 @@ namespace Else.Model
             }
         }
 
-        public Theme(){
+        public Theme()
+        {
+            
+        }
 
+        public Theme(ILogger logger)
+        {
+            _logger = logger;
         }
 
         public Theme(Func<Theme> themeFactory, Paths paths)
@@ -93,10 +101,10 @@ namespace Else.Model
                 Dictionary<string, string> config = result.ToObject<Dictionary<string, string>>();
                 Load(config);
                 FilePath = path;
-                Debug.Print("Loaded theme: name={0} guid={1}", FilePath, GUID);
+                _logger.Trace("Loaded theme: name={0} guid={1}", FilePath, GUID);
             }
             catch (ParseException e) {
-                Debug.Print("failed to parse theme file: {0} ~ {1}", path, e.Message);
+                _logger.Warn("failed to parse theme file: {0} ~ {1}", path, e.Message);
                 throw;
             }
         }
@@ -132,7 +140,6 @@ namespace Else.Model
             var json = JsonConvert.SerializeObject(Config, Formatting.Indented);
             var path = exportPath ?? FilePath;
             File.WriteAllText(path, json);
-            Debug.Print("saved {0} bytes to {1}", FilePath, path);
         }
 
         /// <summary>

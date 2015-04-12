@@ -8,12 +8,10 @@ namespace Else.Services
     /// <summary>
     /// Helpful methods for plugins to invoke.  Avoids dependancy injection in the plugins.
     /// </summary>
-    public class AppCommands : IAppCommands
+    public class AppCommands : MarshalByRefObject, IAppCommands
     {
-        
-        private readonly LauncherWindow _launcherWindow;
         private readonly Lazy<Engine> _engine;
-
+        private readonly LauncherWindow _launcherWindow;
 
         public AppCommands(LauncherWindow launcherWindow, Lazy<Engine> engine)
         {
@@ -28,6 +26,7 @@ namespace Else.Services
         {
             _launcherWindow.ShowWindow();
         }
+
         /// <summary>
         /// Hides the launcher window.
         /// </summary>
@@ -35,14 +34,16 @@ namespace Else.Services
         {
             _launcherWindow.HideWindow();
         }
+
         /// <summary>
         /// Changes the text of the query input TextBox.
         /// </summary>
         /// <param name="query">The query.</param>
         public void RewriteQuery(string query)
         {
-            //_launcherWindow.RewriteQuery(query);
+            _launcherWindow.ViewModel.LauncherViewModel.RewriteQueryCommand?.Execute(query);
         }
+
         /// <summary>
         /// Requests that the Engine executes the last successful query again
         /// </summary>
@@ -50,6 +51,10 @@ namespace Else.Services
         {
             _engine.Value.RequestUpdate();
         }
+
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
     }
-    
 }

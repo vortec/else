@@ -10,7 +10,6 @@ namespace Else.Views.Controls
 
         public Launcher()
         {
-            // initialize ui elements
             InitializeComponent();
         }
 
@@ -18,7 +17,6 @@ namespace Else.Views.Controls
         {
             _viewModel = DataContext as LauncherViewModel;
             if (_viewModel != null) {
-//                QueryInput.PreviewKeyDown += (o, args) => { _viewModel.PreviewKeyDownCommand.Execute(args); };
                 _viewModel.RewriteQueryCommand = new RelayCommand(RewriteQuery);
             }
         }

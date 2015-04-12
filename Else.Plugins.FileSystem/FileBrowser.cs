@@ -60,7 +60,9 @@ namespace Else.Plugin.FileSystem
                                 if (ListDirectoriesFirst) {
                                     sorted = entries.OrderByDescending(e => e.IsDirectory).ThenBy(e => e.FileName);
                                 }
-                                sorted = entries.OrderBy(e => e.FileName);
+                                else {
+                                    sorted = entries.OrderBy(e => e.FileName);
+                                }
 
                                 foreach (var item in sorted) {
                                     results.Add(new Result
@@ -77,7 +79,7 @@ namespace Else.Plugin.FileSystem
                                                 Process.Start(item.Path);
                                             }
                                         },
-                                        Icon = IconTools.GetBitmapForFile(item.Path)
+                                        Icon = "GetFileIcon://" + item.Path
                                     });
                                 }
 

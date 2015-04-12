@@ -9,7 +9,8 @@ namespace Else.Views
 {
     public partial class LauncherWindow
     {
-        
+        public readonly LauncherWindowViewModel ViewModel;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
@@ -17,6 +18,7 @@ namespace Else.Views
         public LauncherWindow(LauncherWindowViewModel viewModel)
         {
             InitializeComponent();
+            ViewModel = viewModel;
             DataContext = viewModel;
         }
 

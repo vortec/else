@@ -1,11 +1,12 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Else.Extensibility
 {
     /// <summary>
     /// Parses of the query string into more useful fields.
     /// </summary>
-    public class Query
+    public class Query : MarshalByRefObject
     {
         /// <summary>
         /// Everything after the Keyword

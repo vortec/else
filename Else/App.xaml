@@ -11,15 +11,17 @@
 
 			<!--Default style-->
 			<ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes/aero2.normalcolor.xaml" />
+				<ResourceDictionary
+					Source="pack://application:,,,/PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes/aero2.normalcolor.xaml" />
 
-                <ResourceDictionary Source="Resources/Generic.xaml" />
-                <ResourceDictionary Source="Resources/Styles.xaml" />
+				<ResourceDictionary Source="Resources/Generic.xaml" />
+				<ResourceDictionary Source="Resources/Styles.xaml" />
 			</ResourceDictionary.MergedDictionaries>
 
 			<!--Converters-->
 			<converter:EqualsConverter x:Key="EqualsConverter2" />
 			<converter:LastItemInContainerConverter x:Key="LastItemInContainerConverter" />
+            <converter:UriToImageConverter x:Key="UriToImageConverter" />
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>

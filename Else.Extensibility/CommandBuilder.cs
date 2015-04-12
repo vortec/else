@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Media.Imaging;
 
 namespace Else.Extensibility
 {
@@ -51,7 +50,7 @@ namespace Else.Extensibility
         /// </summary>
         /// <param name="icon"></param>
         /// <returns></returns>
-        public CommandBuilder Icon(Lazy<BitmapSource> icon)
+        public CommandBuilder Icon(string icon)
         {
             _icon = icon;
             return this;

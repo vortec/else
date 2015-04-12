@@ -25,19 +25,25 @@ namespace Else.DataTypes
                 CollectionChanged(this, notification);
             }
         }
+
         public new void Add(Result value)
         {
             value.Index = Count;
             base.Add(value);
         }
+
+        private static readonly object SyncLock = new object();
+
         public void AddRange(List<Result> collection)
         {
-            if (collection != null) {
-                var i = 0;
-                foreach (var r in collection) {
-                    r.Index = Count + i++;
+            lock (SyncLock) {
+                if (collection != null && collection.Count > 0) {
+                    var i = 0;
+                    foreach (var r in collection) {
+                        r.Index = Count + i++;
+                    }
+                    base.AddRange(collection);
                 }
-                base.AddRange(collection);
             }
         }
     }

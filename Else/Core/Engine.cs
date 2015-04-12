@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
+using Autofac.Extras.NLog;
 using Else.DataTypes;
 using Else.Extensibility;
 
@@ -16,9 +18,12 @@ namespace Else.Core
     public class Engine
     {
         /// <summary>
-        /// Activated plugins
+        ///  lock for synchronization of ResultsList
         /// </summary>
-        public List<Plugin> Plugins => _pluginManager.Plugins;
+        private static readonly object SyncLock = new object();
+
+        private readonly ILogger _logger;
+        private readonly PluginManager _pluginManager;
 
         /// <summary>
         /// The cancellation token of the currently executing query.
@@ -40,12 +45,18 @@ namespace Else.Core
         /// </summary>
         public BindingResultsList ResultsList = new BindingResultsList();
 
-        private readonly PluginManager _pluginManager;
-
-        public Engine(PluginManager pluginManager)
+        public Engine(ILogger logger, PluginManager pluginManager)
         {
+            _logger = logger;
             _pluginManager = pluginManager;
+
+            BindingOperations.EnableCollectionSynchronization(ResultsList, SyncLock);
         }
+
+        /// <summary>
+        /// Activated plugins
+        /// </summary>
+        public List<Plugin> Plugins => _pluginManager.Plugins;
 
         /// <summary>
         /// A plugin has requested that we execute the query again (perhaps it has different results for us)
@@ -90,7 +101,6 @@ namespace Else.Core
                 await Task.Factory.StartNew(async () => { await ExecuteQuery(query); }, _cancelTokenSource.Token);
             }
             catch (TaskCanceledException) {
-                Debug.Print("caught exception");
             }
         }
 
@@ -106,17 +116,17 @@ namespace Else.Core
             var fallback = new List<BaseProvider>();
             foreach (var p in Plugins) {
                 foreach (var c in p.Providers) {
-                    if (c.IsInterestedFunc != null) {
-                        var x = c.IsInterestedFunc(Query);
-                        if (x == ProviderInterest.Exclusive) {
+                    var interest = c.ExecuteIsInterestedFunc(Query);
+                    switch (interest) {
+                        case ProviderInterest.Exclusive:
                             exclusive.Add(c);
-                        }
-                        else if (x == ProviderInterest.Shared) {
-                            shared.Add(c);
-                        }
-                        else if (x == ProviderInterest.Fallback) {
+                            break;
+                        case ProviderInterest.Fallback:
                             fallback.Add(c);
-                        }
+                            break;
+                        case ProviderInterest.Shared:
+                            shared.Add(c);
+                            break;
                     }
                 }
             }
@@ -160,11 +170,19 @@ namespace Else.Core
             foreach (var provider in providers) {
                 if (provider != null) {
                     try {
-                        var task = Task.Factory.StartNew(() => provider.QueryFunc(Query, _cancelTokenSource.Token), _cancelTokenSource.Token);
+                        var task = Task.Factory.StartNew(() =>
+                        {
+                            // get cancellation token source from other AppDomain
+                            var appDomainCancelToken = provider.GetCancellable();
+                            // connect the 2 cancellation token sources
+                            _cancelTokenSource.Token.Register(() => appDomainCancelToken.Cancel());
+
+                            return provider.QueryFunc(Query, appDomainCancelToken);
+                        }, _cancelTokenSource.Token);
                         tasks.Add(task);
                     }
                     catch {
-                        Debug.Print("Failed to start provider");
+                        _logger.Error("provider failure");
                     }
                 }
             }
@@ -182,8 +200,8 @@ namespace Else.Core
                     // rethrow this exception.
                     throw;
                 }
-                catch (Exception) {
-                    Debug.Print("provider failure :|");
+                catch (Exception e) {
+                    _logger.Error(e.ToString());
                 }
             }
             return results;

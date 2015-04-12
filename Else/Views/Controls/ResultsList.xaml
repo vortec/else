@@ -12,7 +12,7 @@
 
 	<ItemsControl
 		x:Name="ItemsControl"
-		ItemsSource="{Binding Items}"
+        ItemsSource="{Binding Items}"
 		Loaded="ItemsControl_OnLoaded"
 		VirtualizingStackPanel.IsVirtualizing="True"
 		VirtualizingStackPanel.VirtualizationMode="Recycling"
@@ -49,7 +49,7 @@
 							<ColumnDefinition Width="50" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<Image x:Name="icon" Source="{Binding Icon.Value}" Width="32" Height="32" Grid.Column="0" />
+                        <Image x:Name="icon" Source="{Binding Path=Icon, Converter={StaticResource UriToImageConverter}}" Width="32" Height="32" Grid.Column="0" />
 						<StackPanel x:Name="TitleContainer" Grid.Column="1">
 							<TextBlock x:Name="Title" Style="{DynamicResource ResultTitle}" Text="{Binding Title}" FontSize="17" Margin="0"
 							           TextTrimming="CharacterEllipsis" />

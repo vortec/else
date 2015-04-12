@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
 using Else.Extensibility;
 
 /*
@@ -34,6 +33,7 @@ namespace Else.Plugin.Programs
         /// </summary>
         public override void Setup()
         {
+
             // recursively scan certain directories and process any .lnk files (shortcuts to applications)
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.CommonStartMenu));
@@ -53,7 +53,7 @@ namespace Else.Plugin.Programs
                             results.Add(new Result
                             {
                                 Title = program.Label,
-                                Icon = program.Icon,
+                                Icon = "GetFileIcon://" + program.ExePath,
                                 SubTitle = program.ExePath,
                                 Launch = launchQuery =>
                                 {
@@ -96,7 +96,7 @@ namespace Else.Plugin.Programs
             {
                 ExePath = shortcut.TargetPath,
                 Label = Path.GetFileNameWithoutExtension(file.Name),
-                Icon = IconTools.GetBitmapForFile(shortcut.TargetPath)
+//                Icon = IconTools.GetBitmapForFile(shortcut.TargetPath)
             };
 
             // skip shortcuts that have no target, or the target exectuable does not exist
@@ -113,7 +113,7 @@ namespace Else.Plugin.Programs
         private class ProgramInfo
         {
             public string ExePath;
-            public Lazy<BitmapSource> Icon;
+//            public Lazy<BitmapSource> Icon;
             public string Label;
         }
     }

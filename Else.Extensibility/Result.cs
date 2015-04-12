@@ -1,18 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Media.Imaging;
 
 namespace Else.Extensibility
 {
     /// <summary>
+    /// A class for wrapping the launch delegate.
+    /// <remarks>Because delegates cannot be serialized, we wrap the delegate in a class that provides remoting functionality.</remarks>
+    /// </summary>
+    public class LaunchDelegateWrapper : MarshalByRefObject
+    {
+        private readonly Action<Query> _func;
+
+        public LaunchDelegateWrapper(Action<Query> func)
+        {
+            _func = func;
+        }
+
+        public void Invoke(Query query)
+        {
+            _func?.Invoke(query);
+        }
+    }
+
+    /// <summary>
     /// Model for the items displayed as results in the launcher.
     /// </summary>
+    [Serializable]
     public class Result
     {
         /// <summary>
-        /// anonymous method that is invoked when the result is selected
+        /// Path to the image that will be displayed in the launcher
         /// </summary>
-        public Action<Query> Launch;
+        public string Icon { get; set; }
+
+        /// <summary>
+        /// a wrapper around the launch delegate.
+        /// </summary>
+        public LaunchDelegateWrapper LaunchDelegateWrapper;
+
+        /// <summary>
+        /// The anonymous method that will be executed when this result is executed (enter key)
+        /// </summary>
+        public Action<Query> Launch
+        {
+            // we wrap the delegate in a class, so that it can be remoted.
+            set { LaunchDelegateWrapper = new LaunchDelegateWrapper(value); }
+        }
 
         /// <summary>
         /// Main text
@@ -28,11 +61,6 @@ namespace Else.Extensibility
         /// internal
         /// </summary>
         public int Index { get; set; }
-
-        /// <summary>
-        /// Image displayed in the launcher (lazy loaded)
-        /// </summary>
-        public Lazy<BitmapSource> Icon { get; set; }
 
         /// <summary>
         /// Whether this result has a subtitle

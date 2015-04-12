@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace Else.Extensibility
 {
@@ -12,7 +11,7 @@ namespace Else.Extensibility
             return this;
         }
 
-        public ResultProviderBuilder Query(Func<Query, CancellationToken, List<Result>> queryFunc)
+        public ResultProviderBuilder Query(Func<Query, ITokenSource, List<Result>> queryFunc)
         {
             QueryFunc = queryFunc;
             return this;

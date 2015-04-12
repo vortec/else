@@ -57,19 +57,19 @@ namespace Else.ViewModels
             new Result
             {
                 Title = "Google Chrome",
-                Icon = IconTools.GetBitmapForFile(@"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"),
+                Icon = @"GetFileIcon://C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
                 SubTitle = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
             },
             new Result
             {
                 Title = "Notepad",
-                Icon = IconTools.GetBitmapForFile(@"C:\Windows\system32\notepad.exe"),
+                Icon = @"GetFileIcon://C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
                 SubTitle = @"C:\Windows\system32\notepad.exe"
             },
             new Result
             {
                 Title = "Internet Explorer",
-                Icon = IconTools.GetBitmapForFile(@"C:\Program Files\Internet Explorer\iexplore.exe"),
+                Icon = @"GetFileIcon://C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
                 SubTitle = @"C:\Program Files\Internet Explorer\iexplore.exe"
             }
         };

@@ -1,3 +1,4 @@
+
 namespace Else.Extensibility
 {
     public class ResultProvider : BaseProvider
