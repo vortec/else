@@ -50,6 +50,10 @@ namespace Else.Services
         /// </summary>
         public void ScanForThemes(string directory, bool isEditable)
         {
+            if (!Directory.Exists(directory)) {
+                Debug.Print("Couldn't scan for themes in {0}, directory does not exist");
+                return;
+            }
             foreach (var path in Directory.EnumerateFiles(directory).Where(s => s.EndsWith(".json"))) {
                 if (File.Exists(path)) {
                     var theme = _themeFactory();

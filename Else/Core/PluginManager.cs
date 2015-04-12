@@ -50,7 +50,7 @@ namespace Else.Core
         /// Loads a plugin from its directory.
         /// </summary>
         /// <param name="pluginDirectory">The plugin directory (e.g. %appdata%\Else\Plugin\FileSystem.</param>
-        private void LoadPluginFromDirectory(string pluginDirectory)
+        public void LoadPluginFromDirectory(string pluginDirectory)
         {
             // e.g. "FileSystem"
             var pluginName = new DirectoryInfo(pluginDirectory).Name;

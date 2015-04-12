@@ -23,12 +23,14 @@ namespace Else
 {
     public partial class App
     {
-        public static IContainer Container;
+        public IContainer Container;
         private HwndSource _hwndSource;
         private Mutex _instanceMutex;
         private NotifyIcon _trayIcon;
 
-        private void SetupIOC()
+        public event EventHandler OnStartupComplete;
+
+        public void SetupIOC()
         {
             var builder = new ContainerBuilder();
 
@@ -105,15 +107,17 @@ namespace Else
                 themeManager.ScanForThemes(paths.GetUserPath("Themes"), true);
                 themeManager.ApplyThemeFromSettings();
 
-                var pluginManager = scope.Resolve<PluginManager>();
-                pluginManager.DiscoverPlugins();
-
-                // create LauncherWindow (we need a window to register Hotkey stuff)
+                // create LauncherWindow (we create it now because we need its window handle to register hotkeys and create the tray icon)
                 var launcherWindow = scope.Resolve<LauncherWindow>();
-
                 SetupWndProc(launcherWindow);
-                SetupTrayIcon();
+
+                if (Assembly.GetExecutingAssembly() == Assembly.GetCallingAssembly()) {
+                    var pluginManager = scope.Resolve<PluginManager>();
+                    pluginManager.DiscoverPlugins();
+                    SetupTrayIcon();
+                }
             }
+            OnStartupComplete?.Invoke(this, EventArgs.Empty);
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -242,5 +246,7 @@ namespace Else
             }
             return IntPtr.Zero;
         }
+
+        
     }
 }

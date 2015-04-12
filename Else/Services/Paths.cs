@@ -39,7 +39,8 @@ namespace Else.Services
                 AppDataDirectory = AppDomain.CurrentDomain.BaseDirectory;
             }
 
-            UserDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Assembly.GetEntryAssembly().GetName().Name);
+            //UserDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Assembly.GetEntryAssembly().GetName().Name);
+            UserDataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Assembly.GetExecutingAssembly().GetName().Name);
 
             // ensure we have AppDataDirectory
             if (!Directory.Exists(AppDataDirectory)) {
