@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using Autofac.Extras.NLog;
 using Autofac.Features.Indexed;
 using Else.Extensibility;
 using Else.Services;
@@ -14,6 +14,7 @@ namespace Else.Core
     public class PluginManager
     {
         private readonly Lazy<AppCommands> _appCommands;
+        private readonly ILogger _logger;
         private readonly Paths _paths;
         private readonly IIndex<string, Func<BasePluginWrapper>> _pluginWrapperFunc;
         public readonly List<Plugin> Plugins = new List<Plugin>();
@@ -21,11 +22,13 @@ namespace Else.Core
         public PluginManager(
             IIndex<string, Func<BasePluginWrapper>> pluginWrapperFunc,
             Lazy<AppCommands> appCommands,
-            Paths paths)
+            Paths paths,
+            ILogger logger)
         {
             _pluginWrapperFunc = pluginWrapperFunc;
             _appCommands = appCommands;
             _paths = paths;
+            _logger = logger;
         }
 
         /// <summary>
@@ -87,7 +90,7 @@ namespace Else.Core
             plugin.AppCommands = _appCommands.Value;
             plugin.Setup();
             Plugins.Add(plugin);
-            Debug.Print("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
+            _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
         }
     }
 }

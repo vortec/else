@@ -1,6 +1,9 @@
 ﻿using System;
 using CommandLine;
 using CommandLine.Text;
+using NLog;
+using NLog.Config;
+using NLog.Targets;
 
 namespace Simulator
 {
@@ -9,7 +12,7 @@ namespace Simulator
         [ValueOption(0)]
         public string PluginDirectory { get; set; }
 
-        [Option("query", HelpText = "The query to initially execute in the launcher window.", DefaultValue = "")]
+        [Option("query", HelpText = "The query to initially execute in the launcher window.")]
         public string Query { get; set; }
 
         [HelpOption]
@@ -31,6 +34,7 @@ namespace Simulator
         [STAThread]
         private static void Main(string[] args)
         {
+            SetupNlog();
             var options = new SimulatorOptions();
             if (Parser.Default.ParseArguments(args, options)) {
                 // we cannot mark PluginDirectory option as Required=True, so we manually check here and show help if it is missing.
@@ -44,6 +48,21 @@ namespace Simulator
                     pluginRunner.Run(options);
                 }
             }
+        }
+
+        private static void SetupNlog()
+        {
+            var config = new LoggingConfiguration();
+
+            var consoleTarget = new ColoredConsoleTarget();
+            config.AddTarget("console", consoleTarget);
+
+            consoleTarget.Layout = @"${message}";
+
+            var rule1 = new LoggingRule("*", LogLevel.Debug, consoleTarget);
+            config.LoggingRules.Add(rule1);
+
+            LogManager.Configuration = config;
         }
     }
 }

@@ -22,7 +22,6 @@ namespace Else.Views.Controls
             }
             set{
                 SetValue(ActiveThemeProperty, value);
-                Debug.Print("ActiveTheme = {0}", value);
             }
         }
         public static readonly DependencyProperty ActiveThemeProperty =

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
+using Autofac.Extras.NLog;
 using Else.Extensibility;
 using Else.Services;
 
@@ -16,13 +17,15 @@ namespace Else.Core
     /// </summary>
     public class AssemblyPluginWrapper : BasePluginWrapper
     {
+        private readonly ILogger _logger;
         private readonly Paths _paths;
         private readonly ClientSponsor _sponsor = new ClientSponsor();
         private AppDomain _appDomain;
         private PathBasedAssemblyResolver _assemblyResolver;
 
-        public AssemblyPluginWrapper(Paths paths)
+        public AssemblyPluginWrapper(ILogger logger, Paths paths)
         {
+            _logger = logger;
             _paths = paths;
         }
 
@@ -76,7 +79,7 @@ namespace Else.Core
                     }
                 }
                 catch (Exception e) {
-                    Debug.Print("Failed to register plugin {0} - {1}", p.FullName, e);
+                    _logger.Warn("Failed to initialize plugin {0} - {1}", p.FullName, e);
                 }
             }
             if (!Loaded.Any()) {

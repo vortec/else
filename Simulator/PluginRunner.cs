@@ -53,8 +53,10 @@ namespace Simulator
                         var launcherWindow = scope.Resolve<LauncherWindow>();
                         var appCommands = scope.Resolve<AppCommands>();
                         launcherWindow.ShowWindow();
-                        appCommands.RewriteQuery(options.Query);
-                        
+                        if (!string.IsNullOrEmpty(options.Query)) {
+                            appCommands.RewriteQuery(options.Query);
+                        }
+
                     }
                 });
             });

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Autofac;
+using Autofac.Extras.NLog;
 using Else.Core;
 using Else.Extensibility;
 using Else.Helpers;
@@ -18,21 +19,25 @@ using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
 using Else.Views;
+using NLog;
 
 namespace Else
 {
     public partial class App
     {
-        public IContainer Container;
         private HwndSource _hwndSource;
         private Mutex _instanceMutex;
+        private Logger _logger;
         private NotifyIcon _trayIcon;
-
+        public IContainer Container;
         public event EventHandler OnStartupComplete;
 
-        public void SetupIOC()
+        public void SetupAutoFac()
         {
             var builder = new ContainerBuilder();
+
+            // modules
+            builder.RegisterModule<NLogModule>();
 
             // register singletons
             builder.RegisterType<LauncherWindow>().SingleInstance();
@@ -50,9 +55,8 @@ namespace Else
             builder.RegisterType<AssemblyPluginWrapper>().Keyed<BasePluginWrapper>(".dll");
 
 
-
             // instances
-            builder.RegisterType<Theme>();
+            builder.RegisterType<Theme>().UsingConstructor(typeof(ILogger));
             builder.RegisterType<SettingsWindow>();
             builder.RegisterType<AssemblyPluginWrapper>();
 
@@ -82,7 +86,11 @@ namespace Else
             base.OnStartup(e);
             InitializeComponent();
 
-            SetupIOC();
+            // create logger
+            _logger = LogManager.GetLogger("app");
+
+            // setup dependancies
+            SetupAutoFac();
 
             using (var scope = Container.BeginLifetimeScope()) {
                 // ensure data directories exist
@@ -96,10 +104,10 @@ namespace Else
                     Debug.Fail(notFound.Message);
                     Current.Shutdown();
                 }
-
+                
                 // print user config path 
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-                Debug.Print("Local user config path: {0}", config.FilePath);
+                _logger.Info("Local user config path: {0}", config.FilePath);
 
                 // initialize themes and scan the disk for themes
                 var themeManager = scope.Resolve<ThemeManager>();
@@ -111,7 +119,8 @@ namespace Else
                 var launcherWindow = scope.Resolve<LauncherWindow>();
                 SetupWndProc(launcherWindow);
 
-                if (Assembly.GetExecutingAssembly() == Assembly.GetCallingAssembly()) {
+
+                if (Assembly.GetExecutingAssembly() == Assembly.GetEntryAssembly()) {
                     var pluginManager = scope.Resolve<PluginManager>();
                     pluginManager.DiscoverPlugins();
                     SetupTrayIcon();
@@ -181,7 +190,7 @@ namespace Else
             // show launcher on double click
             _trayIcon.DoubleClick += (sender, args) =>
             {
-                //LauncherWindow.ShowWindow();
+                //                LauncherWindow.ShowWindow();
             };
 
             // setup context menu
@@ -246,7 +255,5 @@ namespace Else
             }
             return IntPtr.Zero;
         }
-
-        
     }
 }

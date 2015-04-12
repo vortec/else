@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Autofac.Extras.NLog;
 using Else.Model;
 using Else.Properties;
 
@@ -35,13 +36,15 @@ namespace Else.Services
         /// </summary>
         public Theme ActiveTheme;
 
+        private readonly ILogger _logger;
         private readonly Func<Theme> _themeFactory;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
-        public ThemeManager(Func<Theme> themeFactory)
+        public ThemeManager(ILogger logger, Func<Theme> themeFactory)
         {
+            _logger = logger;
             _themeFactory = themeFactory;
         }
 
@@ -51,7 +54,7 @@ namespace Else.Services
         public void ScanForThemes(string directory, bool isEditable)
         {
             if (!Directory.Exists(directory)) {
-                Debug.Print("Couldn't scan for themes in {0}, directory does not exist");
+                _logger.Warn("Couldn't scan for themes in {0}, directory does not exist");
                 return;
             }
             foreach (var path in Directory.EnumerateFiles(directory).Where(s => s.EndsWith(".json"))) {
@@ -108,11 +111,11 @@ namespace Else.Services
                     if (Themes.Any()) {
                         ApplyTheme(Themes.First());
                         SaveSettings();
-                        Debug.Print("Failed to set default theme, so we set {0} instead.", Themes.First().Name);
+                        _logger.Warn("Failed to set default theme, so we set {0} instead.", Themes.First().Name);
                     }
                     else {
                         // otherwise run without a theme
-                        Debug.Print("No themes found at all");
+                        _logger.Warn("No themes found at all");
                     }
                 }
             }
@@ -126,7 +129,7 @@ namespace Else.Services
             var theme = Themes.First(t => t.GUID == guid);
             ApplyTheme(theme);
             SaveSettings();
-            Debug.Print("Applied Theme (GUID={0} Name={1})", theme.GUID, theme.Name);
+            _logger.Info("Applied Theme (GUID={0} Name={1})", theme.GUID, theme.Name);
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using Autofac.Extras.NLog;
 using Else.DataTypes;
 using Else.Extensibility;
 
@@ -21,6 +22,7 @@ namespace Else.Core
         /// </summary>
         private static readonly object SyncLock = new object();
 
+        private readonly ILogger _logger;
         private readonly PluginManager _pluginManager;
 
         /// <summary>
@@ -43,8 +45,9 @@ namespace Else.Core
         /// </summary>
         public BindingResultsList ResultsList = new BindingResultsList();
 
-        public Engine(PluginManager pluginManager)
+        public Engine(ILogger logger, PluginManager pluginManager)
         {
+            _logger = logger;
             _pluginManager = pluginManager;
 
             BindingOperations.EnableCollectionSynchronization(ResultsList, SyncLock);
@@ -98,7 +101,6 @@ namespace Else.Core
                 await Task.Factory.StartNew(async () => { await ExecuteQuery(query); }, _cancelTokenSource.Token);
             }
             catch (TaskCanceledException) {
-                Debug.Print("caught exception");
             }
         }
 
@@ -180,7 +182,7 @@ namespace Else.Core
                         tasks.Add(task);
                     }
                     catch {
-                        Debug.Print("Failed to start provider");
+                        _logger.Error("provider failure");
                     }
                 }
             }
@@ -199,7 +201,7 @@ namespace Else.Core
                     throw;
                 }
                 catch (Exception e) {
-                    Debug.Print(e.ToString());
+                    _logger.Error(e.ToString());
                 }
             }
             return results;
