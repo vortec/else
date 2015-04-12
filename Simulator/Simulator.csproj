@@ -84,6 +84,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Else.Extensibility\Else.Extensibility.csproj">
+      <Project>{76AB3B71-AA48-4F3B-8CF5-025972D95D44}</Project>
+      <Name>Else.Extensibility</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Else\Else.csproj">
       <Project>{f6e71369-0ac1-4921-bae6-88bf451155bc}</Project>
       <Name>Else</Name>

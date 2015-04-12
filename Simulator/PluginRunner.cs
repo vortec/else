@@ -4,6 +4,7 @@ using System.Threading;
 using Autofac;
 using Else;
 using Else.Core;
+using Else.Services;
 using Else.Views;
 
 namespace Simulator
@@ -34,10 +35,10 @@ namespace Simulator
         /// Load the plugin and display the launcher window.
         /// </summary>
         /// <param name="path">The plugin path.</param>
-        public void Run(string path)
+        public void Run(SimulatorOptions options)
         {
-            if (!Directory.Exists(path)) {
-                Console.Error.WriteLine("Error: Directory does not exist [{0}]", path);
+            if (!Directory.Exists(options.PluginDirectory)) {
+                Console.Error.WriteLine("Error: Directory does not exist [{0}]", options.PluginDirectory);
                 return;
             }
             // start main Else app
@@ -48,9 +49,12 @@ namespace Simulator
                     using (var scope = _app.Container.BeginLifetimeScope()) {
                         // attempt to load the plugin
                         var pluginManager = scope.Resolve<PluginManager>();
-                        pluginManager.LoadPluginFromDirectory(path);
+                        pluginManager.LoadPluginFromDirectory(options.PluginDirectory);
                         var launcherWindow = scope.Resolve<LauncherWindow>();
+                        var appCommands = scope.Resolve<AppCommands>();
                         launcherWindow.ShowWindow();
+                        appCommands.RewriteQuery(options.Query);
+                        
                     }
                 });
             });
