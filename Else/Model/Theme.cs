@@ -66,15 +66,11 @@ namespace Else.Model
             
         }
 
-        public Theme(ILogger logger)
-        {
-            _logger = logger;
-        }
-
-        public Theme(Func<Theme> themeFactory, Paths paths)
+        public Theme(Func<Theme> themeFactory, Paths paths, ILogger logger)
         {
             _themeFactory = themeFactory;
             _paths = paths;
+            _logger = logger;
         }
 
         /// <summary>

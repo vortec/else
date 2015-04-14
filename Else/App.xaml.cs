@@ -56,7 +56,7 @@ namespace Else
 
 
             // instances
-            builder.RegisterType<Theme>().UsingConstructor(typeof(ILogger));
+            builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
             builder.RegisterType<SettingsWindow>();
             builder.RegisterType<AssemblyPluginWrapper>();
 
@@ -75,11 +75,11 @@ namespace Else
             Container = builder.Build();
         }
 
-        protected override void OnStartup(StartupEventArgs e)
+        private void OnStart(object sender, StartupEventArgs e)
         {
             // create logger
             _logger = LogManager.GetLogger("app");
-            
+
             // quit the app if we could not create the mutex, another instance is already running
             if (!CreateMutex()) {
                 _logger.Fatal("Refusing to start, another instance is already running");
@@ -87,9 +87,8 @@ namespace Else
                 return;
             }
 
-            base.OnStartup(e);
-            InitializeComponent();
-            
+            SetupWpfTheme();
+
             // setup dependancies
             SetupAutoFac();
 
@@ -105,7 +104,7 @@ namespace Else
                     Debug.Fail(notFound.Message);
                     Current.Shutdown();
                 }
-                
+
                 // print user config path 
                 var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
                 _logger.Info("Local user config path: {0}", config.FilePath);
@@ -128,6 +127,37 @@ namespace Else
                 }
             }
             OnStartupComplete?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void SetupWpfTheme()
+        {
+            var win8Version = new Version(6, 2, 9200, 0);
+
+            Resources.BeginInit();
+
+            // add specific styles per platform
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= win8Version) {
+                // its win8 or higher.
+                var theme =
+                    LoadComponent(new Uri(@"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml", UriKind.Relative))
+                        as ResourceDictionary;
+                Resources.MergedDictionaries.Insert(0, theme);
+                var win8Styles = LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as ResourceDictionary;
+                Resources.MergedDictionaries.Insert(1, win8Styles);
+            }
+            else {
+                // e.g. windows 7 or winxp
+                var theme =
+                    LoadComponent(new Uri(@"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
+                        UriKind.Relative)) as ResourceDictionary;
+                Resources.MergedDictionaries.Insert(0, theme);
+            }
+
+
+            var styles = LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
+            Resources.MergedDictionaries.Add(styles);
+
+            Resources.EndInit();
         }
 
         protected override void OnExit(ExitEventArgs e)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlTypes;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
@@ -47,9 +48,9 @@ namespace Else.Services
                 throw new FileNotFoundException(string.Format("Failed to find App Data directory (expected: {0})", AppDataDirectory));
             }
 
-            // create default user directories (more to check that we can create them)
-            GetUserPath("Plugins");
-            GetUserPath("Themes");
+            // create default user directories
+            Directory.CreateDirectory(GetUserPath("Plugins"));
+            Directory.CreateDirectory(GetUserPath("Themes"));
 
             PathsOk = true;
         }
@@ -57,7 +58,6 @@ namespace Else.Services
         public string GetUserPath(string path="")
         {
             path = Path.Combine(UserDataDirectory, path);
-            Directory.CreateDirectory(Path.GetDirectoryName(path));
             return path;
         }
         public string GetAppPath(string path="")
