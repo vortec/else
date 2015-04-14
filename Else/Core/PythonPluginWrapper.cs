@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using Autofac.Extras.NLog;
 using Else.Extensibility;
 using Else.Services;
@@ -35,8 +36,16 @@ namespace Else.Core
             // setup paths
             var paths = engine.GetSearchPaths();
             paths.Add(Path.GetDirectoryName(path));
-            // todo: we need to distribute this directory with the app
-            paths.Add(@"C:\Program Files (x86)\IronPython 2.7\Lib");
+
+            string libPath;
+            if (System.Diagnostics.Debugger.IsAttached) {
+                libPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName, "PythonLib");
+            }
+            else {
+                libPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "PythonLib");
+            }
+            MessageBox.Show(string.Format(@"libPath('{0}')", libPath));
+            paths.Add(libPath);
             engine.SetSearchPaths(paths);
 
             var scope = engine.CreateScope();
@@ -44,7 +53,9 @@ namespace Else.Core
             scope.ImportModule("clr");
             // import Else.Extensibility.dll automatically, it's expected to be in the app path.
             var dllPath = _paths.GetAppPath("Else.Extensibility.dll");
-            engine.Execute(string.Format(@"clr.AddReferenceToFileAndPath('{0}')", dllPath), scope);
+
+            MessageBox.Show(string.Format(@"clr.AddReferenceToFileAndPath('{0}')", dllPath));
+            engine.Execute(string.Format(@"clr.AddReferenceToFileAndPath(r'{0}')", dllPath), scope);
             
 
             // execute the plugin py script
