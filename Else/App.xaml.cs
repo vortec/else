@@ -7,8 +7,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
 using Autofac;
 using Autofac.Extras.NLog;
 using Else.Core;
@@ -26,7 +24,6 @@ namespace Else
 {
     public partial class App
     {
-        
         private Mutex _instanceMutex;
         private Logger _logger;
         private TrayIcon _trayIcon;
@@ -170,6 +167,7 @@ namespace Else
 
         protected override void OnExit(ExitEventArgs e)
         {
+            _trayIcon.Dispose();
             // release mutex
             _instanceMutex?.ReleaseMutex();
             base.OnExit(e);

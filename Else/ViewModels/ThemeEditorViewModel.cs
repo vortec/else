@@ -2,9 +2,9 @@
 using System.Windows.Input;
 using System.Windows.Media;
 using Else.DataTypes;
+using Else.Extensibility;
 using Else.Lib;
 using Else.Model;
-using Else.Extensibility;
 using Else.Services;
 using Else.Services.Interfaces;
 
@@ -45,6 +45,7 @@ namespace Else.ViewModels
             _colorPickerWindow = colorPickerWindow;
             SaveCommand = new RelayCommand(param => Save());
             RevertCommand = new RelayCommand(param => Revert());
+            UnloadedCommand = new RelayCommand(param => Unloaded());
         }
 
         public LauncherViewModel LauncherViewModel { get; set; }
@@ -76,6 +77,7 @@ namespace Else.ViewModels
 
         public ICommand SaveCommand { get; set; }
         public ICommand RevertCommand { get; set; }
+        public ICommand UnloadedCommand { get; set; }
 
         /// <summary>
         /// Gets a value indicating whether this <see cref="Theme"/> is editable.
@@ -95,6 +97,13 @@ namespace Else.ViewModels
         {
             get { return (bool) GetValue(HasChangedProperty); }
             set { SetValue(HasChangedProperty, value); }
+        }
+
+        private void Unloaded()
+        {
+            if (_themeManager.ActiveTheme != _originalTheme) {
+                _themeManager.ApplyTheme(_originalTheme);
+            }
         }
 
         /// <summary>

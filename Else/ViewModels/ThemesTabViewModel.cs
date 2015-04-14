@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Else.Lib;
 using Else.Model;
 using Else.Services;
@@ -33,6 +35,7 @@ namespace Else.ViewModels
             if (themeManager.ActiveTheme != null) {
                 SelectedItem = themeManager.ActiveTheme;
             }
+            
 
             // connect the commands to methods
             DuplicateCommand = new RelayCommand(param => Duplicate());
