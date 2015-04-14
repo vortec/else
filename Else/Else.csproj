@@ -76,6 +76,9 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Else.App</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
       <HintPath>..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
@@ -162,6 +165,7 @@
     <Compile Include="Lib\ImageCache.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
     <Compile Include="Lib\TrayIcon.cs" />
+    <Compile Include="Interop\Win32MessagePump.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\LauncherViewModel.cs" />
     <Compile Include="ViewModels\LauncherWindowViewModel.cs" />

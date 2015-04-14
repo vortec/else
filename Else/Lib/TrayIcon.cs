@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using Else.Helpers;
 using Else.Properties;
 using Else.Views;
+
 using Application = System.Windows.Application;
 
 namespace Else.Lib

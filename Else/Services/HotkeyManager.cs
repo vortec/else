@@ -63,7 +63,7 @@ namespace Else.Services
         /// <summary>
         /// Called when WM_HOTKEY is received by wndproc, triggers any registered hotkey callbacks.
         /// </summary>
-        public void HandlePress(KeyCombo combo)
+        public void HandleKeyCombo(KeyCombo combo)
         {
             // check if the hotkey has been registered
             if (_callbacks.ContainsKey(combo)) {

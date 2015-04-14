@@ -5,15 +5,15 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Autofac;
 using Autofac.Extras.NLog;
 using Else.Core;
 using Else.Extensibility;
-using Else.Helpers;
+using Else.Interop;
 using Else.Lib;
 using Else.Model;
 using Else.Services;
@@ -26,12 +26,12 @@ namespace Else
 {
     public partial class App
     {
-        private HwndSource _hwndSource;
+        
         private Mutex _instanceMutex;
         private Logger _logger;
+        private TrayIcon _trayIcon;
         public IContainer Container;
         public event EventHandler OnStartupComplete;
-        private TrayIcon _trayIcon;
 
         public void SetupAutoFac()
         {
@@ -50,6 +50,7 @@ namespace Else
             builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
             builder.RegisterType<PluginManager>().SingleInstance();
             builder.RegisterType<TrayIcon>().SingleInstance();
+            builder.RegisterType<Win32MessagePump>().SingleInstance();
 
             // plugin wrappers
             builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
@@ -76,10 +77,12 @@ namespace Else
             Container = builder.Build();
         }
 
-        private void OnStart(object sender, StartupEventArgs e)
+        private void OnStart(object sender, StartupEventArgs startupEventArgs)
         {
             // create logger
             _logger = LogManager.GetLogger("app");
+
+            SetupUnhandledExceptionHandlers();
 
             // quit the app if we could not create the mutex, another instance is already running
             if (!CreateMutex()) {
@@ -118,8 +121,10 @@ namespace Else
 
                 // create LauncherWindow (we create it now because we need its window handle to register hotkeys and create the tray icon)
                 var launcherWindow = scope.Resolve<LauncherWindow>();
-                SetupWndProc(launcherWindow);
 
+                // setup message pump
+                var messagePump = scope.Resolve<Win32MessagePump>();
+                messagePump.Setup(launcherWindow);
 
                 // only initialize plugins and trayicon if we are directly running the app
                 if (Assembly.GetExecutingAssembly() == Assembly.GetEntryAssembly()) {
@@ -176,7 +181,6 @@ namespace Else
         /// <returns>true if mutex creation was successful</returns>
         private bool CreateMutex()
         {
-            // get GUID
             var attribute =
                 (GuidAttribute) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (GuidAttribute), true)[0];
             var guid = attribute.Value;
@@ -191,52 +195,30 @@ namespace Else
             return true;
         }
 
-        /// <summary>
-        /// Setup wndproc handling so we can receive window messages (Win32 stuff)
-        /// </summary>
-        /// <exception cref="Exception">Failed to acquire window handle</exception>
-        public void SetupWndProc(Window window)
+        private void SetupUnhandledExceptionHandlers()
         {
-            var windowHelper = new WindowInteropHelper(window);
-            windowHelper.EnsureHandle();
-            _hwndSource = HwndSource.FromHwnd(windowHelper.Handle);
-            if (_hwndSource == null) {
-                throw new Exception("Failed to acquire window handle");
-            }
-            _hwndSource.AddHook(HandleMessages);
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+                OnUnhandledException("AppDomain.CurrentDomain.UnhandledException", e.ExceptionObject as Exception);
+
+            DispatcherUnhandledException += (s, e) =>
+                OnUnhandledException("Application.Current.DispatcherUnhandledException", e.Exception);
+
+            TaskScheduler.UnobservedTaskException += (s, e) =>
+                OnUnhandledException("TaskScheduler.UnobservedTaskException", e.Exception);
         }
 
-        /// <summary>
-        /// Handle win32 window message proc.
-        /// </summary>
-        private IntPtr HandleMessages(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        private void OnUnhandledException(string message, Exception exception)
         {
-            //Debug.Print("msg={0} wParam={1} lParam={2} handled={3}", msg, wParam, lParam, handled);
+            // log the exception
+            _logger.Fatal(message, exception);
 
-            // WM_HOTKEY (we relay this to HotkeyManager)
-            if (msg == 0x0312) {
-                // hotkey id, supplied upon registration
-                var id = (int) wParam;
+            // show messagebox to the user
+            var title = "An unhandled exception occurred: " + exception.Message;
+            var msg = string.Format("{0} Exception", Assembly.GetExecutingAssembly().GetName().Name);
+            MessageBox.Show(title, msg, MessageBoxButton.OK, MessageBoxImage.Error);
 
-                // convert lParam to int, and split into high+low
-                var lpInt = (int) lParam;
-                var low = lpInt & 0xFFFF;
-                var high = lpInt >> 16;
-
-                // get virtual key code from high
-                var key = KeyInterop.KeyFromVirtualKey(high);
-
-                // get modifier from low
-                var modifier = (Modifier) (low);
-
-                // relay to hotkey manager
-                using (var scope = Container.BeginLifetimeScope()) {
-                    var hotkeyManager = scope.Resolve<HotkeyManager>();
-                    var combo = new KeyCombo(modifier, key);
-                    hotkeyManager.HandlePress(combo);
-                }
-            }
-            return IntPtr.Zero;
+            // prevent .NET "application has stopped working.." window
+            Environment.Exit(1);
         }
     }
 }
