@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>Else</id>
+        <version>0.1</version>
+        <title>Else</title>
+        <authors>James</authors>
+        <projectUrl>http://otp.me.uk/~james/Else/</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Else Productivity Utility</description>
+        <summary>Else Productivity Utility</summary>
+    </metadata>
+    <files>
+        <file src="Build\Release\Else.exe" target="lib\net45\Else.exe" />
+        <file src="Build\Release\Else.exe.config" target="lib\net45\Else.exe.config" />
+        <file src="Build\Release\Simulator.exe" target="lib\net45\Simulator.exe" />
+        <file src="Build\Release\*.dll" target="lib\net45" />
+        <file src="PythonPlugins\**" target="lib\net45\Plugins" />
+        <file src="Build\Release\Plugins\**" target="lib\net45\Plugins" />
+        <file src="Build\Release\Themes\**" target="lib\net45\Themes" />
+        <file src="PythonLib\**" target="lib\net45\PythonLib" />
+    </files>
+</package>
