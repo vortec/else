@@ -14,6 +14,7 @@ using Autofac.Extras.NLog;
 using Else.Core;
 using Else.Extensibility;
 using Else.Helpers;
+using Else.Lib;
 using Else.Model;
 using Else.Services;
 using Else.Services.Interfaces;
@@ -28,9 +29,9 @@ namespace Else
         private HwndSource _hwndSource;
         private Mutex _instanceMutex;
         private Logger _logger;
-        private NotifyIcon _trayIcon;
         public IContainer Container;
         public event EventHandler OnStartupComplete;
+        private TrayIcon _trayIcon;
 
         public void SetupAutoFac()
         {
@@ -41,7 +42,6 @@ namespace Else
 
             // register singletons
             builder.RegisterType<LauncherWindow>().SingleInstance();
-
             builder.RegisterType<Paths>().SingleInstance().AsSelf();
             builder.RegisterType<Engine>().SingleInstance();
             builder.RegisterType<ThemeManager>().SingleInstance();
@@ -49,6 +49,7 @@ namespace Else
             builder.RegisterType<AppCommands>().AsSelf().As<IAppCommands>().SingleInstance();
             builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
             builder.RegisterType<PluginManager>().SingleInstance();
+            builder.RegisterType<TrayIcon>().SingleInstance();
 
             // plugin wrappers
             builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
@@ -120,10 +121,12 @@ namespace Else
                 SetupWndProc(launcherWindow);
 
 
+                // only initialize plugins and trayicon if we are directly running the app
                 if (Assembly.GetExecutingAssembly() == Assembly.GetEntryAssembly()) {
                     var pluginManager = scope.Resolve<PluginManager>();
                     pluginManager.DiscoverPlugins();
-                    SetupTrayIcon();
+                    _trayIcon = scope.Resolve<TrayIcon>();
+                    _trayIcon.Setup();
                 }
             }
             OnStartupComplete?.Invoke(this, EventArgs.Empty);
@@ -162,10 +165,6 @@ namespace Else
 
         protected override void OnExit(ExitEventArgs e)
         {
-            // ensure tray icon is hidden when the app closes (else it lingers in the tray incompetently)
-            if (_trayIcon != null) {
-                _trayIcon.Visible = false;
-            }
             // release mutex
             _instanceMutex?.ReleaseMutex();
             base.OnExit(e);
@@ -205,53 +204,6 @@ namespace Else
                 throw new Exception("Failed to acquire window handle");
             }
             _hwndSource.AddHook(HandleMessages);
-        }
-
-        /// <summary>
-        /// Setup tray icon.
-        /// </summary>
-        private void SetupTrayIcon()
-        {
-            _trayIcon = new NotifyIcon
-            {
-                Icon = Else.Properties.Resources.AppIcon,
-                Text = Assembly.GetExecutingAssembly().GetName().Name
-            };
-
-            // show launcher on double click
-            _trayIcon.DoubleClick += (sender, args) =>
-            {
-                //                LauncherWindow.ShowWindow();
-            };
-
-            // setup context menu
-            _trayIcon.ContextMenuStrip = new ContextMenuStrip();
-
-            // context menu item 'Exit'
-            var exit = new ToolStripMenuItem("Exit");
-            exit.Click += (sender, args) => { Current.Shutdown(); };
-
-            // context menu item 'Settings'
-            var settings = new ToolStripMenuItem("Settings");
-            settings.Click += (sender, args) =>
-            {
-                if (UI.IsWindowOpen<Window>("Settings")) {
-                    // focus window
-                    UI.FocusWindow<Window>("Settings");
-                }
-                else {
-                    // show window
-                    var window = Container.Resolve<SettingsWindow>();
-                    window.Show();
-                }
-            };
-
-            // add menu items to context menu
-            _trayIcon.ContextMenuStrip.Items.Add(settings);
-            _trayIcon.ContextMenuStrip.Items.Add(exit);
-
-            // show tray icon
-            _trayIcon.Visible = true;
         }
 
         /// <summary>
