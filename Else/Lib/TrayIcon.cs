@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using Else.Helpers;
@@ -9,16 +10,16 @@ using Application = System.Windows.Application;
 
 namespace Else.Lib
 {
-    public class TrayIcon
+    public class TrayIcon : IDisposable
     {
         private readonly LauncherWindow _launcherWindow;
-        private readonly SettingsWindow _settingsWindow;
+        private readonly Func<SettingsWindow> _settingsWindowFactory;
         private NotifyIcon _trayIcon;
 
-        public TrayIcon(LauncherWindow launcherWindow, SettingsWindow settingsWindow)
+        public TrayIcon(LauncherWindow launcherWindow, Func<SettingsWindow> settingsWindowFactory)
         {
             _launcherWindow = launcherWindow;
-            _settingsWindow = settingsWindow;
+            _settingsWindowFactory = settingsWindowFactory;
         }
 
         public void Setup()
@@ -49,7 +50,8 @@ namespace Else.Lib
                 }
                 else {
                     // show window
-                    _settingsWindow.Show();
+                    var window = _settingsWindowFactory();
+                    window.Show();
                 }
             };
 
@@ -59,6 +61,16 @@ namespace Else.Lib
 
             // show tray icon
             _trayIcon.Visible = true;
+        }
+
+
+        public void Dispose()
+        {
+            // ensure tray icon is removed (otherwise it just lingers in the tray after app exit)
+            if (_trayIcon != null) {
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            }
         }
     }
 }
