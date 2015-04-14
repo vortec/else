@@ -44,7 +44,6 @@ namespace Else.Core
             else {
                 libPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "PythonLib");
             }
-            MessageBox.Show(string.Format(@"libPath('{0}')", libPath));
             paths.Add(libPath);
             engine.SetSearchPaths(paths);
 
@@ -53,13 +52,10 @@ namespace Else.Core
             scope.ImportModule("clr");
             // import Else.Extensibility.dll automatically, it's expected to be in the app path.
             var dllPath = _paths.GetAppPath("Else.Extensibility.dll");
-
-            MessageBox.Show(string.Format(@"clr.AddReferenceToFileAndPath('{0}')", dllPath));
             engine.Execute(string.Format(@"clr.AddReferenceToFileAndPath(r'{0}')", dllPath), scope);
             
 
             // execute the plugin py script
-            
             var source = engine.CreateScriptSourceFromFile(path);
             var compiled = source.Compile();
             try {

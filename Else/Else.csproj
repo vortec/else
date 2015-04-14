@@ -161,6 +161,7 @@
     <Compile Include="Core\PythonPluginWrapper.cs" />
     <Compile Include="Lib\ImageCache.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
+    <Compile Include="Lib\TrayIcon.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="ViewModels\LauncherViewModel.cs" />
     <Compile Include="ViewModels\LauncherWindowViewModel.cs" />
