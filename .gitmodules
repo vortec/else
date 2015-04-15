@@ -1,0 +1,3 @@
+[submodule "Releases"]
+	path = Releases
+	url = git@bitbucket.org:james2/else-releases.git
