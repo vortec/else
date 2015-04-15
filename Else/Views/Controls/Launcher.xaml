@@ -1,69 +1,73 @@
 ﻿<UserControl
-    x:Class="Else.Views.Controls.Launcher"
-    x:Name="LauncherControl"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="clr-namespace:Else.Views.Controls"
-    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
-    xmlns:ei="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
-    xmlns:behaviours="clr-namespace:Else.Behaviours"
-    Height="350" Width="555"
-    UseLayoutRounding="True"
-    RenderOptions.ClearTypeHint="Enabled"
-    DataContext="{Binding LauncherViewModel}"
-    Loaded="Launcher_OnLoaded"
-    Background="Transparent">
+	x:Class="Else.Views.Controls.Launcher"
+	x:Name="LauncherControl"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:controls="clr-namespace:Else.Views.Controls"
+	xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+	xmlns:ei="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+	xmlns:behaviours="clr-namespace:Else.Behaviours"
+	Height="350" Width="555"
+	UseLayoutRounding="True"
+	DataContext="{Binding LauncherViewModel}"
+	Loaded="Launcher_OnLoaded"
+	Background="Transparent">
 
-<!--    When this UserControl visibilty has changed, trigger a command on the viewmodel-->
-    <i:Interaction.Triggers>
-        <ei:PropertyChangedTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=IsVisible}" >
-            <i:InvokeCommandAction Command="{Binding VisibilityChangedCommand, Mode=OneWay}" />
-        </ei:PropertyChangedTrigger>
-    </i:Interaction.Triggers>
-    
-    <Border x:Name="WindowBorder" Style="{DynamicResource WindowBorder}">
-        <Border Style="{DynamicResource Container}">
-<!--        An extra border to prevent visual glitches, this will mean the alpha will not be accurate (doubled), perhaps can compensate -->
-            <Border x:Name="Container" Style="{DynamicResource Container}" RenderOptions.ClearTypeHint="Enabled">
-                <Grid x:Name="ElementsContainer" Margin="10">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-                    <Grid x:Name="QueryInputContainer" Style="{DynamicResource QueryInputContainer}"
-                          RenderOptions.ClearTypeHint="Enabled">
-                        <TextBox
-                            Name="QueryInput"
-                            Text="{Binding QueryInputText, UpdateSourceTrigger=PropertyChanged}"
-                            Grid.Row="0"
-                            behaviours:FocusExtension.IsFocused="{Binding IsQueryInputFocused}"
-                            Style="{DynamicResource QueryInput}">
-                            
-                            <i:Interaction.Behaviors>
-                                <behaviours:EventToCommandBehavior Command="{Binding QueryInputPreviewKeyDown}" Event="PreviewKeyDown" PassArguments="True"/>
-                            </i:Interaction.Behaviors>
-                            
-                            <TextBox.Resources>
+	<!--    When this UserControl visibilty has changed, trigger a command on the viewmodel-->
+	<i:Interaction.Triggers>
+		<ei:PropertyChangedTrigger
+			Binding="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=IsVisible}">
+			<i:InvokeCommandAction Command="{Binding VisibilityChangedCommand, Mode=OneWay}" />
+		</ei:PropertyChangedTrigger>
+	</i:Interaction.Triggers>
+
+	<Border x:Name="WindowBorder" Style="{DynamicResource WindowBorder}">
+		<Border Style="{DynamicResource Container}">
+			<!--        An extra border to prevent visual glitches, this will mean the alpha will not be accurate (doubled), perhaps can compensate -->
+			<Border x:Name="Container" Style="{DynamicResource Container}">
+				<Grid x:Name="ElementsContainer" Margin="10">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<Grid x:Name="QueryInputContainer" Style="{DynamicResource QueryInputContainer}">
+						<TextBlock Style="{DynamicResource QueryInputViewOnly}">Testing</TextBlock>
+						<TextBox
+							Name="QueryInput"
+							Text="{Binding QueryInputText, UpdateSourceTrigger=PropertyChanged}"
+							Grid.Row="0"
+							behaviours:FocusExtension.IsFocused="{Binding IsQueryInputFocused}"
+							RenderOptions.ClearTypeHint="Enabled"
+							Style="{DynamicResource QueryInput}">
+
+							<i:Interaction.Behaviors>
+								<behaviours:EventToCommandBehavior Command="{Binding QueryInputPreviewKeyDown}" Event="PreviewKeyDown"
+								                                   PassArguments="True" />
+							</i:Interaction.Behaviors>
+
+							<TextBox.Resources>
+								
 <!--                            hack to make cleartype work..-->
-                                <Style TargetType="{x:Type ScrollViewer}">
-                                    <Setter Property="ContentTemplate">
-                                        <Setter.Value>
-                                            <DataTemplate>
-                                                <Border
-                                                    Background="{Binding RelativeSource={RelativeSource AncestorType={x:Type TextBox}},Path=Background}"
-                                                    RenderOptions.ClearTypeHint="Enabled">
-                                                    <ContentPresenter Content="{Binding}" />
-                                                </Border>
-                                            </DataTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </TextBox.Resources>
-                        </TextBox>
-                    </Grid>
-                    <controls:ResultsList x:Name="ResultsList" Grid.Row="1" Margin="0 10 0 0" VerticalAlignment="Top" />
-                </Grid>
-            </Border>
-        </Border>
-    </Border>
+								<Style TargetType="{x:Type ScrollViewer}">
+									<Setter Property="ContentTemplate">
+										<Setter.Value>
+											<DataTemplate>
+
+												<Border
+													Background="{Binding RelativeSource={RelativeSource AncestorType={x:Type TextBox}},Path=Background}"
+													RenderOptions.ClearTypeHint="Enabled">
+													<ContentPresenter Content="{Binding}" RenderOptions.ClearTypeHint="Enabled" />
+												</Border>
+											</DataTemplate>
+										</Setter.Value>
+									</Setter>
+								</Style>
+							</TextBox.Resources>
+						</TextBox>
+					</Grid>
+					<controls:ResultsList x:Name="ResultsList" Grid.Row="1" Margin="0 10 0 0" VerticalAlignment="Top" />
+				</Grid>
+			</Border>
+		</Border>
+	</Border>
 </UserControl>

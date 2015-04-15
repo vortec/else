@@ -1,42 +1,41 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    
-    
-    <!--These are the default brushes, they can be overriden by themes.-->
+
+    <!--These are the default brushes, when a theme loads it overwrites these color values -->
     <SolidColorBrush x:Key="WindowBorderColor" Color="#7F363636" />
     <SolidColorBrush x:Key="WindowBackgroundColor" Color="White" />
-    
+
     <SolidColorBrush x:Key="QueryBoxBackgroundColor" Color="White" />
     <SolidColorBrush x:Key="QueryBoxTextColor" Color="Black" />
-    
+
     <SolidColorBrush x:Key="ResultBackgroundColor" Color="White" />
     <SolidColorBrush x:Key="ResultSelectedBackgroundColor" Color="#EEEDEF" />
-    
+
     <SolidColorBrush x:Key="ResultTitleColor" Color="Black" />
     <SolidColorBrush x:Key="ResultSubTitleColor" Color="#777777" />
-    
+
     <SolidColorBrush x:Key="ResultSeparatorColor" Color="#EEEDEF" />
-    
+
     <!--These are the default fonts, they can be overriden by themes.-->
     <!--<FontFamily x:Key="ResultTitleFontFamily">Tahoma</FontFamily>
     <FontFamily x:Key="ResultSubTitleFontFamily">Tahoma</FontFamily>
     <FontFamily x:Key="QueryBoxFontFamily">Tahoma</FontFamily>-->
-    
-    
-    
-    <!--Core styles now, these cannot be overriden by theme, but they reference theme elements above)-->
-    
+
+
+    <!--Core styles now, these cannot be overridden by themes, but they reference elements above)-->
+
     <!-- Default Element Styles -->
     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Padding" Value="10 3"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Padding" Value="10 3" />
+        <Setter Property="FontSize" Value="14" />
     </Style>
-    
+
     <!--Launcher Window Styles-->
     <Style x:Key="QueryInputContainer" TargetType="Grid">
         <Setter Property="Background" Value="{DynamicResource QueryBoxBackgroundColor}" />
     </Style>
+    
     <Style x:Key="QueryInput" TargetType="TextBox">
         <Setter Property="Height" Value="48" />
         <Setter Property="FontSize" Value="24" />
@@ -45,17 +44,17 @@
         <Setter Property="FontFamily" Value="Segoe WP semibold" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="Foreground" Value="{DynamicResource QueryBoxTextColor}" />
-        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Background" Value="{DynamicResource QueryBoxBackgroundColor}" />
         <Setter Property="CaretBrush" Value="{DynamicResource QueryBoxTextColor}" />
     </Style>
-    
+
     <Style x:Key="WindowBorder" TargetType="Border">
         <Setter Property="BorderBrush" Value="{DynamicResource WindowBorderColor}" />
         <Setter Property="BorderThickness" Value="8" />
         <Setter Property="CornerRadius" Value="3" />
         <!--<Setter Property="Background" Value="{DynamicResource WindowBorderColor}" />-->
     </Style>
-    
+
     <Style x:Key="Container" TargetType="Border">
         <Setter Property="CornerRadius" Value="3" />
         <Setter Property="BorderThickness" Value="2" />
@@ -64,11 +63,9 @@
         <!--Tweak to prevent gap between ContainerBorder and WindowBorder-->
         <Setter Property="Margin" Value="-1" />
     </Style>
-    
-    
+
+
     <!--Launcher Window Results List Styles-->
-    
-    
     <Style x:Key="ResultSeparator" TargetType="Border">
         <Setter Property="Margin" Value="0" />
         <Setter Property="BorderBrush" Value="{DynamicResource ResultSeparatorColor}" />
@@ -78,9 +75,9 @@
         <Setter Property="Background" Value="{DynamicResource ResultBackgroundColor}" />
     </Style>
     <Style x:Key="ResultsScrollViewer" TargetType="ScrollViewer">
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
-        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
-        <Setter Property="Padding" Value="0"/>
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="Padding" Value="0" />
     </Style>
     <Style x:Key="ResultTitle" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{DynamicResource ResultTitleColor}" />
@@ -93,8 +90,6 @@
         <!--<Setter Property="FontFamily" Value="{DynamicResource ResultSubTitleFontFamily}" />-->
     </Style>
     
+    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-    
-    
-</ResourceDictionary> 
+</ResourceDictionary>

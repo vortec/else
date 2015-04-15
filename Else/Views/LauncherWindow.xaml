@@ -10,7 +10,6 @@
         WindowStartupLocation="CenterScreen"
         UseLayoutRounding="True"
         AllowsTransparency="True"
-        RenderOptions.ClearTypeHint="Enabled"
         Opacity="0"
         Topmost="True"
         PreviewKeyDown="OnPreviewKeyDown"

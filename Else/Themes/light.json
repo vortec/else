@@ -3,7 +3,7 @@
     "Author" :  "James Hutchby",
     "WindowBorderColor": "#7F363636",
     "WindowBackgroundColor": "White",
-    "QueryBoxBackgroundColor": "Transparent",
+    "QueryBoxBackgroundColor": "White",
     "QueryBoxTextColor": "Black",
     "ResultBackgroundColor": "White",
     "ResultSelectedBackgroundColor": "#EEEDEF",

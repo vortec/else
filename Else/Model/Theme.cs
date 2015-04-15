@@ -97,10 +97,10 @@ namespace Else.Model
                 Dictionary<string, string> config = result.ToObject<Dictionary<string, string>>();
                 Load(config);
                 FilePath = path;
-                _logger.Trace("Loaded theme: name={0} guid={1}", FilePath, GUID);
+                //_logger.Trace("Loaded theme: name={0} guid={1}", FilePath, GUID);
             }
             catch (ParseException e) {
-                _logger.Warn("failed to parse theme file: {0} ~ {1}", path, e.Message);
+                _logger.Warn("failed to parse theme file {0}", path);
                 throw;
             }
         }
