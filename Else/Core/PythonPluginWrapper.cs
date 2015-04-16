@@ -63,8 +63,7 @@ namespace Else.Core
             }
             catch (Exception e) {
                 var pytrace = engine.GetService<ExceptionOperations>().FormatException(e);
-                _logger.Error("Failed to load plugin '{0}'", path);
-                _logger.Error(pytrace);
+                throw new Exception($"Failed to load plugin '{path}' {pytrace}");
             }
 
             // check for any python types that derive from Plugin..

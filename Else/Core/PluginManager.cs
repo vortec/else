@@ -45,7 +45,12 @@ namespace Else.Core
 
             foreach (var sourceDirectory in sources) {
                 foreach (var subdir in Directory.EnumerateDirectories(sourceDirectory)) {
-                    LoadPluginFromDirectory(subdir);
+                    try {
+                        LoadPluginFromDirectory(subdir);
+                    }
+                    catch (Exception e) {
+                        _logger.Error($"Failed to load plugin {subdir}", e);
+                    }
                 }
             }
         }

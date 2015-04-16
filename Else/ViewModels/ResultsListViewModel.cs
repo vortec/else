@@ -66,10 +66,10 @@ namespace Else.ViewModels
                         // perhaps there is a better way?
                         var engine = Python.CreateEngine();
                         var pythonTraceback = engine.GetService<ExceptionOperations>().FormatException(exception);
-                        _logger.Error(pythonTraceback);
+                        _logger.Error("Plugin result launch threw an exception:\n{0}", pythonTraceback);
                         return;
                     }
-                    _logger.Error("Failed to launch result", exception);
+                    _logger.Error("Plugin result launch threw an exception", exception);
                 }
             }
             else {

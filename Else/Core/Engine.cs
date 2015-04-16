@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -102,6 +101,12 @@ namespace Else.Core
             }
             catch (TaskCanceledException) {
             }
+            catch (AggregateException ae) {
+                // we already log these exceptions in ProcessProviderQueryAsync()
+                // foreach (var e in ae.Flatten().InnerExceptions) {
+                //     _logger.Error("Plugin query threw an exception", e);
+                // }
+            }
         }
 
         /// <summary>
@@ -169,21 +174,16 @@ namespace Else.Core
             var tasks = new List<Task<List<Result>>>();
             foreach (var provider in providers) {
                 if (provider != null) {
-                    try {
-                        var task = Task.Factory.StartNew(() =>
-                        {
-                            // get cancellation token source from other AppDomain
-                            var appDomainCancelToken = provider.GetCancellable();
-                            // connect the 2 cancellation token sources
-                            _cancelTokenSource.Token.Register(() => appDomainCancelToken.Cancel());
+                    var task = Task.Factory.StartNew(() =>
+                    {
+                        // get cancellation token source from other AppDomain
+                        var appDomainCancelToken = provider.GetCancellable();
+                        // connect the 2 cancellation token sources
+                        _cancelTokenSource.Token.Register(() => appDomainCancelToken.Cancel());
 
-                            return provider.QueryFunc(Query, appDomainCancelToken);
-                        }, _cancelTokenSource.Token);
-                        tasks.Add(task);
-                    }
-                    catch {
-                        _logger.Error("provider failure");
-                    }
+                        return provider.ExecuteQueryFunc(Query, appDomainCancelToken);
+                    }, _cancelTokenSource.Token, TaskCreationOptions.AttachedToParent, TaskScheduler.Default);
+                    tasks.Add(task);
                 }
             }
 
@@ -201,7 +201,7 @@ namespace Else.Core
                     throw;
                 }
                 catch (Exception e) {
-                    _logger.Error(e.ToString());
+                    _logger.Error("Plugin query threw an exception", e);
                 }
             }
             return results;
