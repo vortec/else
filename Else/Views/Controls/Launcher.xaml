@@ -31,7 +31,6 @@
 						<RowDefinition Height="*" />
 					</Grid.RowDefinitions>
 					<Grid x:Name="QueryInputContainer" Style="{DynamicResource QueryInputContainer}">
-						<TextBlock Style="{DynamicResource QueryInputViewOnly}">Testing</TextBlock>
 						<TextBox
 							Name="QueryInput"
 							Text="{Binding QueryInputText, UpdateSourceTrigger=PropertyChanged}"
