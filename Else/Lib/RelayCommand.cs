@@ -42,10 +42,12 @@ namespace Else.Lib
             return _canExecute?.Invoke(parameter) ?? true;
         }
 
-        public event EventHandler CanExecuteChanged
+        public event EventHandler CanExecuteChanged;
+
+        public void RaiseCanExecuteChanged()
         {
-            add { CommandManager.RequerySuggested += value; }
-            remove { CommandManager.RequerySuggested -= value; }
+            var handler = CanExecuteChanged;
+            handler?.Invoke(this, EventArgs.Empty);
         }
 
         public void Execute(object parameter)
