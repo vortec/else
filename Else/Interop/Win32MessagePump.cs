@@ -9,11 +9,13 @@ namespace Else.Interop
     public class Win32MessagePump
     {
         private readonly HotkeyManager _hotkeyManager;
+        private readonly App _app;
         private HwndSource _hwndSource;
 
-        public Win32MessagePump(HotkeyManager hotkeyManager)
+        public Win32MessagePump(HotkeyManager hotkeyManager, App app)
         {
             _hotkeyManager = hotkeyManager;
+            _app = app;
         }
 
         /// <summary>
@@ -31,13 +33,16 @@ namespace Else.Interop
             _hwndSource.AddHook(HandleMessages);
         }
 
+        private const int WM_CLOSE = 0x0010;
+        private const int WM_HOTKEY = 0x0312;
         /// <summary>
         /// Handle win32 window message proc.
         /// </summary>
         private IntPtr HandleMessages(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
+            
             // WM_HOTKEY (we relay this to HotkeyManager)
-            if (msg == 0x0312) {
+            if (msg == WM_HOTKEY) {
                 // hotkey id, supplied upon registration
                 var id = (int) wParam;
 
@@ -56,6 +61,10 @@ namespace Else.Interop
                 var combo = new KeyCombo(modifier, key);
                 _hotkeyManager.HandleKeyCombo(combo);
             }
+            if (msg == WM_CLOSE) {
+                _app.Shutdown();
+            }
+
             return IntPtr.Zero;
         }
     }

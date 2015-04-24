@@ -1,44 +1,112 @@
-﻿
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows;
+using System.Windows.Interop;
+using Else.Views;
+
+// ReSharper disable InconsistentNaming
 
 namespace Else.Interop
 {
     /// <summary>
     /// Win32 API calls
     /// </summary>
-    public static class Win32
+    public class Win32 : Win32Signatures
     {
-        /// <summary>
-        /// Defines a system-wide hot key.
-        /// </summary>
-        /// <param name="hWnd">Handle to the window that will receive WM_HOTKEY messages.</param>
-        /// <param name="id">The identifier of the hotkey.</param>
-        /// <param name="fsModifiers">The keys that must be pressed in combination with the key specified by the virtualKey.</param>
-        /// <param name="vk">The vk.</param>
-        /// <see cref="https://msdn.microsoft.com/en-us/library/windows/desktop/ms646309%28v=vs.85%29.aspx"/>
-        /// <returns>
-        /// If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.The vk.
-        /// </returns>
-        [DllImport("user32.dll")]
-        internal static extern bool RegisterHotKey(IntPtr hWnd, int id, int fsModifiers, int vk);
+        public delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
+
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_DLGMODALFRAME = 0x0001;
+        private const int SWP_NOSIZE = 0x0001;
+        private const int SWP_NOMOVE = 0x0002;
+        private const int SWP_NOZORDER = 0x0004;
+        private const int SWP_FRAMECHANGED = 0x0020;
+        private const uint WM_SETICON = 0x0080;
+
+        public static void RemoveWindowIcon(Window window)
+        {
+            // Get the window's handle
+            var hwnd = new WindowInteropHelper(window).Handle;
+            // Change the extended window style to not show a window icon
+            var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_DLGMODALFRAME);
+            // Update the window's non-client area to reflect the changes
+            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+        }
 
         /// <summary>
-        /// Frees a hot key previously registered by the calling thread.
+        /// Enumerates the process window handles.
         /// </summary>
-        /// <param name="hWnd">A handle to the window associated with the hot key to be freed.</param>
-        /// <param name="id">The identifier of the hot key to be freed.</param>
-        /// <see cref="https://msdn.microsoft.com/en-us/library/windows/desktop/ms646327(v=vs.85).aspx"/>
-        /// <returns>
-        /// If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero.The vk.
-        /// </returns>
-        [DllImport("user32.dll")]
-        internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+        /// <param name="processId">The process identifier.</param>
+        /// <returns></returns>
+        public static IEnumerable<IntPtr> EnumerateProcessWindowHandles(int processId)
+        {
+            var handles = new List<IntPtr>();
 
+            foreach (ProcessThread thread in Process.GetProcessById(processId).Threads) {
+                EnumThreadWindows(thread.Id, (hWnd, lParam) =>
+                {
+                    handles.Add(hWnd);
+                    return true;
+                }, IntPtr.Zero);
+            }
 
+            return handles;
+        }
 
+        private const int WM_CLOSE = 0x0010;
+
+        /// <summary>
+        /// If there are 2 instances (processes) of this app running, kill the other one.
+        /// </summary>
+        public static void KillCurrentlyRunning()
+        {
+            // get current pid
+            var assembly = Assembly.GetExecutingAssembly();
+            var pid = Process.GetCurrentProcess().Id;
+
+            // get all processes with this assembly name
+            var processes = Process.GetProcessesByName(assembly.GetName().Name);
+
+            for (var i = 0; i < processes.Count(); i++) {
+                var process = processes[i];
+                // exclude the current process..
+                if (process.Id != pid) {
+                    // get all window handles for the process
+                    var handles = EnumerateProcessWindowHandles(process.Id);
+                    
+                    foreach (var handle in handles) {
+                        try {
+                            // try and find the "Else Launcher" window (main window that we can send messages to)
+                            var length = GetWindowTextLength(handle);
+                            var wtStr = new StringBuilder(length + 1);
+                            GetWindowText(handle, wtStr, wtStr.Capacity);
+                            if (wtStr.ToString() == LauncherWindow.WindowTitle) {
+                                // we have found the window that we can send messages to..
+                                // send WM_QUIT message
+                                SendMessage(handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                                // wait for the process to exit cleanly
+                                var exited = process.WaitForExit(500);
+                                // ugh, process didn't exit, we just kill it (bad because we will leave a tray icon)
+                                if (!exited) {
+                                    process.Kill();
+                                    process.WaitForExit(500);
+                                }
+                            }
+
+                        }
+                        catch (Exception e) {
+                            // not sure what went wrong really...
+                            // lets hope there are no processes running
+                        }
+                    }
+                }
+            }
+        }
     }
 }
