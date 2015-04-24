@@ -14,6 +14,7 @@ using Else.Extensibility;
 using Else.Interop;
 using Else.Lib;
 using Else.Model;
+using Else.Properties;
 using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
@@ -30,70 +31,39 @@ namespace Else
         public IContainer Container;
         public event EventHandler OnStartupComplete;
 
-        public void SetupAutoFac()
-        {
-            var builder = new ContainerBuilder();
-
-            // modules
-            builder.RegisterModule<NLogModule>();
-
-            // register singletons
-            builder.RegisterType<LauncherWindow>().SingleInstance();
-            builder.RegisterType<Paths>().SingleInstance().AsSelf();
-            builder.RegisterType<Engine>().SingleInstance();
-            builder.RegisterType<ThemeManager>().SingleInstance();
-            builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
-            builder.RegisterType<AppCommands>().AsSelf().As<IAppCommands>().SingleInstance();
-            builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
-            builder.RegisterType<PluginManager>().SingleInstance();
-            builder.RegisterType<TrayIcon>().SingleInstance();
-            builder.RegisterType<Win32MessagePump>().SingleInstance();
-
-            // plugin wrappers
-            builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
-            builder.RegisterType<AssemblyPluginWrapper>().Keyed<BasePluginWrapper>(".dll");
-
-
-            // instances
-            builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
-            builder.RegisterType<SettingsWindow>();
-            builder.RegisterType<AssemblyPluginWrapper>();
-
-            // register ViewModels
-            builder.RegisterType<SettingsWindowViewModel>();
-            builder.RegisterType<ThemeEditorViewModel>();
-            builder.RegisterType<ThemesTabViewModel>();
-            builder.RegisterType<LauncherViewModel>();
-            builder.RegisterType<LauncherWindowViewModel>();
-            builder.RegisterType<ResultsListViewModel>();
-
-
-            builder.RegisterInstance(this).As<App>().ExternallyOwned();
-
-            // build container
-            Container = builder.Build();
-        }
-
         private void OnStart(object sender, StartupEventArgs startupEventArgs)
         {
             // create logger
             _logger = LogManager.GetLogger("app");
 
+            // handle unhandled exceptions
             SetupUnhandledExceptionHandlers();
-
-            // quit the app if we could not create the mutex, another instance is already running
-            if (!CreateMutex()) {
-                _logger.Fatal("Refusing to start, another instance is already running");
-                Current.Shutdown();
-                return;
-            }
-
-            SetupWpfTheme();
-
-            // setup dependancies
+            
+            // setup dependency injection
             SetupAutoFac();
 
             using (var scope = Container.BeginLifetimeScope()) {
+                // handle installer events
+                var updater = scope.Resolve<Updater>();
+                updater.HandleEvents();
+
+                // just in case our process is brutally killed, cleanup trayicon and updater
+                AppDomain.CurrentDomain.ProcessExit += (o, args) =>
+                {
+                    _trayIcon?.Dispose();
+                    updater?.Dispose();
+                };
+
+                // quit the app if we could not create the mutex, another instance is already running
+                if (!CreateMutex()) {
+                    _logger.Fatal("Refusing to start, another instance is already running");
+                    Current.Shutdown();
+                    return;
+                }
+
+                // override default wpf themes
+                SetupWpfTheme();
+
                 // ensure data directories exist
                 var paths = scope.Resolve<Paths>();
                 try {
@@ -123,15 +93,72 @@ namespace Else
                 var messagePump = scope.Resolve<Win32MessagePump>();
                 messagePump.Setup(launcherWindow);
 
-                // only initialize plugins and trayicon if we are directly running the app
+                // only initialize plugins and trayicon if we are directly running the app (e.g. not running inside the theme editor)
                 if (Assembly.GetExecutingAssembly() == Assembly.GetEntryAssembly()) {
                     var pluginManager = scope.Resolve<PluginManager>();
                     pluginManager.DiscoverPlugins();
                     _trayIcon = scope.Resolve<TrayIcon>();
                     _trayIcon.Setup();
                 }
+
+                // show splash screen on the first run
+                if (!Settings.Default.FirstLaunch) {
+                    var splashScreen = scope.Resolve<SplashScreenWindow>();
+                    splashScreen.ShowWindow();
+                    Settings.Default.FirstLaunch = true;
+                    Settings.Default.Save();
+                }
             }
+            // trigger custom OnStartupComplete event, this is used by the theme editor.
             OnStartupComplete?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void SetupAutoFac()
+        {
+            var builder = new ContainerBuilder();
+
+            // modules
+            builder.RegisterModule<NLogModule>();
+
+            // register singletons
+            builder.RegisterType<LauncherWindow>().SingleInstance();
+            builder.RegisterType<Paths>().SingleInstance().AsSelf();
+            builder.RegisterType<Engine>().SingleInstance();
+            builder.RegisterType<ThemeManager>().SingleInstance();
+            builder.RegisterType<HotkeyManager>().AsSelf().As<IStartable>().SingleInstance();
+            builder.RegisterType<AppCommands>().AsSelf().As<IAppCommands>().SingleInstance();
+            builder.RegisterType<ColorPickerWindow>().As<IColorPickerWindow>();
+            builder.RegisterType<PluginManager>().SingleInstance();
+            builder.RegisterType<TrayIcon>().SingleInstance();
+            builder.RegisterType<Win32MessagePump>().SingleInstance();
+            builder.RegisterType<Updater>().SingleInstance();
+            builder.RegisterType<SplashScreenWindow>().SingleInstance();
+
+            // plugin wrappers
+            builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
+            builder.RegisterType<AssemblyPluginWrapper>().Keyed<BasePluginWrapper>(".dll");
+
+            // instances
+            builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
+            builder.RegisterType<AssemblyPluginWrapper>();
+
+            // windows
+            builder.RegisterType<ThemesWindow>();
+            builder.RegisterType<AboutWindow>();
+
+            // register ViewModels
+            builder.RegisterType<ThemeEditorViewModel>();
+            builder.RegisterType<LauncherViewModel>();
+            builder.RegisterType<LauncherWindowViewModel>();
+            builder.RegisterType<ResultsListViewModel>();
+            builder.RegisterType<ThemesWindowViewModel>();
+            builder.RegisterType<AboutWindowViewModel>();
+
+
+            builder.RegisterInstance(this).As<App>();
+
+            // build container
+            Container = builder.Build();
         }
 
         private void SetupWpfTheme()
@@ -144,22 +171,30 @@ namespace Else
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= win8Version) {
                 // its win8 or higher.
                 var theme =
-                    LoadComponent(new Uri(@"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml", UriKind.Relative))
+                    LoadComponent(
+                        new Uri(
+                            @"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml",
+                            UriKind.Relative))
                         as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(0, theme);
-                var win8Styles = LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as ResourceDictionary;
+                var win8Styles =
+                    LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as
+                        ResourceDictionary;
                 Resources.MergedDictionaries.Insert(1, win8Styles);
             }
             else {
                 // e.g. windows 7 or winxp
                 var theme =
-                    LoadComponent(new Uri(@"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
-                        UriKind.Relative)) as ResourceDictionary;
+                    LoadComponent(
+                        new Uri(
+                            @"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
+                            UriKind.Relative)) as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(0, theme);
             }
 
 
-            var styles = LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
+            var styles =
+                LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
             Resources.MergedDictionaries.Add(styles);
 
             Resources.EndInit();
@@ -167,7 +202,7 @@ namespace Else
 
         protected override void OnExit(ExitEventArgs e)
         {
-            _trayIcon.Dispose();
+            _trayIcon?.Dispose();
             // release mutex
             _instanceMutex?.ReleaseMutex();
             base.OnExit(e);
