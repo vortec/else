@@ -2,24 +2,41 @@
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
+using Autofac;
 using Else.Helpers;
 using Else.Properties;
 using Else.Views;
-
 using Application = System.Windows.Application;
 
 namespace Else.Lib
 {
     public class TrayIcon : IDisposable
     {
+        private readonly Func<AboutWindow> _aboutWindowFactory;
         private readonly LauncherWindow _launcherWindow;
-        private readonly Func<SettingsWindow> _settingsWindowFactory;
+        private readonly ILifetimeScope _scope;
+        private readonly SplashScreenWindow _splashScreenWindow;
+        private readonly Func<ThemesWindow> _themesWindowFactory;
         private NotifyIcon _trayIcon;
 
-        public TrayIcon(LauncherWindow launcherWindow, Func<SettingsWindow> settingsWindowFactory)
+        public TrayIcon(LauncherWindow launcherWindow, Func<ThemesWindow> themesWindowFactory,
+            Func<AboutWindow> aboutWindowFactory, ILifetimeScope scope, SplashScreenWindow splashScreenWindow)
         {
             _launcherWindow = launcherWindow;
-            _settingsWindowFactory = settingsWindowFactory;
+            _themesWindowFactory = themesWindowFactory;
+            _aboutWindowFactory = aboutWindowFactory;
+            _scope = scope;
+            _splashScreenWindow = splashScreenWindow;
+        }
+
+        public void Dispose()
+        {
+            // ensure tray icon is removed (otherwise it just lingers in the tray after app exit)
+            if (_trayIcon != null) {
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            }
+            _scope.Dispose();
         }
 
         public void Setup()
@@ -31,46 +48,43 @@ namespace Else.Lib
             };
 
             // show launcher on double click
-            _trayIcon.DoubleClick += (sender, args) => { _launcherWindow.ShowWindow(); };
+            _trayIcon.DoubleClick += (sender, args) => _launcherWindow.ShowWindow();
 
             // setup context menu
             _trayIcon.ContextMenuStrip = new ContextMenuStrip();
 
-            // context menu item 'Exit'
+            // context menu items
             var exit = new ToolStripMenuItem("Exit");
             exit.Click += (sender, args) => { Application.Current.Shutdown(); };
 
-            // context menu item 'Settings'
-            var settings = new ToolStripMenuItem("Settings");
-            settings.Click += (sender, args) =>
-            {
-                if (UI.IsWindowOpen<Window>("Settings")) {
-                    // focus window
-                    UI.FocusWindow<Window>("Settings");
-                }
-                else {
-                    // show window
-                    var window = _settingsWindowFactory();
-                    window.Show();
-                }
-            };
+            AddWindowAsMenuItem("Themes", _scope.Resolve<Func<ThemesWindow>>());
+            AddWindowAsMenuItem("About", _scope.Resolve<Func<AboutWindow>>());
+
 
             // add menu items to context menu
-            _trayIcon.ContextMenuStrip.Items.Add(settings);
             _trayIcon.ContextMenuStrip.Items.Add(exit);
 
             // show tray icon
             _trayIcon.Visible = true;
         }
 
-
-        public void Dispose()
+        private void AddWindowAsMenuItem<T>(string text, Func<T> windowFactory) where T : Window
         {
-            // ensure tray icon is removed (otherwise it just lingers in the tray after app exit)
-            if (_trayIcon != null) {
-                _trayIcon.Visible = false;
-                _trayIcon.Dispose();
-            }
+            var item = new ToolStripMenuItem(text);
+            item.Click += (sender, args) =>
+            {
+                if (UI.IsWindowOpen<T>()) {
+                    // window already open, focus it
+                    UI.FocusWindow<T>();
+                }
+                else {
+                    _splashScreenWindow.Close();
+                    // show the window
+                    var window = windowFactory();
+                    window.Show();
+                }
+            };
+            _trayIcon.ContextMenuStrip.Items.Add(item);
         }
     }
 }

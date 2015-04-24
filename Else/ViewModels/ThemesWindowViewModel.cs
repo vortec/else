@@ -1,9 +1,7 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Else.Lib;
 using Else.Model;
 using Else.Services;
@@ -11,7 +9,7 @@ using Microsoft.Win32;
 
 namespace Else.ViewModels
 {
-    public class ThemesTabViewModel : INotifyPropertyChanged
+    public class ThemesWindowViewModel : ObservableObject
     {
         private readonly ThemeManager _themeManager;
 
@@ -24,7 +22,7 @@ namespace Else.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="T:ThemesTabViewModel"/> class.
         /// </summary>
-        public ThemesTabViewModel(ThemeEditorViewModel themeEditorViewModel, ThemeManager themeManager)
+        public ThemesWindowViewModel(ThemeEditorViewModel themeEditorViewModel, ThemeManager themeManager)
         {
             ThemeEditorViewModel = themeEditorViewModel;
 
@@ -35,7 +33,7 @@ namespace Else.ViewModels
             if (themeManager.ActiveTheme != null) {
                 SelectedItem = themeManager.ActiveTheme;
             }
-            
+
 
             // connect the commands to methods
             DuplicateCommand = new RelayCommand(param => Duplicate());
@@ -56,9 +54,7 @@ namespace Else.ViewModels
             set
             {
                 if (value != null) {
-                    _selectedItem = value;
-                    // trigger PropertyChanged
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("SelectedItem"));
+                    SetProperty(ref _selectedItem, value);
                     // notify ThemeEditorViewModel
                     ThemeEditorViewModel.SetTheme(_selectedItem);
                 }
@@ -75,7 +71,6 @@ namespace Else.ViewModels
         public ICommand DuplicateCommand { get; set; }
         public ICommand ExportCommand { get; set; }
         public ICommand DeleteCommand { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// Exports the selected theme to a .json file.
