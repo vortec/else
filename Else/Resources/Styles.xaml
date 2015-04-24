@@ -90,6 +90,6 @@
         <!--<Setter Property="FontFamily" Value="{DynamicResource ResultSubTitleFontFamily}" />-->
     </Style>
     
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    
     
 </ResourceDictionary>

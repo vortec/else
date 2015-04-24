@@ -14,6 +14,7 @@
 			<converter:EqualsConverter x:Key="EqualsConverter2" />
 			<converter:LastItemInContainerConverter x:Key="LastItemInContainerConverter" />
             <converter:UriToImageConverter x:Key="UriToImageConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		</ResourceDictionary>
 	</Application.Resources>
 </Application>
