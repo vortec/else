@@ -99,7 +99,7 @@ namespace Else.Model
                 FilePath = path;
                 //_logger.Trace("Loaded theme: name={0} guid={1}", FilePath, GUID);
             }
-            catch (ParseException e) {
+            catch (ParseException) {
                 _logger.Warn("failed to parse theme file {0}", path);
                 throw;
             }

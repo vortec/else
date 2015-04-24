@@ -101,7 +101,7 @@ namespace Else.Core
             }
             catch (TaskCanceledException) {
             }
-            catch (AggregateException ae) {
+            catch (AggregateException) {
                 // we already log these exceptions in ProcessProviderQueryAsync()
                 // foreach (var e in ae.Flatten().InnerExceptions) {
                 //     _logger.Error("Plugin query threw an exception", e);

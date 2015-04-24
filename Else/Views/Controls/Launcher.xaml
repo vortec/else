@@ -13,8 +13,8 @@
 	Loaded="Launcher_OnLoaded"
 	Background="Transparent">
 
-	<!--    When this UserControl visibilty has changed, trigger a command on the viewmodel-->
-	<i:Interaction.Triggers>
+    <!--When this UserControl visibilty has changed, trigger a command on the viewmodel--> 
+    <i:Interaction.Triggers>
 		<ei:PropertyChangedTrigger
 			Binding="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=IsVisible}">
 			<i:InvokeCommandAction Command="{Binding VisibilityChangedCommand, Mode=OneWay}" />
@@ -23,7 +23,7 @@
 
 	<Border x:Name="WindowBorder" Style="{DynamicResource WindowBorder}">
 		<Border Style="{DynamicResource Container}">
-			<!--        An extra border to prevent visual glitches, this will mean the alpha will not be accurate (doubled), perhaps can compensate -->
+            <!--An extra border to prevent visual glitches, this will mean the alpha will not be accurate (doubled), perhaps can compensate--> 
 			<Border x:Name="Container" Style="{DynamicResource Container}">
 				<Grid x:Name="ElementsContainer" Margin="10">
 					<Grid.RowDefinitions>
@@ -45,9 +45,9 @@
 							</i:Interaction.Behaviors>
 
 							<TextBox.Resources>
-								
-<!--                            hack to make cleartype work..-->
-								<Style TargetType="{x:Type ScrollViewer}">
+
+                                <!--hack to make cleartype work..-->
+                                <Style TargetType="{x:Type ScrollViewer}">
 									<Setter Property="ContentTemplate">
 										<Setter.Value>
 											<DataTemplate>

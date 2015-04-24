@@ -105,6 +105,9 @@ namespace Else.Views.Controls
         /// <param name="element">The element on which we add hover and click handlers.</param>
         private void SetMouseHandlersForElement(string themeKey, string hoverText, UIElement element)
         {
+            if (element == null) {
+                return;
+            }
             // change the instruction text to hoverText
             element.IsMouseDirectlyOverChanged += (sender, e) => {
                 if (ViewModel.Editable && (bool)e.NewValue) {
