@@ -11,10 +11,7 @@ namespace Else.ViewModels
         public AboutWindowViewModel(Updater updater)
         {
             _updater = updater;
-            UpdateCommand = new RelayCommand(DoUpdate);
         }
-
-        public RelayCommand UpdateCommand { get; set; }
 
         public string CurrentVersion
         {
@@ -25,13 +22,8 @@ namespace Else.ViewModels
                     // has not been installed yet
                     return "";
                 }
-                return "Version " + current.ToString();
+                return "Version " + current;
             }
-        }
-
-        private void DoUpdate(object obj)
-        {
-            _updater.UpdateApp();
         }
 
         public void Dispose()
