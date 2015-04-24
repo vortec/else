@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Autofac;
 using Else.Helpers;
 using Else.Properties;
+using Else.Services;
 using Else.Views;
 using Application = System.Windows.Application;
 
@@ -60,8 +61,6 @@ namespace Else.Lib
             AddWindowAsMenuItem("Themes", _scope.Resolve<Func<ThemesWindow>>());
             AddWindowAsMenuItem("About", _scope.Resolve<Func<AboutWindow>>());
 
-
-            // add menu items to context menu
             _trayIcon.ContextMenuStrip.Items.Add(exit);
 
             // show tray icon
@@ -73,6 +72,7 @@ namespace Else.Lib
             var item = new ToolStripMenuItem(text);
             item.Click += (sender, args) =>
             {
+                Updater.OnUserActivity();
                 if (UI.IsWindowOpen<T>()) {
                     // window already open, focus it
                     UI.FocusWindow<T>();

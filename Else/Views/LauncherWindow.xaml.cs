@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using Else.Properties;
+using Else.Services;
 using Else.ViewModels;
 
 namespace Else.Views
@@ -31,6 +32,7 @@ namespace Else.Views
         /// </summary>
         public void ShowWindow()
         {
+            Updater.OnUserActivity();
             _splashScreenWindow.Close();
             if (Visibility != Visibility.Visible) {
                 // check if we should do fade
