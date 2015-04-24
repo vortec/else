@@ -217,9 +217,6 @@
     </ApplicationDefinition>
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
-    <Compile Include="Converter\BoolToVisConverter.cs" />
-    <Compile Include="Converter\MultiBooleanToVisibilityConverter.cs" />
-    <Compile Include="Converter\InverseBoolToVisConverter.cs" />
     <Compile Include="Converter\UriToImageConverter.cs" />
     <Compile Include="Core\BasePluginWrapper.cs" />
     <Compile Include="Core\PathBasedAssemblyResolver.cs" />
