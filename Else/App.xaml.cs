@@ -38,7 +38,7 @@ namespace Else
 
             // handle unhandled exceptions
             SetupUnhandledExceptionHandlers();
-            
+
             // setup dependency injection
             SetupAutoFac();
 
@@ -47,7 +47,7 @@ namespace Else
                 var updater = scope.Resolve<Updater>();
                 updater.HandleEvents();
 
-                // just in case our process is brutally killed, cleanup trayicon and updater
+                // just in case we brutally terminate our process, cleanup trayicon and updater
                 AppDomain.CurrentDomain.ProcessExit += (o, args) =>
                 {
                     _trayIcon?.Dispose();
@@ -161,40 +161,38 @@ namespace Else
             Container = builder.Build();
         }
 
+        /// <summary>
+        /// Setup WPF base themes.
+        /// <remarks>
+        /// WPF fails to setup the default themes when a custom theme is used.
+        /// Also windows 8 wpf styles differ from styles used by the US (e.g. buttons)
+        /// </remarks>
+        /// </summary>
         private void SetupWpfTheme()
         {
             var win8Version = new Version(6, 2, 9200, 0);
-
             Resources.BeginInit();
-
             // add specific styles per platform
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= win8Version) {
                 // its win8 or higher.
                 var theme =
-                    LoadComponent(
-                        new Uri(
-                            @"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml",
-                            UriKind.Relative))
-                        as ResourceDictionary;
+                    LoadComponent(new Uri(@"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml",
+                        UriKind.Relative)) as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(0, theme);
                 var win8Styles =
-                    LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as
-                        ResourceDictionary;
+                    LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(1, win8Styles);
             }
             else {
                 // e.g. windows 7 or winxp
                 var theme =
-                    LoadComponent(
-                        new Uri(
-                            @"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
-                            UriKind.Relative)) as ResourceDictionary;
+                    LoadComponent(new Uri(@"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
+                        UriKind.Relative)) as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(0, theme);
             }
 
 
-            var styles =
-                LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
+            var styles = LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
             Resources.MergedDictionaries.Add(styles);
 
             Resources.EndInit();
@@ -214,8 +212,7 @@ namespace Else
         /// <returns>true if mutex creation was successful</returns>
         private bool CreateMutex()
         {
-            var attribute =
-                (GuidAttribute) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (GuidAttribute), true)[0];
+            var attribute = (GuidAttribute) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (GuidAttribute), true)[0];
             var guid = attribute.Value;
 
             bool createdNew;
