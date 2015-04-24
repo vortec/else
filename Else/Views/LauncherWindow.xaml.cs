@@ -9,17 +9,21 @@ namespace Else.Views
 {
     public partial class LauncherWindow
     {
+        public static string WindowTitle = "Else Launcher";
         public readonly LauncherWindowViewModel ViewModel;
+        private readonly SplashScreenWindow _splashScreenWindow;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
         /// <param name="viewModel"></param>
-        public LauncherWindow(LauncherWindowViewModel viewModel)
+        public LauncherWindow(LauncherWindowViewModel viewModel, SplashScreenWindow splashScreenWindow)
         {
             InitializeComponent();
             ViewModel = viewModel;
+            _splashScreenWindow = splashScreenWindow;
             DataContext = viewModel;
+            Title = WindowTitle;
         }
 
         /// <summary>
@@ -27,6 +31,7 @@ namespace Else.Views
         /// </summary>
         public void ShowWindow()
         {
+            _splashScreenWindow.Close();
             if (Visibility != Visibility.Visible) {
                 // check if we should do fade
                 if (Settings.Default.FadeInWindow) {
