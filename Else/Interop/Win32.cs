@@ -26,6 +26,7 @@ namespace Else.Interop
         private const int SWP_NOMOVE = 0x0002;
         private const int SWP_NOZORDER = 0x0004;
         private const int SWP_FRAMECHANGED = 0x0020;
+        private const int SWP_NOACTIVATE = 0x0010;
         private const uint WM_SETICON = 0x0080;
 
         public static void RemoveWindowIcon(Window window)
@@ -36,7 +37,9 @@ namespace Else.Interop
             var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
             SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_DLGMODALFRAME);
             // Update the window's non-client area to reflect the changes
-            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOACTIVATE);
+            SendMessage(hwnd, WM_SETICON, new IntPtr(1), IntPtr.Zero);
+            SendMessage(hwnd, WM_SETICON, IntPtr.Zero, IntPtr.Zero);
         }
 
         /// <summary>
