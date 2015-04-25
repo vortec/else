@@ -130,22 +130,19 @@ namespace Else.Helpers
         }
 
         /// <summary>
-        /// Returns a lazy BitmapSource for a given path within the Resources directory.
+        /// Provides an image from a given path.
+        /// 
+        /// Supported values:
+        /// string: Absolute path to an image file on the filesystem.
+        /// string: GetFileIcon://, Direct path to anything on the filesystem (e.g. exe, or folder), from which we extract an image
+        /// BitmapSource or Lazy BitmapSource
+        /// 
         /// </summary>
-        /// <param name="path"></param>
         /// <returns></returns>
-        public static Lazy<BitmapSource> LoadImageFromResources(string path)
-        {
-            return new Lazy<BitmapSource>(() =>
-            {
-                var uri = new Uri("pack://application:,,,/Else;component/Resources/" + path);
-                return new BitmapImage(uri);
-            });
-        }
-
         public static Lazy<BitmapSource> LoadImageFromPath(string uri)
         {
             const string iconScheme = "GetFileIcon://";
+            const string appResourceSchema = "AppResource://";
 
             return new Lazy<BitmapSource>(() =>
             {
@@ -155,10 +152,18 @@ namespace Else.Helpers
                         new byte[] {0, 0, 0, 0}, 1);
                     return image;
                 }
+                // if uri starts with "GetFileIcon://", instead use IconTools to query the operating system for an icon
+                // if the path is an executable (.exe), the exe icon is returned
+                // for any other path, the image should be similar to what explorer.exe would show (this should work for directories too)
                 if (uri.StartsWith(iconScheme)) {
-                    var iconpath = uri.Substring(iconScheme.Length);
-                    return IconTools.GetBitmapForFile(iconpath).Value;
+                    var path = uri.Substring(iconScheme.Length);
+                    return IconTools.GetBitmapForFile(path).Value;
                 }
+                if (uri.StartsWith(appResourceSchema)) {
+                    var path = uri.Substring(appResourceSchema.Length);
+                    uri = "pack://application:,,,/Else;component/Resources/" + path;
+                }
+
                 var bi = new BitmapImage();
                 bi.BeginInit();
                 bi.UriSource = new Uri(uri, UriKind.RelativeOrAbsolute);

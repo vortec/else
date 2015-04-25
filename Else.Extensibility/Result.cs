@@ -29,9 +29,12 @@ namespace Else.Extensibility
     public class Result
     {
         /// <summary>
-        /// Path to the image that will be displayed in the launcher
+        /// Supported values:
+        /// string: Absolute path to an image file on the filesystem.
+        /// string: GetFileIcon://, Direct path to anything on the filesystem (e.g. exe, or folder), from which we extract an image
+        /// BitmapSource or Lazy BitmapSource
         /// </summary>
-        public string Icon { get; set; }
+        public object Icon { get; set; }
 
         /// <summary>
         /// a wrapper around the launch delegate.
