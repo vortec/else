@@ -199,18 +199,22 @@ namespace Else.ViewModels
         /// <param name="themeKey">The theme key.</param>
         public void ShowColorPicker(Window parentWindow, string windowTitle, string themeKey)
         {
-            var existingColor = ColorConverter.ConvertFromString(_editedTheme.Config[themeKey]);
-            Color currentColor;
-            if (existingColor != null) {
-                currentColor = (Color) existingColor;
+            Color? currentColor = null;
+            if (_editedTheme.Config.ContainsKey(themeKey)) {
+                var existingColor = ColorConverter.ConvertFromString(_editedTheme.Config[themeKey]);
+                if (existingColor is Color) {
+                    currentColor = (Color)existingColor;
+                }
             }
-            else {
-                // default
+
+            // color not found in existing theme, use default
+            if (currentColor == null) {
                 currentColor = Colors.DarkSlateGray;
             }
+
             HidePickerWindow();
             _colorPickerWindow.ColorChanged += (sender, color) => { SetConfigParam(themeKey, color); };
-            _colorPickerWindow.Show(parentWindow, windowTitle, currentColor);
+            _colorPickerWindow.Show(parentWindow, windowTitle, currentColor.Value);
         }
     }
 }

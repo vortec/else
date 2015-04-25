@@ -34,6 +34,7 @@
     <!--Launcher Window Styles-->
     <Style x:Key="QueryInputContainer" TargetType="Grid">
         <Setter Property="Background" Value="{DynamicResource QueryBoxBackgroundColor}" />
+        <Setter Property="ClipToBounds" Value="True"/>
     </Style>
     
     <Style x:Key="QueryInput" TargetType="TextBox">
@@ -46,6 +47,7 @@
         <Setter Property="Foreground" Value="{DynamicResource QueryBoxTextColor}" />
         <Setter Property="Background" Value="{DynamicResource QueryBoxBackgroundColor}" />
         <Setter Property="CaretBrush" Value="{DynamicResource QueryBoxTextColor}" />
+        <Setter Property="ClipToBounds" Value="True"/>
     </Style>
 
     <Style x:Key="WindowBorder" TargetType="Border">
