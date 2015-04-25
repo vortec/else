@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using Else.Interop;
+using Else.Lib;
 using Else.ViewModels;
 
 namespace Else.Views
@@ -10,7 +11,7 @@ namespace Else.Views
     /// <summary>
     /// Interaction logic for AboutWindow.xaml
     /// </summary>
-    public partial class AboutWindow : IDisposable
+    public partial class AboutWindow
     {
         private readonly AboutWindowViewModel _aboutWindowViewModel;
 
@@ -20,6 +21,7 @@ namespace Else.Views
             InitializeComponent();
             PreviewKeyDown += OnPreviewKeyDown;
             DataContext = _aboutWindowViewModel;
+            
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs keyEventArgs)
@@ -38,11 +40,6 @@ namespace Else.Views
         {
             Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
             e.Handled = true;
-        }
-
-        public void Dispose()
-        {
-            _aboutWindowViewModel?.Dispose();
         }
     }
 }

@@ -7,8 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using Autofac.Extras.NLog;
 using Else.Interop;
+using Else.Properties;
 using Squirrel;
 using Timer = System.Timers.Timer;
 
@@ -17,10 +19,10 @@ namespace Else.Services
     /// <summary>
     /// 
     /// Manages auto update and restart of the app.
-    /// An initial update check + install is done 2 minutes after construction.
-    /// If not successful, a repeating timer is setup for every 30 minutes, to check + install updates.
+    /// An initial update check is done 2 minutes after app start.
+    /// If not successful, we check for for updates every 30 minutes, indefinately.
     /// 
-    /// Once an update is installed, this class will monitor User activity for a good opportunity to restart 
+    /// Once an update is installed, this class will monitor user activity for a good opportunity to restart 
     /// the app (e.g. windows all closed and no recent UI interaction)
     /// 
     /// </summary>
@@ -37,9 +39,9 @@ namespace Else.Services
         private const string UpdateUrl = @"http://otp.me.uk/~james/Else/Installer";
 
         /// <summary>
-        /// The minimum UI idle time before restart.
+        /// The minimum UI idle time before restart
         /// </summary>
-        private const int MinimumUserIdleBeforeRestart = 30;
+        private readonly TimeSpan _minimumUserIdleBeforeRestart = TimeSpan.FromSeconds(30);
 
         /// <summary>
         /// the last known UI activity (updated by various app windows)
@@ -56,12 +58,14 @@ namespace Else.Services
         /// <summary>
         /// The initial update delay
         /// </summary>
-        private TimeSpan _initialUpdateDelay = new TimeSpan(0, 2, 0);
+        private TimeSpan _initialUpdateDelay = TimeSpan.FromMinutes(1);
 
         /// <summary>
         /// The repeating update delay
         /// </summary>
-        private TimeSpan _repeatingUpdateDelay = new TimeSpan(0, 30, 0);
+        private TimeSpan _repeatingUpdateDelay = TimeSpan.FromMinutes(30);
+
+        private TimeSpan _restartAttemptDelay = TimeSpan.FromSeconds(5);
 
         /// <summary>
         /// Timer used for auto restarting the app.
@@ -89,6 +93,7 @@ namespace Else.Services
         /// <param name="logger">The logger.</param>
         public Updater(ILogger logger)
         {
+            
             _logger = logger;
             UpdateManager = new UpdateManager(UpdateUrl, AppName, FrameworkVersion.Net45);
             BeginAutoUpdateTimer();
@@ -174,10 +179,14 @@ namespace Else.Services
         /// </summary>
         public async Task UpdateApp()
         {
+            if (!Settings.Default.AutoUpdate) {
+                // automatic updates are disabled.
+                return;
+            }
             // lock, otherwise multiple updates could happen
             if (_updateLock.WaitOne(200)) {
                 try {
-                    //_logger.Debug("Checking for updates");
+                    _logger.Debug("Checking for updates");
 
                     // check for updates
                     var updateInfo = await UpdateManager.CheckForUpdate();
@@ -196,9 +205,10 @@ namespace Else.Services
                         // update is installed, we need to restart in the future to apply the update.
                         RestartPending = true;
                         // begin timer that will check for good opportunity to restart
-                        _restartTimer = new Timer(5000);
+                        _restartTimer = new Timer(_restartAttemptDelay.TotalMilliseconds);
                         _restartTimer.Elapsed += AttemptSilentRestart;
-                        _restartTimer.Start();
+                        _restartTimer.Enabled = true;
+                        _restartTimer.AutoReset = true;
                     }
                     else {
                         // no updates available
@@ -227,16 +237,16 @@ namespace Else.Services
         private void AttemptSilentRestart(object sender, ElapsedEventArgs e)
         {
             if (!RestartPending) {
-                _restartTimer.Stop();
+                _restartTimer.Enabled = false;
                 return;
             }
 
-            // minimum UI idle before restart..
+            // don't restart if UI has been recently used
             var delta = DateTime.Now - _lastActivity;
-            if (delta.TotalSeconds < MinimumUserIdleBeforeRestart) {
+            if (delta < _minimumUserIdleBeforeRestart) {
                 return;
             }
-            // ensure no windows open before restart..
+            // don't restart if any windows are open
             var windowsAreOpen = false;
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -250,7 +260,16 @@ namespace Else.Services
             }
 
             // otherwise, all good to restart
-            RestartApp();
+            try {
+                RestartApp();
+            }
+            catch (Exception exception) {
+                _logger.Error("failed to restart app", exception);
+                // we failed to restart the app, nothing more we can do
+                // so we cancel the restart timer
+                _restartTimer.Enabled = false;
+
+            }
         }
 
         /// <summary>

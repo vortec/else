@@ -1,10 +1,10 @@
-﻿using System;
-using Else.Lib;
+﻿using Else.Lib;
+using Else.Properties;
 using Else.Services;
 
 namespace Else.ViewModels
 {
-    public class AboutWindowViewModel : ObservableObject, IDisposable
+    public class AboutWindowViewModel : ObservableObject
     {
         private readonly Updater _updater;
 
@@ -13,6 +13,9 @@ namespace Else.ViewModels
             _updater = updater;
         }
 
+        /// <summary>
+        /// Gets the currently installed version from UpdateManager.
+        /// </summary>
         public string CurrentVersion
         {
             get
@@ -26,9 +29,21 @@ namespace Else.ViewModels
             }
         }
 
-        public void Dispose()
+        /// <summary>
+        /// Wraps Settings.Default.AutoUpdate
+        /// </summary>
+        public bool AutomaticUpdatesEnabled
         {
-            _updater?.Dispose();
+            get { return Settings.Default.AutoUpdate; }
+            set
+            {
+                if (Settings.Default.AutoUpdate != value) {
+                    // has changed
+                    Settings.Default.AutoUpdate = value;
+                    Settings.Default.Save();
+                    OnPropertyChanged();
+                }
+            }
         }
     }
 }
