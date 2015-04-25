@@ -200,8 +200,10 @@ namespace Else.Services
                         _restartTimer.Elapsed += AttemptSilentRestart;
                         _restartTimer.Start();
                     }
-                    // no updates available
-                    _logger.Debug("No updates available");
+                    else {
+                        // no updates available
+                        _logger.Debug("No updates available");
+                    }
                 }
                 catch (Exception e) {
                     _logger.Error("error occurred while downloading or installing update", e);
