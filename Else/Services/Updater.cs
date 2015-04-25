@@ -115,14 +115,16 @@ namespace Else.Services
 
         private async void UpdateTimerElapsed(object sender, ElapsedEventArgs elapsedEventArgs)
         {
+            _updateTimer.Enabled = false;
+
             // attempt initial app update
             await UpdateApp();
 
             if (RestartPending) {
-                // app was successfully updated, stop the timer
-                _updateTimer.Enabled = false;
+                // app was successfully updated
                 return;
             }
+            _updateTimer.Enabled = true;
 
             // start a new repeating timer
             if (!_updateTimer.AutoReset) {
@@ -202,7 +204,7 @@ namespace Else.Services
                     _logger.Debug("No updates available");
                 }
                 catch (Exception e) {
-                    _logger.Error("error occurred while downloading or installing update");
+                    _logger.Error("error occurred while downloading or installing update", e);
                 }
                 finally {
                     // release lock

@@ -100,7 +100,7 @@ namespace Else.Interop
                             }
 
                         }
-                        catch (Exception e) {
+                        catch {
                             // not sure what went wrong really...
                             // lets hope there are no processes running
                         }
