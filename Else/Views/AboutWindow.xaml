@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Else.Views"
         ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Title="About Else" Height="210" Width="300">
     <Grid>

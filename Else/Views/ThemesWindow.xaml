@@ -7,6 +7,7 @@
         xmlns:designerData="clr-namespace:Else.DesignerData"
         xmlns:controls="clr-namespace:Else.Views.Controls"
         xmlns:viewModels="clr-namespace:Else.ViewModels"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
         Width="1000" Height="600"
         ResizeMode="NoResize"
