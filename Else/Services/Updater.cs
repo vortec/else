@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
-using System.Windows.Automation.Peers;
 using Autofac.Extras.NLog;
 using Else.Interop;
 using Else.Properties;
@@ -39,16 +38,16 @@ namespace Else.Services
         private const string UpdateUrl = @"http://otp.me.uk/~james/Else/Installer";
 
         /// <summary>
-        /// The minimum UI idle time before restart
-        /// </summary>
-        private readonly TimeSpan _minimumUserIdleBeforeRestart = TimeSpan.FromSeconds(30);
-
-        /// <summary>
         /// the last known UI activity (updated by various app windows)
         /// </summary>
         private static DateTime _lastActivity;
 
         private readonly ILogger _logger;
+
+        /// <summary>
+        /// The minimum UI idle time before restart
+        /// </summary>
+        private readonly TimeSpan _minimumUserIdleBeforeRestart = TimeSpan.FromSeconds(30);
 
         /// <summary>
         /// To prevent simultaenous updates.
@@ -93,7 +92,6 @@ namespace Else.Services
         /// <param name="logger">The logger.</param>
         public Updater(ILogger logger)
         {
-            
             _logger = logger;
             UpdateManager = new UpdateManager(UpdateUrl, AppName, FrameworkVersion.Net45);
             BeginAutoUpdateTimer();
@@ -268,7 +266,6 @@ namespace Else.Services
                 // we failed to restart the app, nothing more we can do
                 // so we cancel the restart timer
                 _restartTimer.Enabled = false;
-
             }
         }
 
