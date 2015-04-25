@@ -31,7 +31,6 @@ namespace Else.Plugin.Web
                 AddCommand(p.Keyword)
                     .Title(p.DisplayText)
                     .Icon(GetPath(p.IconName))
-                    //                    .Icon(Helper.LoadImageFromResources(p.IconName))
                     .Launch(query =>
                     {
                         var searchKeywords = query.Keyword.StartsWith(p.Keyword) ? query.Arguments : query.Raw;

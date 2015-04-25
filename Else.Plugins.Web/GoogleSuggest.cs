@@ -18,10 +18,11 @@ namespace Else.Plugin.Web
         private const string Url = "http://suggestqueries.google.com/complete/search";
         private const string Keyword = "g";
         private readonly HttpClient _client = new HttpClient();
-        private readonly Lazy<BitmapSource> _icon = Helper.LoadImageFromResources("google.png");
+        private string _icon;
 
         public override void Setup()
         {
+            _icon = GetPath("Resources\\google.png");
             AddProvider()
                 .Keyword(Keyword)
                 .Query(Query);
@@ -41,7 +42,7 @@ namespace Else.Plugin.Web
                         var results = cachedSuggestions.Select(suggestion => new Result
                         {
                             Title = suggestion,
-//                            Icon = _icon,
+                            Icon = _icon,
                             SubTitle = "Search google for " + suggestion,
                             Launch = query1 =>
                             {
@@ -56,7 +57,7 @@ namespace Else.Plugin.Web
                         new Result
                         {
                             Title = "No search suggestions found.",
-//                            Icon = _icon
+                            Icon = _icon
                         }
                     };
                 }
@@ -68,7 +69,7 @@ namespace Else.Plugin.Web
                     new Result
                     {
                         Title = "Retrieving search suggestions...",
-//                        Icon = _icon
+                        Icon = _icon
                     }
                 };
             }
@@ -79,7 +80,7 @@ namespace Else.Plugin.Web
                 {
                     Title = "Search Google",
                     SubTitle = "Search Google with Suggestions",
-//                    Icon = _icon,
+                    Icon = _icon,
                     Launch = query1 => AppCommands.RewriteQuery(Keyword + ' ')
                 }
             };

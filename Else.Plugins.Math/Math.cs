@@ -12,13 +12,14 @@ namespace Else.Plugin.Math
     {
         private readonly Regex _isNotMathExpressionRegex = new Regex(@"[^0-9\(\)\^\.\+\*\/\-%<>!= ]", RegexOptions.Compiled);
         private readonly CalculationEngine _calculationEngine = new CalculationEngine();
-        private readonly Lazy<BitmapSource> _icon = Helper.LoadImageFromResources("Icons/calculator.png");
+        private string _icon;
 
         /// <summary>
         /// Plugin setup
         /// </summary>
         public override void Setup()
         {
+            _icon = GetPath("Resources/calculator.png");
             AddProvider()
                 .IsFallback()
                 .IsInterested(query =>
@@ -40,6 +41,7 @@ namespace Else.Plugin.Math
                         result = new Result
                         {
                             Title = strMathResult,
+                            Icon = _icon,
                             SubTitle = "Launch this item to copy this number to the clipboard",
                             Launch = info =>
                             {
@@ -52,6 +54,7 @@ namespace Else.Plugin.Math
                         result = new Result
                         {
                             Title = "...",
+                            Icon = _icon,
                             SubTitle = "Please enter a valid expression"
                         };
                     }
