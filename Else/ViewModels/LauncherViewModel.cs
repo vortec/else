@@ -3,15 +3,16 @@ using System.Windows.Input;
 using Else.Core;
 using Else.Extensions;
 using Else.Lib;
+using Else.ViewModels.Interfaces;
 
 namespace Else.ViewModels
 {
-    public class LauncherViewModel : ObservableObject
+    public class LauncherViewModel : ObservableObject, ILauncherViewModel
     {
         private readonly Engine _engine;
         private string _queryInputText;
 
-        public LauncherViewModel(Engine engine, ResultsListViewModel resultsListViewModel)
+        public LauncherViewModel(Engine engine, IResultsListViewModel resultsListViewModel)
         {
             _engine = engine;
             ResultsListViewModel = resultsListViewModel;
@@ -41,7 +42,7 @@ namespace Else.ViewModels
         public RelayCommand QueryInputPreviewKeyDown { get; private set; }
         public RelayCommand RewriteQueryCommand { get; set; }
         public RelayCommand VisibilityChangedCommand { get; set; }
-        public ResultsListViewModel ResultsListViewModel { get; set; }
+        public IResultsListViewModel ResultsListViewModel { get; set; }
 
         private void OnPreviewKeyDown(object o)
         {

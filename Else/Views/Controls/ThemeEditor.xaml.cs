@@ -79,7 +79,7 @@ namespace Else.Views.Controls
             // add handlers for ResultContainer, detects if it is a selected result (because that uses different styles)
             foreach (var element in UI.FindVisualChildren<StackPanel>(Launcher.ResultsList, "ResultContainer")) {
                 // check if this element is selected, by checking if the subtitle 
-                if (element.Background.Equals(Application.Current.Resources.MergedDictionaries[1]["ResultSelectedBackgroundColor"])) {
+                if (element.Background.Equals(Application.Current.Resources["ResultSelectedBackgroundColor"])) {
                     SetMouseHandlersForElement("ResultSelectedBackgroundColor", "Result Selected Background Color", element);
                 }
                 else {

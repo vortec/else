@@ -1,12 +1,14 @@
-﻿namespace Else.ViewModels
+﻿using Else.ViewModels.Interfaces;
+
+namespace Else.ViewModels
 {
     public class LauncherWindowViewModel
     {
-        public LauncherWindowViewModel(LauncherViewModel launcherViewModel)
+        public LauncherWindowViewModel(ILauncherViewModel launcherViewModel)
         {
             LauncherViewModel = launcherViewModel;
         }
 
-        public LauncherViewModel LauncherViewModel { get; set; }
+        public ILauncherViewModel  LauncherViewModel { get; set; }
     }
 }

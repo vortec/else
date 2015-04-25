@@ -231,9 +231,13 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\Updater.cs" />
     <Compile Include="ViewModels\AboutWindowViewModel.cs" />
+    <Compile Include="ViewModels\Interfaces\ILauncherViewModel.cs" />
     <Compile Include="ViewModels\LauncherViewModel.cs" />
+    <Compile Include="ViewModels\Interfaces\IResultsListViewModel.cs" />
     <Compile Include="ViewModels\LauncherWindowViewModel.cs" />
     <Compile Include="ViewModels\ResultsListViewModel.cs" />
+    <Compile Include="ViewModels\ThemeEditorLauncherViewModel.cs" />
+    <Compile Include="ViewModels\ThemeEditorResultsListViewModel.cs" />
     <Compile Include="ViewModels\ThemesWindowViewModel.cs" />
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
@@ -429,6 +433,7 @@
       <Name>Else.Extensibility</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -10,7 +10,7 @@
     <SolidColorBrush x:Key="QueryBoxTextColor" Color="Black" />
 
     <SolidColorBrush x:Key="ResultBackgroundColor" Color="White" />
-    <SolidColorBrush x:Key="ResultSelectedBackgroundColor" Color="#EEEDEF" />
+    <SolidColorBrush x:Key="ResultSelectedBackgroundColor" Color="#FFEEEDEF" />
 
     <SolidColorBrush x:Key="ResultTitleColor" Color="Black" />
     <SolidColorBrush x:Key="ResultSubTitleColor" Color="#777777" />

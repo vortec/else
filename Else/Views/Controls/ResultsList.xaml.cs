@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Else.Helpers;
 using Else.ViewModels;
+using Else.ViewModels.Interfaces;
 
 namespace Else.Views.Controls
 {
@@ -20,7 +21,7 @@ namespace Else.Views.Controls
 
         private void ResultsList_OnLoaded(object sender, RoutedEventArgs e)
         {
-            var viewModel = DataContext as ResultsListViewModel;
+            var viewModel = DataContext as IResultsListViewModel;
             if (viewModel != null) {
                 viewModel.PropertyChanged += (o, args) =>
                 {

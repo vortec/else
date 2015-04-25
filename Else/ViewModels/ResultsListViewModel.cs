@@ -7,6 +7,7 @@ using Autofac.Extras.NLog;
 using Else.Core;
 using Else.DataTypes;
 using Else.Lib;
+using Else.ViewModels.Interfaces;
 using IronPython.Hosting;
 using IronPython.Runtime;
 using IronPython.Runtime.Exceptions;
@@ -16,7 +17,7 @@ using Microsoft.Scripting.Hosting.Providers;
 
 namespace Else.ViewModels
 {
-    public class ResultsListViewModel : ObservableObject
+    public class ResultsListViewModel : ObservableObject, IResultsListViewModel
     {
         private readonly Engine _engine;
         private readonly ILogger _logger;

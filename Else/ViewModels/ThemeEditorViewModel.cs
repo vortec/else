@@ -37,7 +37,7 @@ namespace Else.ViewModels
         /// </summary>
         private Theme _originalTheme;
 
-        public ThemeEditorViewModel(ThemeManager themeManager, LauncherViewModel launcherViewModel,
+        public ThemeEditorViewModel(ThemeManager themeManager, ThemeEditorLauncherViewModel launcherViewModel,
             IColorPickerWindow colorPickerWindow)
         {
             LauncherViewModel = launcherViewModel;
@@ -48,7 +48,7 @@ namespace Else.ViewModels
             UnloadedCommand = new RelayCommand(param => Unloaded());
         }
 
-        public LauncherViewModel LauncherViewModel { get; set; }
+        public ThemeEditorLauncherViewModel LauncherViewModel { get; set; }
 
         /// <summary>
         /// Example data for showing off the launcher styles.

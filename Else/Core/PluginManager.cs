@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using Autofac.Extras.NLog;
 using Autofac.Features.Indexed;
@@ -42,6 +43,8 @@ namespace Else.Core
                 _paths.GetAppPath("Plugins"),
                 _paths.GetUserPath("Plugins")
             };
+            var timer = new Stopwatch();
+            timer.Start();
 
             foreach (var sourceDirectory in sources) {
                 foreach (var subdir in Directory.EnumerateDirectories(sourceDirectory)) {
@@ -53,6 +56,8 @@ namespace Else.Core
                     }
                 }
             }
+            timer.Stop();
+            _logger.Debug("Plugins initialization took {0}ms", timer.ElapsedMilliseconds);
         }
 
         /// <summary>

@@ -18,6 +18,7 @@ using Else.Properties;
 using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
+using Else.ViewModels.Interfaces;
 using Else.Views;
 using NLog;
 
@@ -148,11 +149,14 @@ namespace Else
 
             // register ViewModels
             builder.RegisterType<ThemeEditorViewModel>();
-            builder.RegisterType<LauncherViewModel>();
+            builder.RegisterType<LauncherViewModel>().As<ILauncherViewModel>();
             builder.RegisterType<LauncherWindowViewModel>();
-            builder.RegisterType<ResultsListViewModel>();
+            builder.RegisterType<ResultsListViewModel>().As<IResultsListViewModel>();
             builder.RegisterType<ThemesWindowViewModel>();
             builder.RegisterType<AboutWindowViewModel>();
+            builder.RegisterType<ThemeEditorLauncherViewModel>();
+            builder.RegisterType<ThemeEditorResultsListViewModel>();
+            
 
 
             builder.RegisterInstance(this).As<App>();
