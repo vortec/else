@@ -37,14 +37,23 @@ namespace Else.Core
             var paths = engine.GetSearchPaths();
             paths.Add(Path.GetDirectoryName(path));
 
-            string libPath;
-            if (System.Diagnostics.Debugger.IsAttached) {
-                libPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName, "PythonLib");
+            // determine path to IronPython library
+
+            // in the same directory as our executable
+            var local = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "PythonLib");
+
+            // in the parent directory
+            var parent = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName, "PythonLib");
+
+            if (Directory.Exists(local)) {
+                paths.Add(local);
+            }
+            else if (Directory.Exists(parent)) {
+                paths.Add(parent);
             }
             else {
-                libPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "PythonLib");
+                _logger.Error("Python library not found. Checked {0};{1};", local, parent);
             }
-            paths.Add(libPath);
             engine.SetSearchPaths(paths);
 
             var scope = engine.CreateScope();
