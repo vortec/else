@@ -57,9 +57,12 @@ namespace Else.Plugin.FileSystem
                                     filterEntry(file, false);
                                 }
                                 IEnumerable<FileSystemEntry> sorted;
+#pragma warning disable 162
+                                // ReSharper disable once ConditionIsAlwaysTrueOrFalse
                                 if (ListDirectoriesFirst) {
                                     sorted = entries.OrderByDescending(e => e.IsDirectory).ThenBy(e => e.FileName);
                                 }
+#pragma warning restore 162
                                 else {
                                     sorted = entries.OrderBy(e => e.FileName);
                                 }
