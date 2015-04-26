@@ -260,7 +260,6 @@
     <Compile Include="Model\Theme.cs" />
     <Compile Include="Services\ThemeManager.cs" />
     <Compile Include="Helpers\UI.cs" />
-    <Compile Include="DesignerData\ResultsList.cs" />
     <Compile Include="DataTypes\BindingResultsList.cs" />
     <Compile Include="Views\SplashScreenWindow.xaml.cs">
       <DependentUpon>SplashScreenWindow.xaml</DependentUpon>

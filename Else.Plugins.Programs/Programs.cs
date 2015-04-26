@@ -33,7 +33,6 @@ namespace Else.Plugin.Programs
         /// </summary>
         public override void Setup()
         {
-            return;
 
             // recursively scan certain directories and process any .lnk files (shortcuts to applications)
             ProcessDirectory(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu));
