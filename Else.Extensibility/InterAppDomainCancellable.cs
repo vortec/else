@@ -22,11 +22,16 @@ namespace Else.Extensibility
             _cts.Dispose();
         }
 
+        CancellationToken ITokenSource.Token => _cts.Token;
+
+        public override object InitializeLifetimeService()
+        {
+            return null;
+        }
+
         public void Cancel()
         {
             _cts.Cancel();
         }
-
-        CancellationToken ITokenSource.Token => _cts.Token;
     }
 }

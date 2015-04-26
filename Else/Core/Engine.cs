@@ -176,12 +176,19 @@ namespace Else.Core
                 if (provider != null) {
                     var task = Task.Factory.StartNew(() =>
                     {
-                        // get cancellation token source from other AppDomain
-                        var appDomainCancelToken = provider.GetCancellable();
-                        // connect the 2 cancellation token sources
-                        _cancelTokenSource.Token.Register(() => appDomainCancelToken.Cancel());
+                        // create a cancellable that is remotable
+                        var cancellable = new InterAppDomainCancellable();
 
-                        return provider.ExecuteQueryFunc(Query, appDomainCancelToken);
+                        // connect our local cancellation token with the remote one
+                        _cancelTokenSource.Token.Register(() =>
+                        {
+                            cancellable.Cancel();
+                            cancellable.Dispose();
+                        });
+
+                        // query the provider and pass the remotable cancellable
+                        return provider.ExecuteQueryFunc(Query, cancellable);
+
                     }, _cancelTokenSource.Token, TaskCreationOptions.AttachedToParent, TaskScheduler.Default);
                     tasks.Add(task);
                 }
