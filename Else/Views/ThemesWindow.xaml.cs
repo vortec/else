@@ -1,6 +1,4 @@
-﻿using System;
-using Else.Interop;
-using Else.ViewModels;
+﻿using Else.ViewModels;
 
 namespace Else.Views
 {
@@ -10,11 +8,6 @@ namespace Else.Views
         {
             InitializeComponent();
             DataContext = themesWindowViewModel;
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            Win32.RemoveWindowIcon(this);
         }
     }
 }

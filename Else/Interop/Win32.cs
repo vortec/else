@@ -29,6 +29,11 @@ namespace Else.Interop
         private const int SWP_NOACTIVATE = 0x0010;
         private const uint WM_SETICON = 0x0080;
 
+        /// <summary>
+        /// Removes the window icon (the icon on the left of the window titlebar).
+        /// <remarks>Has the side effect of removing the icon from alt-tab task switcher also</remarks>
+        /// </summary>
+        /// <param name="window">The window.</param>
         public static void RemoveWindowIcon(Window window)
         {
             // Get the window's handle

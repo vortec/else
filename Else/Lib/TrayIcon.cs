@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
@@ -44,7 +45,7 @@ namespace Else.Lib
         {
             _trayIcon = new NotifyIcon
             {
-                Icon = Resources.AppIcon,
+                Icon = new Icon(Resources.AppIcon, SystemInformation.SmallIconSize),
                 Text = Assembly.GetExecutingAssembly().GetName().Name
             };
 

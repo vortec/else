@@ -38,6 +38,7 @@ namespace Else.Core
         /// </summary>
         public void DiscoverPlugins()
         {
+            return;
             var sources = new[]
             {
                 _paths.GetAppPath("Plugins"),

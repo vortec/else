@@ -1,9 +1,6 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Windows.Input;
 using System.Windows.Navigation;
-using Else.Interop;
-using Else.Lib;
 using Else.ViewModels;
 
 namespace Else.Views
@@ -21,7 +18,6 @@ namespace Else.Views
             InitializeComponent();
             PreviewKeyDown += OnPreviewKeyDown;
             DataContext = _aboutWindowViewModel;
-            
         }
 
         private void OnPreviewKeyDown(object sender, KeyEventArgs keyEventArgs)
@@ -29,11 +25,6 @@ namespace Else.Views
             if (keyEventArgs.Key == Key.Escape) {
                 Close();
             }
-        }
-
-        protected override void OnSourceInitialized(EventArgs e)
-        {
-            Win32.RemoveWindowIcon(this);
         }
 
         private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
