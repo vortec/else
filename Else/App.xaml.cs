@@ -30,6 +30,7 @@ namespace Else
         private Logger _logger;
         private TrayIcon _trayIcon;
         public IContainer Container;
+        public bool RunningFromSimulator;
         public event EventHandler OnStartupComplete;
 
         private void OnStart(object sender, StartupEventArgs startupEventArgs)
@@ -94,20 +95,24 @@ namespace Else
                 var messagePump = scope.Resolve<Win32MessagePump>();
                 messagePump.Setup(launcherWindow);
 
-                // only initialize plugins and trayicon if we are directly running the app (e.g. not running inside the theme editor)
-                if (Assembly.GetExecutingAssembly() == Assembly.GetEntryAssembly()) {
+                // only do the following if the app is running directly (not launched from simulator)
+                if (!RunningFromSimulator) {
+                    // only initialize plugins and trayicon if we are directly running the app (e.g. not running inside the theme editor)
+
                     var pluginManager = scope.Resolve<PluginManager>();
                     pluginManager.DiscoverPlugins();
                     _trayIcon = scope.Resolve<TrayIcon>();
                     _trayIcon.Setup();
-                }
 
-                // show splash screen on the first run
-                if (!Settings.Default.FirstLaunch) {
-                    var splashScreen = scope.Resolve<SplashScreenWindow>();
-                    splashScreen.ShowWindow();
-                    Settings.Default.FirstLaunch = true;
-                    Settings.Default.Save();
+                    // show splash screen on the first run
+                    if (!Settings.Default.FirstLaunch) {
+                        var splashScreen = scope.Resolve<SplashScreenWindow>();
+                        splashScreen.ShowWindow();
+                        Settings.Default.FirstLaunch = true;
+                        Settings.Default.Save();
+                    }
+                    scope.Resolve<Updater>().BeginAutoUpdates();
+                    
                 }
             }
             // trigger custom OnStartupComplete event, this is used by the theme editor.
@@ -156,7 +161,6 @@ namespace Else
             builder.RegisterType<AboutWindowViewModel>();
             builder.RegisterType<ThemeEditorLauncherViewModel>();
             builder.RegisterType<ThemeEditorResultsListViewModel>();
-            
 
 
             builder.RegisterInstance(this).As<App>();

@@ -28,6 +28,8 @@ namespace Simulator
             var appthread = new Thread(() =>
             {
                 _app = new App();
+                _app.InitializeComponent();
+                _app.RunningFromSimulator = true;
                 _app.OnStartupComplete += onStartupComplete;
                 _app.Run();
             });

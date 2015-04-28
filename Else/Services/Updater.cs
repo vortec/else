@@ -94,7 +94,6 @@ namespace Else.Services
         {
             _logger = logger;
             UpdateManager = new UpdateManager(UpdateUrl, AppName, FrameworkVersion.Net45);
-            BeginAutoUpdateTimer();
         }
 
         public void Dispose()
@@ -109,7 +108,7 @@ namespace Else.Services
         /// <summary>
         /// Begins the automatic update timer.
         /// </summary>
-        private void BeginAutoUpdateTimer()
+        public void BeginAutoUpdates()
         {
             _updateTimer = new Timer(_initialUpdateDelay.TotalMilliseconds) {AutoReset = false};
             _updateTimer.Elapsed += UpdateTimerElapsed;
