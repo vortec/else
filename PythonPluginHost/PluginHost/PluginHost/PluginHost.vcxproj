@@ -148,8 +148,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Exceptions.h" />
     <ClInclude Include="Helpers.h" />
     <ClInclude Include="ModuleWrapper.h" />
+    <ClInclude Include="PythonListIterator.h" />
     <ClInclude Include="PythonPlugin.h" />
     <ClInclude Include="Host.h" />
     <ClInclude Include="ElseModule.h" />

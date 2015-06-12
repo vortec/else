@@ -4,6 +4,7 @@
 #include "Host.h"
 #include "ElseModule.h"
 #include "ModuleWrapper.h"
+#include "Exceptions.h"
 
 using namespace System::Diagnostics;
 
@@ -15,7 +16,6 @@ using namespace System::Diagnostics;
 void Host::Init()
 {
     modules = gcnew Dictionary<String ^, ModuleWrapper^>();
-    host = this;
     // setup python
     Py_Initialize();
     pystateMain = PyThreadState_Get();
@@ -27,24 +27,28 @@ void Host::Init()
 /// <param name="directory">The directory.</param>
 void Host::LoadPlugin(String^ path)
 {
-    /*if (modules->ContainsKey(path)) {
-        throw gcnew PluginException(String::Format("plugin already exists with the path {0}", path));
-    }*/
+    // only allow a single instance of each plugin.
+    if (modules->ContainsKey(path)) {
+        throw gcnew PluginLoadException(String::Format("ERROR: plugin at path {0} is already loaded.", path));
+    }
+    // attempt to load the plugin
     auto module = gcnew ModuleWrapper();
-    // setup interpreter
     try {
         module->Load(path);
-        /*auto ptr = new ModuleWrapperBridge(module);*/
+        // success, add to loaded modules list
         modules->Add(path, module);
         Debug::Print("Module load success: {0}", path);
     }
     catch (Exception^ e) {
+        // failure!
+        throw;
         Debug::Print("Module load failure: {0} [{1}]", path, e);
-    }
-    finally {
     }
 }
 
+/// <summary>
+/// Finalizes an instance of the <see cref="Host"/> class.
+/// </summary>
 Host::~Host()
 {
     Py_Finalize();

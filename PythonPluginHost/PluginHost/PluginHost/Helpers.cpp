@@ -51,3 +51,11 @@ char* getPythonTraceback()
 
     return chrRetval;
 }
+
+String^ pyRepr(PyObject* instance)
+{
+    PyObject* objectsRepresentation = PyObject_Repr(instance);
+    const char* s = PyUnicode_AsUTF8(objectsRepresentation);
+    Py_DECREF(objectsRepresentation);
+    return gcnew String(s);
+}

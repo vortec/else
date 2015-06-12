@@ -10,6 +10,7 @@ using namespace System::Diagnostics;
 using namespace System::IO;
 using namespace Else::Extensibility;
 using namespace System::Runtime::InteropServices;
+
 static const char* sysPaths[] = {
     // standard python libs
     "C:\\Users\\James\\Repos\\Else\\Python\\StdLib\\Lib",
@@ -25,6 +26,10 @@ ModuleWrapper::ModuleWrapper()
     plugins = gcnew List<IPlugin^>();
 }
 
+/// <summary>
+/// Attempts loading of a python module at the specified path.  Creates a new python interpreter state.
+/// </summary>
+/// <param name="path">The path.</param>
 void ModuleWrapper::Load(String^ path)
 {
     auto info = gcnew DirectoryInfo(Path::GetDirectoryName(path));
@@ -34,7 +39,6 @@ void ModuleWrapper::Load(String^ path)
     // create new python interpreter and switch to it
     pystate = Py_NewInterpreter();
     PySwitchState();
-
 
     // setup sys.path
     PySys_SetObject("path", PyList_New(0));
@@ -66,14 +70,19 @@ void ModuleWrapper::Load(String^ path)
     delete context;
     delete pObj;
 }
+/// <summary>
+/// A python plugin is registered.
+/// </summary>
+/// <param name="instance">The plugin instance (a python object).</param>
 void ModuleWrapper::RegisterPlugin(PyObject* instance)
 {
     auto p = gcnew PythonPlugin(instance);
-    Debug::Print("plugin name = {0}", p->Name);
-    //plugins->Add((IPlugin^)p);
     plugins->Add(p);
 }
 
+/// <summary>
+/// Switch to this modules dedicated python thread state.
+/// </summary>
 void ModuleWrapper::PySwitchState()
 {
     PyThreadState_Swap(pystate);
@@ -81,6 +90,7 @@ void ModuleWrapper::PySwitchState()
 
 ModuleWrapper::~ModuleWrapper()
 {
+    // clean up python interpreter
     if (pystate != nullptr) {
         Py_EndInterpreter(pystate);
         pystate = nullptr;

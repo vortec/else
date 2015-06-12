@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "ElseModule.h"
+#include "Exceptions.h"
 
 using namespace System;
 using namespace System::Diagnostics;

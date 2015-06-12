@@ -51,8 +51,14 @@
     <ClInclude Include="ElseModule.h">
       <Filter>Header Files\ElseModule</Filter>
     </ClInclude>
+    <ClInclude Include="PythonListIterator.h">
+      <Filter>Header Files\Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="Exceptions.h">
+      <Filter>Header Files\Lib</Filter>
+    </ClInclude>
     <ClInclude Include="PythonProvider.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -78,7 +84,7 @@
       <Filter>Source Files\ElseModule</Filter>
     </ClCompile>
     <ClCompile Include="PythonProvider.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

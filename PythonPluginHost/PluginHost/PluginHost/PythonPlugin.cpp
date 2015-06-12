@@ -14,8 +14,6 @@ using namespace System::Diagnostics;
 PythonPlugin::PythonPlugin(PyObject* instance)
 {
     _instance = instance;
-    for each (auto x in Providers) {
-    }
 }
 PythonPlugin::~PythonPlugin()
 {

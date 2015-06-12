@@ -3,25 +3,16 @@
 #include "PythonProvider.h"
 #include "Helpers.h"
 
-
-
 using namespace msclr::interop;
 using namespace System;
 using namespace System::Diagnostics;
-
 
 PythonProvider::PythonProvider(PyObject* instance)
 {
     _instance = instance;
 }
-String^ PythonProvider::repr(PyObject* instance)
-{
-    PyObject* objectsRepresentation = PyObject_Repr(instance);
-    const char* s = PyUnicode_AsUTF8(objectsRepresentation);
-    Py_DECREF(objectsRepresentation);
-    return gcnew String(s);
-}
-PyObject* ConvertStructToPyDict(Else::Extensibility::Query ^query)
+
+PyObject* ConvertQueryToPyDict(Else::Extensibility::Query ^query)
 {
     auto context = gcnew marshal_context();
     PyObject* dict = PyDict_New();
@@ -55,7 +46,7 @@ PyObject* ConvertStructToPyDict(Else::Extensibility::Query ^query)
 ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query)
 {
     // convert Query struct to a python dictionary
-    auto queryDict = ConvertStructToPyDict(query);
+    auto queryDict = ConvertQueryToPyDict(query);
     ProviderInterest interest = ProviderInterest::None;
     
     // call is_interested() on the provider
@@ -102,7 +93,7 @@ long GetLong(PyObject* result, const char* key)
 System::Collections::Generic::List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
 {
     // convert Query struct to a python dictionary
-    auto queryDict = ConvertStructToPyDict(query);
+    auto queryDict = ConvertQueryToPyDict(query);
 
     auto results = gcnew System::Collections::Generic::List<Result^>();
 
