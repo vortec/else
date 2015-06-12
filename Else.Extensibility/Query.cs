@@ -41,7 +41,7 @@ namespace Else.Extensibility
         /// <summary>
         /// Regex for detecting a path (e.g. c:\test)
         /// </summary>
-        public Regex PathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
+        static readonly Regex PathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
 
         /// <summary>
         /// The entire query string as provided by the user

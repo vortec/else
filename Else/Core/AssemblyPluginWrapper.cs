@@ -72,7 +72,7 @@ namespace Else.Core
                     if (instance != null) {
                         Loaded.Add(instance);
                         instance.Name = instance.GetType().Name;
-                        instance.PluginLanguage = "C#";
+                        //instance._pluginLanguage = "C#";
                         // setup lifetime sponsor (prevent the remote object from being disconnected)
                         var lease = (ILease) RemotingServices.GetLifetimeService(instance);
                         lease.Register(_sponsor);

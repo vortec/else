@@ -116,9 +116,9 @@ namespace Else.Core
         private async Task ExecuteQuery(string query)
         {
             // determine which providers are able to respond to this query, and sort them into groups
-            var exclusive = new List<BaseProvider>(); // todo: consider removing exclusive
-            var shared = new List<BaseProvider>();
-            var fallback = new List<BaseProvider>();
+            var exclusive = new List<IProvider>(); // todo: consider removing exclusive
+            var shared = new List<IProvider>();
+            var fallback = new List<IProvider>();
             foreach (var p in Plugins) {
                 foreach (var c in p.Providers) {
                     var interest = c.ExecuteIsInterestedFunc(Query);
@@ -168,7 +168,7 @@ namespace Else.Core
             }
         }
 
-        private async Task<List<Result>> ProcessProviderQueryAsync(List<BaseProvider> providers)
+        private async Task<List<Result>> ProcessProviderQueryAsync(List<IProvider> providers)
         {
             // invoke Query() on each provider, collect the returned Task() objects
             var tasks = new List<Task<List<Result>>>();

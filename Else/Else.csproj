@@ -228,6 +228,7 @@
     <Compile Include="Behaviours\FocusExtension.cs" />
     <Compile Include="Converter\UriToImageConverter.cs" />
     <Compile Include="Core\BasePluginWrapper.cs" />
+    <Compile Include="Core\CPythonPluginFileWrapper.cs" />
     <Compile Include="Core\PathBasedAssemblyResolver.cs" />
     <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Core\AssemblyPluginWrapper.cs" />

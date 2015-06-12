@@ -54,6 +54,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="IconTools.cs" />
     <Compile Include="InterAppDomainCancellable.cs" />
+    <Compile Include="IProvider.cs" />
     <Compile Include="ProviderInterest.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="IAppCommands.cs" />

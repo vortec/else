@@ -62,6 +62,11 @@ namespace Else.ViewModels
                     item.LaunchDelegateWrapper?.Invoke(_engine.Query);
                 }
                 catch (Exception exception) {
+                    // this is now broken...
+                    // gettype().name == exception
+                    if (exception is IPythonException) {
+                        Debugger.Break();
+                    }
                     if (exception.GetType().Name == "PythonException") {
                         // we create a python engine here just to format the exception as a python traceback
                         // perhaps there is a better way?

@@ -8,6 +8,11 @@ namespace Else.Core
     public abstract class BasePluginWrapper
     {
         public List<Plugin> Loaded = new List<Plugin>();
+
+        /// <summary>
+        /// Load one or more plugins from a plugin directory.
+        /// </summary>
+        /// <param name="path">The plugin directory.</param>
         public abstract void Load(string path);
 
         /// <summary>

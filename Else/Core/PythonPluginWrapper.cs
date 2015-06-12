@@ -1,25 +1,23 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows;
 using Autofac.Extras.NLog;
 using Else.Extensibility;
 using Else.Services;
 using IronPython.Hosting;
-using IronPython.Runtime;
-using IronPython.Runtime.Exceptions;
 using IronPython.Runtime.Operations;
 using IronPython.Runtime.Types;
 using Microsoft.Scripting.Hosting;
-using Microsoft.Scripting.Hosting.Providers;
+using Microsoft.Scripting.Runtime;
 
 namespace Else.Core
 {
     public class PythonPluginWrapper : BasePluginWrapper
     {
+        private readonly IAppCommands _appCommands;
         private readonly ILogger _logger;
         private readonly Paths _paths;
-        private readonly IAppCommands _appCommands;
 
         public PythonPluginWrapper(ILogger logger, Paths paths, IAppCommands appCommands)
         {
@@ -31,7 +29,10 @@ namespace Else.Core
         public override void Load(string path)
         {
             // create python engine
-            var engine = Python.CreateEngine();
+            var options = new Dictionary<string, object>();
+            options["Frames"] = ScriptingRuntimeHelpers.True;
+
+            var engine = Python.CreateEngine(options);
 
             // setup paths
             var paths = engine.GetSearchPaths();
@@ -40,10 +41,10 @@ namespace Else.Core
             // determine path to IronPython library
 
             // in the same directory as our executable
-            var local = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "PythonLib");
+            var local = Path.Combine(Directory.GetCurrentDirectory(), "PythonLib");
 
             // in the parent directory
-            var parent = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName, "PythonLib");
+            var parent = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName, "PythonLib");
 
             if (Directory.Exists(local)) {
                 paths.Add(local);
@@ -62,7 +63,7 @@ namespace Else.Core
             // import Else.Extensibility.dll automatically, it's expected to be in the app path.
             var dllPath = _paths.GetAppPath("Else.Extensibility.dll");
             engine.Execute(string.Format(@"clr.AddReferenceToFileAndPath(r'{0}')", dllPath), scope);
-            
+
 
             // execute the plugin py script
             var source = engine.CreateScriptSourceFromFile(path);
@@ -83,7 +84,7 @@ namespace Else.Core
                     // create instance of Plugin
                     Plugin instance = value();
                     instance.Name = obj.Key;
-                    instance.PluginLanguage = "IronPython";
+                    //instance._pluginLanguage = "IronPython";
                     Loaded.Add(instance);
                 }
             }
