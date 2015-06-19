@@ -3,44 +3,13 @@
 #include "PythonProvider.h"
 #include "Helpers.h"
 
+
 using namespace msclr::interop;
 using namespace System;
-using namespace System::Diagnostics;
 
 PythonProvider::PythonProvider(PyObject* instance)
 {
     _instance = instance;
-}
-
-PyObject* ConvertQueryToPyDict(Else::Extensibility::Query ^query)
-{
-    auto context = gcnew marshal_context();
-    PyObject* dict = PyDict_New();
-    
-    auto fields = query->GetType()->GetFields();
-    for each (auto field in fields) {
-        PyObject* value;
-        auto fieldName = context->marshal_as<const char*>(field->Name);
-        
-        if (field->FieldType == System::String::typeid) {
-            // string
-            auto valueStr = dynamic_cast<String^>(field->GetValue(query));
-            auto fieldValue = context->marshal_as<const char*>(valueStr);
-            value = PyUnicode_FromString(fieldValue);
-        }
-        else if (field->FieldType == System::Boolean::typeid) {
-            // boolean
-            auto valueBool = dynamic_cast<Boolean^>(field->GetValue(query));
-            value = *valueBool ? Py_True : Py_False;
-        }
-        else {
-            //Debug::Print("skipped field: {0}", field->Name);
-        }
-        PyDict_SetItemString(dict, fieldName, value);
-        Py_DECREF(value);
-    }
-    delete context;
-    return dict;
 }
 
 ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query)
@@ -89,6 +58,21 @@ long GetLong(PyObject* result, const char* key)
     }
     return 0;
 }
+PyObject* GetMethod(PyObject* result, const char* key)
+{
+    auto method = PyObject_GetAttrString(result, key);
+    if (method != nullptr) { // && PyMethod_Check(method)
+        return method;
+    }
+    return nullptr;
+}
+
+void test_launch(Query^ query)
+{
+    Debug::Print("LAUNCH");
+}
+
+
 
 System::Collections::Generic::List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
 {
@@ -118,13 +102,23 @@ System::Collections::Generic::List<Result ^> ^ PythonProvider::ExecuteQueryFunc(
                     auto result = gcnew Result();
                     result->Title = GetString(item, "title");
                     result->SubTitle = GetString(item, "subtitle");
-
-                    //result->Launch = GetBoolean(item, "launch");
+                    auto launch_callback = GetMethod(item, "launch");
+                    if (launch_callback != nullptr) {
+                        auto callback = gcnew PythonLaunchCallback(item);
+                        result->Launch = gcnew Action<Query^>(callback, &PythonLaunchCallback::launch);
+                        callbacks.Add(callback);
+                        Debug::Print("success [cb find]");
+                    }
                     //result->Icon = GetBoolean(item, "icon");
-                    result->Index = GetLong(item, "index");
-                    results->Add(result);
-
+                    result->Index = i;
+                    
                     i++;
+                    if (PyErr_Occurred()) {
+                        Debug::Print(gcnew String(getPythonTraceback()));
+                    }
+                    else {
+                        results->Add(result);
+                    }
                 }
                 Py_DECREF(seq);
             }
@@ -132,3 +126,5 @@ System::Collections::Generic::List<Result ^> ^ PythonProvider::ExecuteQueryFunc(
     }
     return results;
 }
+
+

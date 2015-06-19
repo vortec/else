@@ -9,16 +9,16 @@ namespace Else.Extensibility
     /// </summary>
     public class LaunchDelegateWrapper : MarshalByRefObject
     {
-        private readonly Action<Query> _func;
+        public readonly Action<Query> Func;
 
         public LaunchDelegateWrapper(Action<Query> func)
         {
-            _func = func;
+            Func = func;
         }
 
         public void Invoke(Query query)
         {
-            _func?.Invoke(query);
+            Func?.Invoke(query);
         }
     }
 
@@ -39,7 +39,7 @@ namespace Else.Extensibility
         /// <summary>
         /// a wrapper around the launch delegate.
         /// </summary>
-        public LaunchDelegateWrapper LaunchDelegateWrapper;
+        private LaunchDelegateWrapper _launchDelegateWrapper;
 
         /// <summary>
         /// The anonymous method that will be executed when this result is executed (enter key)
@@ -47,7 +47,8 @@ namespace Else.Extensibility
         public Action<Query> Launch
         {
             // we wrap the delegate in a class, so that it can be remoted.
-            set { LaunchDelegateWrapper = new LaunchDelegateWrapper(value); }
+            get { return _launchDelegateWrapper?.Func; }
+            set { _launchDelegateWrapper = new LaunchDelegateWrapper(value); }
         }
 
         /// <summary>

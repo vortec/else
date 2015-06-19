@@ -4,6 +4,7 @@
 #include "Exceptions.h"
 #include "PythonListIterator.h"
 
+
 using namespace System;
 using namespace System::Collections::Generic;
 using namespace System::Diagnostics;
@@ -26,8 +27,8 @@ public ref class PythonPlugin : public IPlugin
             }
         }
         
-        virtual property System::Collections::Generic::IEnumerable<Else::Extensibility::IProvider ^> ^ Providers {
-            System::Collections::Generic::IEnumerable<Else::Extensibility::IProvider ^> ^ get() sealed
+        virtual property System::Collections::Generic::ICollection<Else::Extensibility::IProvider ^> ^ Providers {
+            System::Collections::Generic::ICollection<Else::Extensibility::IProvider ^> ^ get() sealed
             {
                 auto providers = PyObject_GetAttrString(_instance, "providers");
                 if (providers == nullptr) {

@@ -2,6 +2,10 @@
 # sys.path.append("c:\\users\\james\\repos\\else\\Python")
 import Else
 import bitly_api
+from pprint import pprint
+
+import pdb
+pdb.set_trace()
 
 
 class URLShortener(Else.Plugin):
@@ -11,7 +15,7 @@ class URLShortener(Else.Plugin):
         
     def shortenUrl(self, query):
         # query bitly api
-        short = self.shorten(query.Arguments)
+        short = self.shorten(query['Arguments'])
         # hide the launcher window
         self.AppCommands.HideWindow()
         # copy shortened url to clipboard
@@ -20,6 +24,7 @@ class URLShortener(Else.Plugin):
     # use bitly url shortening service..
     def shorten(self, url):
         bitly = bitly_api.Connection(access_token="0a862e797f9cd03f5d2ba1a9a6a85a3d691e23d1")
+        print(bitly.shorten(url))
         return bitly.shorten(url)
 
 

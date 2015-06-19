@@ -7,8 +7,9 @@ using namespace System::Collections::Generic;
 /// <summary>
 /// Provides an IEnumerable interface to a python list
 /// </summary>
-public ref struct PythonListIterator : public IEnumerable<IProvider^>
+public ref struct PythonListIterator : public ICollection<IProvider^>
 {
+    
     // IEnumerator implementation
     ref struct enumerator : IEnumerator<IProvider^>
     {
@@ -75,4 +76,13 @@ public ref struct PythonListIterator : public IEnumerable<IProvider^>
     {
         return gcnew enumerator(this);
     }
+
+    // Inherited via ICollection
+    virtual property int Count;
+    virtual property bool IsReadOnly;
+    virtual void Add(Else::Extensibility::IProvider ^item);
+    virtual void Clear();
+    virtual bool Contains(Else::Extensibility::IProvider ^item);
+    virtual void CopyTo(array<Else::Extensibility::IProvider ^, 1> ^array, int arrayIndex);
+    virtual bool Remove(Else::Extensibility::IProvider ^item);
 };

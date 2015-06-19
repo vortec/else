@@ -25,11 +25,11 @@
     <Filter Include="Header Files\Core">
       <UniqueIdentifier>{d8f5ce14-cc5f-4b83-85df-457da7b1f301}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ElseModule">
-      <UniqueIdentifier>{e3f7a994-cc97-492d-a718-e364a10c9a46}</UniqueIdentifier>
+    <Filter Include="Header Files\Python">
+      <UniqueIdentifier>{7d3d1377-ed09-4597-8afb-2e2b4abd8a64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ElseModule">
-      <UniqueIdentifier>{7f73a893-18bf-422b-a38f-926d415e218c}</UniqueIdentifier>
+    <Filter Include="Source Files\Python">
+      <UniqueIdentifier>{98079841-5bac-4fd1-9664-d2e93e837ff2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -48,9 +48,6 @@
     <ClInclude Include="Host.h">
       <Filter>Header Files\Core</Filter>
     </ClInclude>
-    <ClInclude Include="ElseModule.h">
-      <Filter>Header Files\ElseModule</Filter>
-    </ClInclude>
     <ClInclude Include="PythonListIterator.h">
       <Filter>Header Files\Lib</Filter>
     </ClInclude>
@@ -59,6 +56,12 @@
     </ClInclude>
     <ClInclude Include="PythonProvider.h">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="py_else.h">
+      <Filter>Header Files\Python</Filter>
+    </ClInclude>
+    <ClInclude Include="py_appcommands.h">
+      <Filter>Header Files\Python</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,11 +83,17 @@
     <ClCompile Include="Host.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="ElseModule.cpp">
-      <Filter>Source Files\ElseModule</Filter>
-    </ClCompile>
     <ClCompile Include="PythonProvider.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="py_else.cpp">
+      <Filter>Source Files\Python</Filter>
+    </ClCompile>
+    <ClCompile Include="py_appcommands.cpp">
+      <Filter>Source Files\Python</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonListIterator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

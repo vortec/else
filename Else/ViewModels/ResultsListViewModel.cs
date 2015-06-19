@@ -59,7 +59,7 @@ namespace Else.ViewModels
             if (e.Key == Key.Enter || e.Key == Key.Return) {
                 var item = Items[SelectedIndex];
                 try {
-                    item.LaunchDelegateWrapper?.Invoke(_engine.Query);
+                    item.Launch(_engine.Query);
                 }
                 catch (Exception exception) {
                     // this is now broken...

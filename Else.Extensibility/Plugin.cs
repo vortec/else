@@ -8,10 +8,10 @@ namespace Else.Extensibility
     {
         string Name { get; set; }
         string PluginLanguage { get; }
-        IEnumerable<IProvider> Providers { get; }
+        ICollection<IProvider> Providers { get; }
     }
 
-    public abstract class Plugin : MarshalByRefObject
+    public abstract class Plugin : MarshalByRefObject, IPlugin
     {
         /// <summary>
         /// The application commands available for plugin execution
@@ -26,7 +26,7 @@ namespace Else.Extensibility
         /// <summary>
         /// Name for display only (e.g. "MyPlugin")
         /// </summary>
-        public string Name;
+        public string Name { get; set; }
 
         /// <summary>
         /// The containing directory (e.g. %appdata%\Else\Plugins\MyPlugin)
@@ -36,20 +36,13 @@ namespace Else.Extensibility
         /// <summary>
         /// Providers available for querying (these are the objects that respond to a query with results)
         /// </summary>
-        //public List<IProvider> Providers = new List<IProvider>();
-        public IEnumerable<IProvider> Providers
-        {
-            get {
-                yield return null;
-                yield return null;
-                yield return null;
-            }
-        }
+        public ICollection<IProvider> Providers { get; } = new List<IProvider>();
 
         /// <summary>
         /// The language the plugin was written in (e.g. "C#" or"Python")
         /// </summary>
         public string PluginLanguage => "C#";
+
 
         /// <summary>
         /// Plugin setup

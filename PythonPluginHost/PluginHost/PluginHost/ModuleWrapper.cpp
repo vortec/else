@@ -3,10 +3,9 @@
 #include "ModuleWrapper.h"
 #include "Helpers.h"
 #include "PythonPlugin.h"
-#include "ElseModule.h"
+#include "py_else.h"
 
 using namespace msclr::interop;
-using namespace System::Diagnostics;
 using namespace System::IO;
 using namespace Else::Extensibility;
 using namespace System::Runtime::InteropServices;

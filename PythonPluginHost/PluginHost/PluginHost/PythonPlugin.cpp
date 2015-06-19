@@ -1,15 +1,7 @@
 #include "stdafx.h"
-
 #include "PythonPlugin.h"
 #include "Host.h"
-#include "ElseModule.h"
 #include "Helpers.h"
-
-
-
-using namespace System::IO;
-using namespace System::Diagnostics;
-
 
 PythonPlugin::PythonPlugin(PyObject* instance)
 {
