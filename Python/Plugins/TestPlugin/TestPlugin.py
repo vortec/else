@@ -6,6 +6,7 @@ import Else
 class TestPlugin(Else.Plugin):
     def Setup(self):
         self.add_command(Else.Command('testplugin', 'Test Plugin', 'Test {arguments}', requires_arguments=True))
+        self.name = "TestPlugin"
 
 
 

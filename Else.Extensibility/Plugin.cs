@@ -4,14 +4,7 @@ using System.IO;
 
 namespace Else.Extensibility
 {
-    public interface IPlugin
-    {
-        string Name { get; set; }
-        string PluginLanguage { get; }
-        ICollection<IProvider> Providers { get; }
-    }
-
-    public abstract class Plugin : MarshalByRefObject, IPlugin
+    public abstract class Plugin : MarshalByRefObject
     {
         /// <summary>
         /// The application commands available for plugin execution
@@ -26,7 +19,7 @@ namespace Else.Extensibility
         /// <summary>
         /// Name for display only (e.g. "MyPlugin")
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
 
         /// <summary>
         /// The containing directory (e.g. %appdata%\Else\Plugins\MyPlugin)
@@ -36,12 +29,12 @@ namespace Else.Extensibility
         /// <summary>
         /// Providers available for querying (these are the objects that respond to a query with results)
         /// </summary>
-        public ICollection<IProvider> Providers { get; } = new List<IProvider>();
+        public virtual ICollection<IProvider> Providers { get; } = new List<IProvider>();
 
         /// <summary>
         /// The language the plugin was written in (e.g. "C#" or"Python")
         /// </summary>
-        public string PluginLanguage => "C#";
+        public virtual string PluginLanguage => "C#";
 
 
         /// <summary>

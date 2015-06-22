@@ -22,10 +22,14 @@ using Else.ViewModels.Interfaces;
 using Else.Views;
 using NLog;
 
+
+
+
 namespace Else
 {
     public partial class App
     {
+        
         private Mutex _instanceMutex;
         private Logger _logger;
         private TrayIcon _trayIcon;
@@ -139,10 +143,12 @@ namespace Else
             builder.RegisterType<Win32MessagePump>().SingleInstance();
             builder.RegisterType<Updater>().SingleInstance();
             builder.RegisterType<SplashScreenWindow>().SingleInstance();
-
+            
             // plugin wrappers
-            builder.RegisterType<PythonPluginWrapper>().Keyed<BasePluginWrapper>(".py");
-            builder.RegisterType<AssemblyPluginWrapper>().Keyed<BasePluginWrapper>(".dll");
+            
+            builder.RegisterType<PythonPluginHost.PythonPluginHost>().Keyed<PluginWrapper>(".py").SingleInstance();
+            //builder.RegisterType<PythonPluginWrapper>().Keyed<PluginWrapper>(".py");
+            builder.RegisterType<AssemblyPluginWrapper>().Keyed<PluginWrapper>(".dll");
 
             // instances
             builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));

@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="PythonPluginHost.cpp" />
+    <ClCompile Include="Stdafx.cpp" />
+    <ClCompile Include="py_else.cpp">
+      <Filter>Python</Filter>
+    </ClCompile>
+    <ClCompile Include="py_appcommands.cpp">
+      <Filter>Python</Filter>
+    </ClCompile>
+    <ClCompile Include="ModuleWrapper.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonListIterator.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonPlugin.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonProvider.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="py_stdout.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="PythonPluginHost.h" />
+    <ClInclude Include="Stdafx.h" />
+    <ClInclude Include="py_else.h">
+      <Filter>Python</Filter>
+    </ClInclude>
+    <ClInclude Include="py_appcommands.h">
+      <Filter>Python</Filter>
+    </ClInclude>
+    <ClInclude Include="Exceptions.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ModuleWrapper.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonListIterator.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonPlugin.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonProvider.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="py_stdout.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Python">
+      <UniqueIdentifier>{6bd9c260-2292-4299-bc4e-6508538a6459}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib">
+      <UniqueIdentifier>{c0aa96fb-12b7-41cb-993b-d47f0506835f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{5bd2e8d9-d6c0-433d-a1f6-0039675674bd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

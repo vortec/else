@@ -15,7 +15,7 @@ namespace Else.Core
     /// <summary>
     /// Load a plugin assembly and manage the remote instance.
     /// </summary>
-    public class AssemblyPluginWrapper : BasePluginWrapper
+    public class AssemblyPluginWrapper : PluginWrapper
     {
         private readonly ILogger _logger;
         private readonly Paths _paths;

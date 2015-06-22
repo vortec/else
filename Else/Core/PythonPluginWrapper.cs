@@ -13,7 +13,7 @@ using Microsoft.Scripting.Runtime;
 
 namespace Else.Core
 {
-    public class PythonPluginWrapper : BasePluginWrapper
+    public class PythonPluginWrapper : PluginWrapper
     {
         private readonly IAppCommands _appCommands;
         private readonly ILogger _logger;

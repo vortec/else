@@ -35,7 +35,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -227,12 +227,10 @@
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
     <Compile Include="Converter\UriToImageConverter.cs" />
-    <Compile Include="Core\BasePluginWrapper.cs" />
-    <Compile Include="Core\CPythonPluginFileWrapper.cs" />
     <Compile Include="Core\PathBasedAssemblyResolver.cs" />
     <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Core\AssemblyPluginWrapper.cs" />
-    <Compile Include="Core\PythonPluginWrapper.cs" />
+    <None Include="Core\PythonPluginWrapper.cs" />
     <Compile Include="Interop\Win32Signatures.cs" />
     <Compile Include="Lib\ImageCache.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
@@ -437,6 +435,10 @@
     <ProjectReference Include="..\Else.Extensibility\Else.Extensibility.csproj">
       <Project>{76ab3b71-aa48-4f3b-8cf5-025972d95d44}</Project>
       <Name>Else.Extensibility</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginHost.Python\PluginHost.Python.vcxproj">
+      <Project>{2674667a-6951-4fa4-8f45-b7923a987fb1}</Project>
+      <Name>PluginHost.Python</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
