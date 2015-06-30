@@ -56,7 +56,7 @@
     <Compile Include="IconTools.cs" />
     <Compile Include="InterAppDomainCancellable.cs" />
     <Compile Include="IProvider.cs" />
-    <Compile Include="PluginWrapper.cs" />
+    <Compile Include="PluginLoader.cs" />
     <Compile Include="ProviderInterest.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="IAppCommands.cs" />

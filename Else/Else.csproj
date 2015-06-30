@@ -227,10 +227,9 @@
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
     <Compile Include="Converter\UriToImageConverter.cs" />
-    <Compile Include="Core\PathBasedAssemblyResolver.cs" />
     <Compile Include="Core\PluginManager.cs" />
-    <Compile Include="Core\AssemblyPluginWrapper.cs" />
-    <None Include="Core\PythonPluginWrapper.cs" />
+    <Compile Include="Core\AssemblyPluginLoader.cs" />
+    <None Include="Core\IronPythonPluginWrapper.cs" />
     <Compile Include="Interop\Win32Signatures.cs" />
     <Compile Include="Lib\ImageCache.cs" />
     <Compile Include="Lib\ObservableObject.cs" />

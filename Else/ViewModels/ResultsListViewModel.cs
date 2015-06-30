@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using Autofac.Extras.NLog;
@@ -8,12 +7,6 @@ using Else.Core;
 using Else.DataTypes;
 using Else.Lib;
 using Else.ViewModels.Interfaces;
-using IronPython.Hosting;
-using IronPython.Runtime;
-using IronPython.Runtime.Exceptions;
-using IronPython.Runtime.Operations;
-using Microsoft.Scripting.Hosting;
-using Microsoft.Scripting.Hosting.Providers;
 
 namespace Else.ViewModels
 {
@@ -62,19 +55,6 @@ namespace Else.ViewModels
                     item.Launch(_engine.Query);
                 }
                 catch (Exception exception) {
-                    // this is now broken...
-                    // gettype().name == exception
-                    if (exception is IPythonException) {
-                        Debugger.Break();
-                    }
-                    if (exception.GetType().Name == "PythonException") {
-                        // we create a python engine here just to format the exception as a python traceback
-                        // perhaps there is a better way?
-                        var engine = Python.CreateEngine();
-                        var pythonTraceback = engine.GetService<ExceptionOperations>().FormatException(exception);
-                        _logger.Error("Plugin result launch threw an exception:\n{0}", pythonTraceback);
-                        return;
-                    }
                     _logger.Error("Plugin result launch threw an exception", exception);
                 }
             }

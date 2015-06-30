@@ -6,6 +6,7 @@ namespace Else.Extensibility
 {
     public abstract class Plugin : MarshalByRefObject
     {
+        public PluginLoader Owner;
         /// <summary>
         /// The application commands available for plugin execution
         /// </summary>
@@ -68,6 +69,11 @@ namespace Else.Extensibility
         public string GetPath(string filename)
         {
             return Path.Combine(RootDir, filename);
+        }
+
+        public void Unload()
+        {
+            Owner?.UnLoad(this);
         }
     }
 }
