@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "PythonListIterator.h"
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
 
     void PythonListIterator::Add(Else::Extensibility::IProvider ^item)
     {

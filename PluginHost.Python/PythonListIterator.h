@@ -4,7 +4,7 @@
 
 using namespace System::Collections::Generic;
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
 
     /// <summary>
     /// Provides an IEnumerable interface to a python list
@@ -60,9 +60,8 @@ namespace PythonPluginHost {
         PyObject* _pythonList;
         int _length;
 
-        PythonListIterator(PyObject* pythonList, ModuleWrapper^ owner)
+        PythonListIterator(PyObject* pythonList)
         {
-            owner->PySwitchState();
             _pythonList = pythonList;
             _length = (int)PySequence_Length(_pythonList);
             if (_length == -1) {

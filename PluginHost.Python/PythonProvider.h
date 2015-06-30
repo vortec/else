@@ -9,10 +9,10 @@ using namespace System::Collections::Generic;
 #include "Helpers.h"
 #include "Exceptions.h"
 #include <Python.h>
-#include "ModuleWrapper.h"
+//#include "ModuleWrapper.h"
 
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
     
     public ref class PythonLaunchCallback {
     public:
@@ -50,7 +50,7 @@ namespace PythonPluginHost {
         PythonProvider(PyObject* instance);
         virtual ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query);
         virtual List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken);
-        ModuleWrapper^ owner;
+        //ModuleWrapper^ owner;
     private:
         PyObject* _instance;
         List<PythonLaunchCallback^> callbacks;  // store callback delegates for later GC

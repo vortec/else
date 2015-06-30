@@ -1,16 +1,16 @@
 #pragma once
-#include "ModuleWrapper.h"
+//#include "ModuleWrapper.h"
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
 
     #define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
 
 
     struct module_state {
-        void* module_wrapper;
+        void* plugin;
     };
 
 
-    void else_init_module(void* moduleWrapper);
+    void else_init_module(void* plugin);
 
 }

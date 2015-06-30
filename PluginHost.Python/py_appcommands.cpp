@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "py_appcommands.h"
+using namespace System;
+using namespace System::Diagnostics;
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
 
     static PyObject* else_appcommands_showwindow(PyObject* self, PyObject* args)
     {

@@ -13,8 +13,3 @@
 #if defined(_DEBUG_IS_ENABLED)
 #define _DEBUG
 #endif
-
-
-
-
-using namespace System::Diagnostics;

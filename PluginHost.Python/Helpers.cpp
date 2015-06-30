@@ -2,13 +2,17 @@
 #include <msclr/marshal.h>
 #include "Helpers.h"
 
-
 using namespace msclr::interop;
 using namespace System;
 using namespace System::Diagnostics;
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
 
+    String^ getPythonTracebackString()
+    {
+        auto tb = getPythonTraceback();
+        return gcnew String(tb);
+    }
     char* getPythonTraceback()
     {
         // Python equivilant:
@@ -19,7 +23,7 @@ namespace PythonPluginHost {
         PyObject *type, *value, *traceback;
         PyObject *tracebackModule;
         char *chrRetval;
-    
+
         if (PyErr_Occurred()) {
             PyErr_Fetch(&type, &value, &traceback);
 
@@ -63,7 +67,7 @@ namespace PythonPluginHost {
         }
         return "";
     }
-
+    
     String^ pyRepr(PyObject* instance)
     {
         PyObject* objectsRepresentation = PyObject_Repr(instance);
@@ -86,6 +90,9 @@ namespace PythonPluginHost {
             if (field->FieldType == System::String::typeid) {
                 // string
                 auto valueStr = dynamic_cast<String^>(field->GetValue(query));
+                if (!valueStr) {
+                    valueStr = "";
+                }
                 auto fieldValue = context->marshal_as<const char*>(valueStr);
                 value = PyUnicode_FromString(fieldValue);
             }
@@ -102,5 +109,39 @@ namespace PythonPluginHost {
         }
         delete context;
         return dict;
+    }
+    bool GetBoolean(PyObject* result, const char* key)
+    {
+        auto obj = PyObject_GetAttrString(result, key);
+        if (obj != nullptr && PyBool_Check(obj)) {
+            return obj == Py_True;
+        }
+        return false;
+    }
+    String^ GetString(PyObject* result, const char* key)
+    {
+        auto obj = PyObject_GetAttrString(result, key);
+        if (obj != nullptr && PyUnicode_Check(obj)) {
+            auto test = gcnew String(PyUnicode_AsUTF8(obj));
+            return test;
+        }
+        return "";
+    }
+    long GetLong(PyObject* result, const char* key)
+    {
+        auto obj = PyObject_GetAttrString(result, key);
+        if (obj != nullptr && PyNumber_Check(obj)) {
+            auto num = PyLong_AsLong(obj);
+            return num;
+        }
+        return 0;
+    }
+    PyObject* GetMethod(PyObject* result, const char* key)
+    {
+        auto method = PyObject_GetAttrString(result, key);
+        if (method != nullptr) { // && PyMethod_Check(method)
+            return method;
+        }
+        return nullptr;
     }
 }

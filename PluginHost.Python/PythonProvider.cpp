@@ -7,7 +7,7 @@
 using namespace msclr::interop;
 using namespace System;
 
-namespace PythonPluginHost {
+namespace PythonPluginLoader {
 
     PythonProvider::PythonProvider(PyObject* instance)
     {
@@ -34,49 +34,7 @@ namespace PythonPluginHost {
         return interest;
     }
 
-    bool GetBoolean(PyObject* result, const char* key)
-    {
-        auto obj = PyObject_GetAttrString(result, key);
-        if (obj != nullptr && PyBool_Check(obj)) {
-            return obj == Py_True;
-        }
-        return false;
-    }
-    String^ GetString(PyObject* result, const char* key)
-    {
-        auto obj = PyObject_GetAttrString(result, key);
-        if (obj != nullptr && PyUnicode_Check(obj)) {
-            auto test = gcnew String(PyUnicode_AsUTF8(obj));
-            return test;
-        }
-        return "";
-    }
-    long GetLong(PyObject* result, const char* key)
-    {
-        auto obj = PyObject_GetAttrString(result, key);
-        if (obj != nullptr && PyNumber_Check(obj)) {
-            auto num  = PyLong_AsLong(obj);
-            return num;
-        }
-        return 0;
-    }
-    PyObject* GetMethod(PyObject* result, const char* key)
-    {
-        auto method = PyObject_GetAttrString(result, key);
-        if (method != nullptr) { // && PyMethod_Check(method)
-            return method;
-        }
-        return nullptr;
-    }
-
-    void test_launch(Query^ query)
-    {
-        Debug::Print("LAUNCH");
-    }
-
-
-
-    System::Collections::Generic::List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
+    List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
     {
         // convert Query struct to a python dictionary
         auto queryDict = ConvertQueryToPyDict(query);
@@ -87,46 +45,38 @@ namespace PythonPluginHost {
         Py_DECREF(queryDict);
     
         if (pyResults == NULL) {
-            // handle error
-            getPythonTraceback();
+            // python error
+            throw gcnew PythonException(getPythonTracebackString());
         }
-        else {
-            // check for sequence of results
-            if (PySequence_Check(pyResults)) {
-                auto length = PySequence_Length(pyResults);
-                if (length != -1) {
-                    auto currentIndex = -1;
-                    auto seq = PySequence_Fast(pyResults, "expected a sequence");
-                    auto len = PySequence_Size(pyResults);
-                    for (auto i = 0; i < len; i++) {
-                        auto item = PySequence_Fast_GET_ITEM(pyResults, i);
-                        // parse the result
-                        auto result = gcnew Result();
-                        result->Title = GetString(item, "title");
-                        result->SubTitle = GetString(item, "subtitle");
-                        auto launch_callback = GetMethod(item, "launch");
-                        if (launch_callback != nullptr) {
-                            auto callback = gcnew PythonLaunchCallback(item);
-                            result->Launch = gcnew Action<Query^>(callback, &PythonLaunchCallback::launch);
-                            callbacks.Add(callback);
-                        }
-                        //result->Icon = GetBoolean(item, "icon");
-                        result->Index = i;
-                    
-                        i++;
-                        if (PyErr_Occurred()) {
-                            Debug::Print(gcnew String(getPythonTraceback()));
-                        }
-                        else {
-                            results->Add(result);
-                        }
+        
+        // check for sequence of results
+        if (PySequence_Check(pyResults)) {
+            auto length = PySequence_Length(pyResults);
+            if (length != -1) {
+                auto currentIndex = -1;
+                auto seq = PySequence_Fast(pyResults, "expected a sequence");
+                auto len = PySequence_Size(pyResults);
+                for (auto i = 0; i < len; i++) {
+                    auto item = PySequence_Fast_GET_ITEM(pyResults, i);
+                    // parse the result
+                    auto result = gcnew Result();
+                    result->Title = GetString(item, "title");
+                    result->SubTitle = GetString(item, "subtitle");
+                    result->Index = i;
+                    //result->Icon = GetBoolean(item, "icon");
+                    auto launch_callback = GetMethod(item, "launch");
+                        
+                    if (launch_callback != nullptr) {
+                        auto callback = gcnew PythonLaunchCallback(item);
+                        result->Launch = gcnew Action<Query^>(callback, &PythonLaunchCallback::launch);
+                        callbacks.Add(callback);
                     }
-                    Py_DECREF(seq);
+                    i++;
+                    results->Add(result);
                 }
+                Py_DECREF(seq);
             }
         }
         return results;
     }
-
-
 }

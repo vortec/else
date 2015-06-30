@@ -2,7 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="PythonPluginHost.cpp" />
     <ClCompile Include="Stdafx.cpp" />
     <ClCompile Include="py_else.cpp">
       <Filter>Python</Filter>
@@ -10,13 +9,7 @@
     <ClCompile Include="py_appcommands.cpp">
       <Filter>Python</Filter>
     </ClCompile>
-    <ClCompile Include="ModuleWrapper.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="PythonListIterator.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="PythonPlugin.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="PythonProvider.cpp">
@@ -26,9 +19,10 @@
       <Filter>Lib</Filter>
     </ClCompile>
     <ClCompile Include="py_stdout.cpp" />
+    <ClCompile Include="Host.cpp" />
+    <ClCompile Include="PythonPlugin.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PythonPluginHost.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="py_else.h">
       <Filter>Python</Filter>
@@ -39,13 +33,7 @@
     <ClInclude Include="Exceptions.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="ModuleWrapper.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="PythonListIterator.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="PythonPlugin.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="PythonProvider.h">
@@ -55,6 +43,8 @@
       <Filter>Lib</Filter>
     </ClInclude>
     <ClInclude Include="py_stdout.h" />
+    <ClInclude Include="Host.h" />
+    <ClInclude Include="PythonPlugin.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Python">
