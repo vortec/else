@@ -188,3 +188,6 @@ GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
 /Else.sln.GhostDoc.xml
+Else/packages/RELEASES
+Else/packages/
+__pycache__
