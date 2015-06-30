@@ -55,7 +55,7 @@ namespace Simulator
 
             var consoleTarget = new ColoredConsoleTarget();
             config.AddTarget("console", consoleTarget);
-            consoleTarget.Layout = @"${message}";
+            consoleTarget.Layout = @"${message} ${exception:format=tostring}";
             consoleTarget.UseDefaultRowHighlightingRules = true;
 
             var rule1 = new LoggingRule("*", LogLevel.Debug, consoleTarget);
