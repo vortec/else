@@ -63,7 +63,14 @@ namespace Else.Plugin.Web
                 }
 
                 // Cache miss, begin the background query to fill the cache
-                var x = GetSuggestionsAsync(query.Arguments, cancelToken.Token);
+                // create a local cancel token for passing to httpclient..
+                var cancellable = new CancellationToken();
+                cancellable.Register(() =>
+                {
+                    cancelToken.Cancel();
+                    cancelToken.Dispose();
+                });
+                var x = GetSuggestionsAsync(query.Arguments, cancellable);
                 return new List<Result>
                 {
                     new Result

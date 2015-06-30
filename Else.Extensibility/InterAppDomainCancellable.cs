@@ -6,6 +6,8 @@ namespace Else.Extensibility
     public interface ITokenSource
     {
         CancellationToken Token { get; }
+        void Dispose();
+        void Cancel();
     }
 
     public class InterAppDomainCancellable : MarshalByRefObject, ITokenSource, IDisposable

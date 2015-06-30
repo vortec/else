@@ -22,14 +22,10 @@ using Else.ViewModels.Interfaces;
 using Else.Views;
 using NLog;
 
-
-
-
 namespace Else
 {
     public partial class App
     {
-        
         private Mutex _instanceMutex;
         private Logger _logger;
         private TrayIcon _trayIcon;
@@ -47,6 +43,7 @@ namespace Else
 
             // setup dependency injection
             SetupAutoFac();
+
 
             using (var scope = Container.BeginLifetimeScope()) {
                 // handle installer events
@@ -116,7 +113,6 @@ namespace Else
                         Settings.Default.Save();
                     }
                     scope.Resolve<Updater>().BeginAutoUpdates();
-                    
                 }
             }
             // trigger custom OnStartupComplete event, this is used by the theme editor.
@@ -143,16 +139,14 @@ namespace Else
             builder.RegisterType<Win32MessagePump>().SingleInstance();
             builder.RegisterType<Updater>().SingleInstance();
             builder.RegisterType<SplashScreenWindow>().SingleInstance();
-            
+
             // plugin wrappers
-            
-            builder.RegisterType<PythonPluginHost.PythonPluginHost>().Keyed<PluginWrapper>(".py").SingleInstance();
-            //builder.RegisterType<PythonPluginWrapper>().Keyed<PluginWrapper>(".py");
-            builder.RegisterType<AssemblyPluginWrapper>().Keyed<PluginWrapper>(".dll");
+            builder.RegisterType<AssemblyPluginLoader>().Keyed<PluginLoader>(".dll").SingleInstance();
+            builder.RegisterType<PythonPluginLoader.Host>().Keyed<PluginLoader>(".py").SingleInstance();
 
             // instances
             builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
-            builder.RegisterType<AssemblyPluginWrapper>();
+            builder.RegisterType<AssemblyPluginLoader>();
 
             // windows
             builder.RegisterType<ThemesWindow>();
@@ -190,23 +184,29 @@ namespace Else
             if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= win8Version) {
                 // its win8 or higher.
                 var theme =
-                    LoadComponent(new Uri(@"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml",
-                        UriKind.Relative)) as ResourceDictionary;
+                    LoadComponent(
+                        new Uri(
+                            @"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml",
+                            UriKind.Relative)) as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(0, theme);
                 var win8Styles =
-                    LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as ResourceDictionary;
+                    LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as
+                        ResourceDictionary;
                 Resources.MergedDictionaries.Insert(1, win8Styles);
             }
             else {
                 // e.g. windows 7 or winxp
                 var theme =
-                    LoadComponent(new Uri(@"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
-                        UriKind.Relative)) as ResourceDictionary;
+                    LoadComponent(
+                        new Uri(
+                            @"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
+                            UriKind.Relative)) as ResourceDictionary;
                 Resources.MergedDictionaries.Insert(0, theme);
             }
 
 
-            var styles = LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
+            var styles =
+                LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
             Resources.MergedDictionaries.Add(styles);
 
             Resources.EndInit();
@@ -226,7 +226,8 @@ namespace Else
         /// <returns>true if mutex creation was successful</returns>
         private bool CreateMutex()
         {
-            var attribute = (GuidAttribute) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (GuidAttribute), true)[0];
+            var attribute =
+                (GuidAttribute) Assembly.GetExecutingAssembly().GetCustomAttributes(typeof (GuidAttribute), true)[0];
             var guid = attribute.Value;
 
             bool createdNew;

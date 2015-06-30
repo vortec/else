@@ -30,19 +30,14 @@ namespace PythonPluginLoader {
     /// <param name="path">The plugin directory.</param>
     Plugin ^ Host::Load(String ^ path)
     {
-        //
+        // ensure python environment is initialized
         Init();
-        
-
         auto info = gcnew DirectoryInfo(Path::GetDirectoryName(path));
-        auto dirname = info->Name;
-        auto absoluteDir = info->FullName;
-
+        
         marshal_context^ context = gcnew marshal_context();
     
         auto plugin = gcnew PythonPlugin();
         plugin->Load(path);
-    
         return plugin;
     }
 
@@ -50,5 +45,4 @@ namespace PythonPluginLoader {
     {
         throw gcnew System::NotImplementedException();
     }
-
 }

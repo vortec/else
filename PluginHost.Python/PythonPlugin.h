@@ -14,7 +14,7 @@ namespace PythonPluginLoader {
             /// <summary>
             /// Create a new python sub interpreter and load the plugin.
             /// </summary>
-            /// <param name="path">The plugin directory.</param>
+            /// <param name="path">The plugin absolute path (e.g. c:\plugins\URLShortener\URLShortener.py).</param>
             void Load(String^ path);
                         
             /// <summary>
@@ -61,5 +61,6 @@ namespace PythonPluginLoader {
         private:
             PyObject* module;
             PyThreadState* pystate = nullptr;
+            gcroot<PythonPlugin^>* self;
     };
 }

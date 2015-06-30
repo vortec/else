@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Else.Extensibility
 {
@@ -47,7 +48,7 @@ namespace Else.Extensibility
         public Action<Query> Launch
         {
             // we wrap the delegate in a class, so that it can be remoted.
-            get { return _launchDelegateWrapper?.Func; }
+            get { return _launchDelegateWrapper.Invoke; }
             set { _launchDelegateWrapper = new LaunchDelegateWrapper(value); }
         }
 

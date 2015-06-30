@@ -17,11 +17,11 @@ namespace Else.Core
         private readonly Lazy<AppCommands> _appCommands;
         private readonly ILogger _logger;
         private readonly Paths _paths;
-        private readonly IIndex<string, Func<PluginWrapper>> _pluginWrapperFunc;
+        private readonly IIndex<string, Func<PluginLoader>> _pluginWrapperFunc;
         public readonly List<Plugin> Plugins = new List<Plugin>();
 
         public PluginManager(
-            IIndex<string, Func<PluginWrapper>> pluginWrapperFunc,
+            IIndex<string, Func<PluginLoader>> pluginWrapperFunc,
             Lazy<AppCommands> appCommands,
             Paths paths,
             ILogger logger)
@@ -46,6 +46,7 @@ namespace Else.Core
             {
                 @"C:\Users\James\Repos\Else\Python\Plugins"
             };
+
             var timer = new Stopwatch();
             timer.Start();
 
@@ -77,35 +78,22 @@ namespace Else.Core
                     // e.g. "FileSystem.ext"
                     var extension = Path.GetExtension(file);
                     // get the wrapper type for the extension (e.g. .py gets PythonPluginWrapper)
-                    Func<PluginWrapper> wrapperFactory;
+                    Func<PluginLoader> wrapperFactory;
                     if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory)) {
                         // load the plugin via the wrapper
                         var wrapper = _pluginWrapperFunc[extension]();
-                        wrapper.Load(file);
-                        // iterate newly created plugin instances and initialize them
-                        foreach (var plugin in wrapper.Loaded) {
-                            // set plugin directory
-                            plugin.RootDir = pluginDirectory;
-                            InitializePlugin(plugin);
-                        }
-                        // we found a plugin, so we exit this loop
-                        break;
+                        var plugin = wrapper.Load(file);
+                        // setup the plugin instance
+                        plugin.RootDir = pluginDirectory;
+                        plugin.AppCommands = _appCommands.Value;
+                        plugin.Logger = new RemoteLogger(pluginName);
+                        plugin.Setup();
+                        // all done
+                        Plugins.Add(plugin);
+                        _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Initialize a plugin and add to loaded plugins.
-        /// </summary>
-        /// <param name="plugin">The plugin.</param>
-        private void InitializePlugin(Plugin plugin)
-        {
-            plugin.AppCommands = _appCommands.Value;
-            plugin.Logger = new RemoteLogger(plugin.Name);
-            plugin.Setup();
-            Plugins.Add(plugin);
-            _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
         }
     }
 }

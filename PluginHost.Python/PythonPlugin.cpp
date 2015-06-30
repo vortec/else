@@ -25,23 +25,22 @@ namespace PythonPluginLoader {
     {
         // finish our python environment
         if (pystate != nullptr) {
+            Py_DECREF(module);
             Py_EndInterpreter(pystate);
             pystate = nullptr;
         }
-    }    
-        
+        delete self;
+    }
+
     void PythonPlugin::Load(String ^ path)
     {
-        // append trailing slash if needed
-        path = path->TrimEnd('\\') + "\\";
         auto info = gcnew DirectoryInfo(Path::GetDirectoryName(path));
         if (!info->Exists) {
             throw gcnew DirectoryNotFoundException(String::Format("Error: Directory does not exist: {0}", path));
         }
-        auto dirname = info->Name;
-        auto absoluteDir = info->FullName;
-        Debug::Print("Attempting to load plugin '{0}' from directory: {1}", dirname, info->FullName);
-
+        auto pluginDir = info->FullName;    // e.g. "c:\plugins\URLShortener"
+        auto pluginName = info->Name;       // e.g. "URLShortener"
+        
         auto context = gcnew marshal_context();
 
         // create new python interpreter and switch to it
@@ -49,30 +48,30 @@ namespace PythonPluginLoader {
         PySwitchState();
 
         // get sys.path
-        auto sysPath = PySys_GetObject("path");
+        auto pathObject = PySys_GetObject("path");  // borrowed ref
 
         // append the parent directory of our plugin directory (so we can later import it)
-        const char* pluginDir = context->marshal_as<const char*>(absoluteDir);
-        PyList_Insert(sysPath, 0, PyUnicode_FromString(pluginDir));
+        const char* sPluginDir = context->marshal_as<const char*>(pluginDir);
+        PyList_Insert(pathObject, 0, PyUnicode_FromString(sPluginDir));
 
         // append our custom lib path
-        PyList_Insert(sysPath, 0, PyUnicode_FromString("C:\\Users\\James\\Repos\\Else\\Python\\Lib"));
+        auto customLibPath = PyUnicode_FromString("C:\\Users\\James\\Repos\\Else\\Python\\Lib");
+        PyList_Insert(pathObject, 0, customLibPath);
+        Py_DECREF(customLibPath);
 
         // append our zipped python standard library
-        char* pyHome = "C:\\Users\\James\\Repos\\Else\\Python\\python_stdlib.zip";
-        PyList_Insert(sysPath, 0, PyUnicode_FromString(pyHome));
+        auto pythonLibZip = PyUnicode_FromString("C:\\Users\\James\\Repos\\Else\\Python\\python_stdlib.zip");
+        PyList_Insert(pathObject, 0, pythonLibZip);
+        Py_DECREF(pythonLibZip);
 
-        // setup c module
-        auto pObj = new gcroot<PythonPlugin^>(this);
-        else_init_module(pObj);
+        // setup our helper module
+        self = new gcroot<PythonPlugin^>(this);
+        else_init_module(self);
 
         // import the plugin
-        auto modname = PyUnicode_FromString(context->marshal_as<const char*>(dirname));
-        module = PyImport_Import(modname);
-        
-        Py_DECREF(modname);
-        delete context;
-        delete pObj;
+        auto moduleName = PyUnicode_FromString(context->marshal_as<const char*>(pluginName));
+        module = PyImport_Import(moduleName);
+        Py_DECREF(moduleName);
         
         // first failure point, the python module failed to import (e.g. invalid python code)
         if (!module) {
@@ -81,14 +80,13 @@ namespace PythonPluginLoader {
         }
         
         // otherwise we check the plugin is okay
-        Py_INCREF(module);
-        auto pluginName = PyObject_GetAttrString(module, "PLUGIN_NAME");
+        auto name = PyObject_GetAttrString(module, "PLUGIN_NAME");
         auto setupFunc = PyObject_GetAttrString(module, "setup");
         
         // second failure point
         // the plugin must have PLUGIN_NAME and setup() defined
         try {
-            if (!pluginName || (!PyBytes_Check(pluginName) && !PyUnicode_Check(pluginName))) {
+            if (!name || (!PyBytes_Check(name) && !PyUnicode_Check(name))) {
                 throw gcnew PluginLoader::PluginLoadException(String::Format("Error: bad attribute 'PLUGIN_NAME' (expected string)"));
             }
             if (!setupFunc || !PyCallable_Check(setupFunc)) {
@@ -96,7 +94,7 @@ namespace PythonPluginLoader {
             }
         }
         finally {
-            Py_XDECREF(pluginName);
+            Py_XDECREF(name);
             Py_XDECREF(setupFunc);
         }
     }
@@ -104,7 +102,7 @@ namespace PythonPluginLoader {
     void PythonPlugin::PySwitchState()
     {
         PyThreadState_Swap(pystate);
-    }    
+    }
     
     void PythonPlugin::Setup()
     {
@@ -113,6 +111,7 @@ namespace PythonPluginLoader {
         if (!PyEval_CallObject(setupFunc, NULL)) {
             throw gcnew PluginLoader::PluginLoadException(String::Format("Error: plugin setup() method threw an exception: {0}", getPythonTracebackString()));
         }
+        Py_DECREF(setupFunc);
     }   
 
     String^ PythonPlugin::PythonPlugin::Name::get()

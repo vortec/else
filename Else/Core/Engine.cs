@@ -102,7 +102,7 @@ namespace Else.Core
             catch (TaskCanceledException) {
             }
             catch (AggregateException) {
-                // we already log these exceptions in ProcessProviderQueryAsync()
+                // we already log these exceptions in ProcessProviderQueryAsync()...
                 // foreach (var e in ae.Flatten().InnerExceptions) {
                 //     _logger.Error("Plugin query threw an exception", e);
                 // }
@@ -116,7 +116,7 @@ namespace Else.Core
         private async Task ExecuteQuery(string query)
         {
             // determine which providers are able to respond to this query, and sort them into groups
-            var exclusive = new List<IProvider>(); // todo: consider removing exclusive
+            var exclusive = new List<IProvider>();
             var shared = new List<IProvider>();
             var fallback = new List<IProvider>();
             foreach (var p in Plugins) {
