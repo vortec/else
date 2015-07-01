@@ -191,3 +191,4 @@ ModelManifest.xml
 Else/packages/RELEASES
 Else/packages/
 __pycache__
+*.pyc
