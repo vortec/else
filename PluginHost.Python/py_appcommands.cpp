@@ -33,17 +33,21 @@ namespace PythonPluginLoader {
         getPlugin(self)->AppCommands->RequestUpdate();
         return Py_None;
     }
-    /*static PyObject* else_appcommands_rewritequery(PyObject* self, PyObject* args)
+    static PyObject* else_appcommands_rewritequery(PyObject* self, PyObject* args)
     {
-        getPlugin(self)->AppCommands->RewriteQuery("BLAH");
+        const char* query;
+        if (!PyArg_ParseTuple(args, "s", &query)) {
+            return NULL;
+        }
+        getPlugin(self)->AppCommands->RewriteQuery(gcnew String(query));
         return Py_None;
-    }*/
+    }
     
     static PyMethodDef appcommands_methods[] = {
         { "ShowWindow", else_appcommands_showwindow, METH_NOARGS, "Show Window" },
         { "HideWindow", else_appcommands_hidewindow, METH_NOARGS, "Hide Window" },
         //{ "RequestUpdate", else_appcommands_requestupdate, METH_NOARGS, "Request Update" },
-        { "RewriteQuery", else_appcommands_rewritequery, METH_NOARGS, "Rewrite Query" },
+        { "RewriteQuery", else_appcommands_rewritequery, METH_VARARGS, "Rewrite Query" },
         { NULL, NULL, 0, NULL }
     };
 
