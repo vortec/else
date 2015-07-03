@@ -4,18 +4,20 @@ try:
 except ImportError:
     # import failed
     print("c extension not available")
-    
-    # define dummy objects (so our plugins can be executed without the c module)
-    class AppCommands():
-        def __getattr__(self, attr):
-            return lambda: print("AppCommand '{0}' is not available".format(attr))
-    
-    app_commands = AppCommands()
+    from Else import mock_app_commands as app_commands
 
 providers = []
 
 def add_command(command):
+    """Registers a :class:`Command <Command>`.
+
+    :param command: The :class:`Command <Command>` object.
+    """
     providers.append(command)
 
 def add_provider(provider):
+    """Registers a :class:`ResultProvider <ResultProvider>`.
+
+    :param provider: The :class:`ResultProvider<ResultProvider>` object.
+    """
     providers.append(provider)

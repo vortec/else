@@ -4,6 +4,17 @@ from Else.result import Result
 import traceback
 
 class Command(BaseProvider):
+    """A simple keyword command (with optional arguments)
+
+    :param keyword: keyword required to trigger displaying of this command.
+    :param title: result title.
+    :param subtitle: (optional) result subtitle.
+    :param icon: (optional) result icon.
+    :param launch: (optional) method called when the result is launched.
+    :param requires_arguments: (optional) if True, only display this command if arguments have been provided.
+    :param fallback: (optonal) if True, the command will be displayed when no other plugins provide results.
+
+    """
     def __init__(self, keyword, title, subtitle=None, icon=None, launch=None, requires_arguments=False, fallback=False):
         self.keyword = keyword
         self.title = title
@@ -24,7 +35,7 @@ class Command(BaseProvider):
             return self.Interest.Fallback
 
         return self.Interest.Nil
-
+    # wut?
     def query2(self, query, cancel_token):
         try:
             self.query(query, cancel_token)
