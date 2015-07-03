@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Autofac.Extras.NLog;
 using Else.Core;
@@ -52,7 +53,7 @@ namespace Else.ViewModels
             if (e.Key == Key.Enter || e.Key == Key.Return) {
                 var item = Items[SelectedIndex];
                 try {
-                    item.Launch(_engine.Query);
+                    Task.Run(() => { item.Launch(_engine.Query); });
                 }
                 catch (Exception exception) {
                     _logger.Error("Plugin result launch threw an exception", exception);
