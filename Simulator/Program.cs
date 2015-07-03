@@ -23,7 +23,7 @@ namespace Simulator
                 AddDashesToOption = true
             };
             help.AddPreOptionsLine("");
-            help.AddPreOptionsLine(string.Format("Usage: {0} pluginDirectory [options]", AppDomain.CurrentDomain.FriendlyName));
+            help.AddPreOptionsLine($"Usage: {AppDomain.CurrentDomain.FriendlyName} pluginDirectory [options]");
             help.AddOptions(this);
             return help;
         }
@@ -47,6 +47,7 @@ namespace Simulator
                     pluginRunner.Run(options);
                 }
             }
+
         }
 
         private static void SetupNlog()

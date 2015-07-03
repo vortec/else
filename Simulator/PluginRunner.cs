@@ -36,6 +36,7 @@ namespace Simulator
             appthread.SetApartmentState(ApartmentState.STA);
             appthread.Start();
         }
+
         /// <summary>
         /// Load the plugin and display the launcher window.
         /// </summary>
@@ -57,14 +58,13 @@ namespace Simulator
                         // attempt to load the plugin
                         var pluginManager = scope.Resolve<PluginManager>();
                         pluginManager.LoadPluginFromDirectory(options.PluginDirectory);
-                        
+
                         // check if any plugins were successfully loaded
                         if (!pluginManager.Plugins.Any()) {
                             // failure
-                            _logger.Fatal("No plugins found"); 
+                            _logger.Fatal("No plugins found");
                             _app.Shutdown();
                             return;
-
                         }
                         // display the launcher window
                         var launcherWindow = scope.Resolve<LauncherWindow>();
@@ -76,6 +76,12 @@ namespace Simulator
                             appCommands.RewriteQuery(options.Query);
                         }
 
+                        // hook up ctrl+c and ctrl+break, to shutdown the entire program
+                        Console.CancelKeyPress += (s, e) =>
+                        {
+                            e.Cancel = true;
+                            _app.Dispatcher.Invoke(() => { _app.Shutdown(); });
+                        };
                     }
                 });
             });
