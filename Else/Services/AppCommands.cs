@@ -37,7 +37,7 @@ namespace Else.Services
         }
 
         /// <summary>
-        /// Changes the text of the query input TextBox.
+        /// Changes the text of the query input box.
         /// </summary>
         /// <param name="query">The query.</param>
         public void RewriteQuery(string query)

@@ -3,10 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Else's documentation!
-================================
-
-Contents:
+Else's python plugin API
+========================
 
 .. toctree::
    :maxdepth: 2
@@ -18,15 +16,21 @@ Contents:
 .. autoclass:: Command
 .. autoclass:: ResultProvider
 .. autoclass:: Result
+.. autofunction:: add_provider
+.. autofunction:: add_command
 
+
+Application Commands
+====================
+
+Methods for interacting with the Else application.
 
 .. module:: Else.app_commands
+
 .. autofunction:: ShowWindow
 .. autofunction:: HideWindow
-.. .. autofunction:: add_provider
-
-
-
+.. autofunction:: RewriteQuery
+.. autofunction:: RequestUpdate
 
 
 Indices and tables
