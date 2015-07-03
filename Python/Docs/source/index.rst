@@ -1,42 +1,43 @@
-.. Else documentation master file, created by
-   sphinx-quickstart on Fri Jul  3 16:20:51 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Else's python plugin API
-========================
+QuickStart
+==========
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
+    :hidden:
+
+    self
+    examples
+    api
+    simulator
 
 
-.. module:: Else
+Writing python plugins for Else is trivial.  You can run Else plugins standalone and later package them for use in the Else app.
 
 
-.. autoclass:: Command
-.. autoclass:: ResultProvider
-.. autoclass:: Result
-.. autofunction:: add_provider
-.. autofunction:: add_command
 
 
-Application Commands
-====================
-
-Methods for interacting with the Else application.
-
-.. module:: Else.app_commands
-
-.. autofunction:: ShowWindow
-.. autofunction:: HideWindow
-.. autofunction:: RewriteQuery
-.. autofunction:: RequestUpdate
+Minimum Requirements
+--------------------
+* The plugin has it's own directory, and there must be a module with the same name as the directory (e.g. /MyPlugin/MyPlugin.py).
+* The plugin module provides a setup() method and a PLUGIN_NAME string variable.
 
 
-Indices and tables
-==================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+
+Basic Plugin
+------------
+
+This plugin provides 1 command that responds to the keyword 'google' and requires arguments.
+
+For example, the query "google Else Windows" will offer to open chrome.exe at the google search page for "Else Windows".
+
+.. literalinclude:: ../../Lib/demo_simple_plugin/demo_simple_plugin.py
+
+
+Whats next?
+-----------
+
+For more examples, see :doc:`examples`.
+
+For API documentation, see :doc:`api`.
 
