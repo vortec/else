@@ -4,6 +4,7 @@
 #include <msclr\auto_gcroot.h>
 #include "py_else.h"
 #include "Helpers.h"
+#include <msclr/lock.h>
 
 using namespace System::IO;
 using namespace System::Collections::Generic;
@@ -24,16 +25,18 @@ namespace PythonPluginLoader {
     PythonPlugin::~PythonPlugin()
     {
         // finish our python environment
-        if (pystate != nullptr) {
-            Py_DECREF(module);
-            Py_EndInterpreter(pystate);
-            pystate = nullptr;
+        if (_pystate != nullptr) {
+            Py_DECREF(_module);
+            Py_EndInterpreter(_pystate);
+            _pystate = nullptr;
         }
-        delete self;
+        delete _self;
     }
 
     void PythonPlugin::Load(String ^ path)
     {
+        msclr::lock l(_lock);
+        
         auto info = gcnew DirectoryInfo(Path::GetDirectoryName(path));
         if (!info->Exists) {
             throw gcnew DirectoryNotFoundException(String::Format("Error: Directory does not exist: {0}", path));
@@ -44,7 +47,7 @@ namespace PythonPluginLoader {
         auto context = gcnew marshal_context();
 
         // create new python interpreter and switch to it
-        pystate = Py_NewInterpreter();
+        _pystate = Py_NewInterpreter();
         PySwitchState();
 
         // get sys.path
@@ -71,23 +74,23 @@ namespace PythonPluginLoader {
         
 
         // setup our helper module
-        self = new gcroot<PythonPlugin^>(this);
-        else_init_module(self);
+        _self = new gcroot<PythonPlugin^>(this);
+        else_init_module(_self);
 
         // import the plugin
         auto moduleName = PyUnicode_FromString(context->marshal_as<const char*>(pluginName));
-        module = PyImport_Import(moduleName);
+        _module = PyImport_Import(moduleName);
         Py_DECREF(moduleName);
         
         // first failure point, the python module failed to import (e.g. invalid python code)
-        if (!module) {
+        if (!_module) {
             auto exception = String::Format("Error: Failed to load module: {0}", getPythonTracebackString());
             throw gcnew PluginLoader::PluginLoadException(exception);
         }
         
         // otherwise we check the plugin is okay
-        auto name = PyObject_GetAttrString(module, "PLUGIN_NAME");
-        auto setupFunc = PyObject_GetAttrString(module, "setup");
+        auto name = PyObject_GetAttrString(_module, "PLUGIN_NAME");
+        auto setupFunc = PyObject_GetAttrString(_module, "setup");
         
         // second failure point
         // the plugin must have PLUGIN_NAME and setup() defined
@@ -107,25 +110,44 @@ namespace PythonPluginLoader {
     
     void PythonPlugin::PySwitchState()
     {
-        PyThreadState_Swap(pystate);
+        msclr::lock l(_lock);
+        PyThreadState_Swap(_pystate);
     }
     
     void PythonPlugin::Setup()
     {
+        msclr::lock l(_lock);
         PySwitchState();
-        auto setupFunc = PyObject_GetAttrString(module, "setup");
+        auto setupFunc = PyObject_GetAttrString(_module, "setup");
         if (!PyEval_CallObject(setupFunc, NULL)) {
             throw gcnew PluginLoader::PluginLoadException(String::Format("Error: plugin setup() method threw an exception: {0}", getPythonTracebackString()));
         }
         Py_DECREF(setupFunc);
+        
     }   
 
-    String^ PythonPlugin::PythonPlugin::Name::get()
+    String^ PythonPlugin::Name::get()
     {
+        msclr::lock l(_lock);
         PySwitchState();
-        auto pyName = PyObject_GetAttrString(module, "PLUGIN_NAME");
+        auto pyName = PyObject_GetAttrString(_module, "PLUGIN_NAME");
         auto name = gcnew String(PyUnicode_AsUTF8(pyName));
         Py_DECREF(pyName);
         return name;
+    }
+
+    ICollection<IProvider ^> ^ PythonPlugin::Providers::get()
+    {
+        PySwitchState();
+        auto elseModule = PyImport_Import(PyUnicode_FromString("Else"));
+        if (!elseModule) {
+            throw gcnew PythonException("failed to import Else module");
+        }
+
+        auto providers = PyObject_GetAttrString(elseModule, "providers");
+        if (!PySequence_Check(providers)) {
+            throw gcnew PythonException("providers field is not a sequence");
+        }
+        return gcnew PythonListIterator(providers, _lock);
     }
 }

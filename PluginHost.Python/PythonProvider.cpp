@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <msclr/marshal.h>
+#include <msclr/lock.h>
 #include "PythonProvider.h"
 #include "Helpers.h"
 
@@ -9,13 +10,16 @@ using namespace System;
 
 namespace PythonPluginLoader {
 
-    PythonProvider::PythonProvider(PyObject* instance)
+    PythonProvider::PythonProvider(PyObject* instance, Object^ lock)
     {
         _instance = instance;
+        _lock = lock;
     }
 
     ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query)
     {
+        msclr::lock l(_lock);
+        
         // convert Query struct to a python dictionary
         auto queryDict = ConvertQueryToPyDict(query);
         ProviderInterest interest = ProviderInterest::None;
@@ -36,6 +40,7 @@ namespace PythonPluginLoader {
 
     List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
     {
+        msclr::lock l(_lock);
         // convert Query struct to a python dictionary
         auto queryDict = ConvertQueryToPyDict(query);
 
@@ -67,7 +72,7 @@ namespace PythonPluginLoader {
                     auto launch_callback = GetMethod(item, "launch");
                         
                     if (launch_callback != nullptr) {
-                        auto callback = gcnew PythonLaunchCallback(item);
+                        auto callback = gcnew PythonLaunchCallback(item, _lock);
                         result->Launch = gcnew Action<Query^>(callback, &PythonLaunchCallback::launch);
                         callbacks.Add(callback);
                     }

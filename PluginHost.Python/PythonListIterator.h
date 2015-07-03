@@ -3,6 +3,7 @@
 #include "Exceptions.h"
 
 using namespace System::Collections::Generic;
+using namespace System::Threading;
 
 namespace PythonPluginLoader {
 
@@ -15,69 +16,35 @@ namespace PythonPluginLoader {
         // IEnumerator implementation
         ref struct enumerator : IEnumerator<IProvider^>
         {
-            PythonListIterator^ data;
-            int currentIndex;
+            PythonListIterator^ _data;
+            int _currentIndex;
+            Object^ _lock;
 
-            enumerator(PythonListIterator^ data)
-            {
-                this->data = data;
-                currentIndex = -1;
-            }
+            enumerator(PythonListIterator^ data, Object^ lock);
 
-            virtual bool MoveNext() = IEnumerator<IProvider^>::MoveNext
-            {
-                if (currentIndex < data->_length - 1) {
-                    currentIndex++;
-                    return true;
-                }
-                return false;
-            }
-
+            virtual bool MoveNext() = IEnumerator<IProvider^>::MoveNext;
             property IProvider^ Current
             {
-                virtual IProvider^ get() = IEnumerator<IProvider^>::Current::get
-                {
-                    auto item = PySequence_Fast_GET_ITEM(data->_pythonList, currentIndex);
-                    Py_INCREF(item);
-                    return gcnew PythonProvider(item);
-                }
+                virtual IProvider^ get() = IEnumerator<IProvider^>::Current::get;
             };
-
-            // This is required as IEnumerator<T> also implements IEnumerator ??
             property Object^ Current2
             {
-                virtual Object^ get() = System::Collections::IEnumerator::Current::get
-                {
-                    auto item = PySequence_Fast_GET_ITEM(data->_pythonList, currentIndex);
-                    Py_INCREF(item);
-                    return gcnew PythonProvider(item);
-                }
+                virtual Object^ get() = System::Collections::IEnumerator::Current::get;
             };
-            virtual void Reset() = IEnumerator<IProvider^>::Reset{}
-            ~enumerator() {}
+            virtual void Reset() = IEnumerator<IProvider^>::Reset;
+            ~enumerator();
         };
-
+        
         PyObject* _pythonList;
         int _length;
+        Object^ _lock;
+        bool lockTaken;
 
-        PythonListIterator(PyObject* pythonList)
-        {
-            _pythonList = pythonList;
-            _length = (int)PySequence_Length(_pythonList);
-            if (_length == -1) {
-                throw gcnew PythonException("bad python list");
-            }
-        }
+        PythonListIterator(PyObject* pythonList, Object^ lock);
+        virtual System::Collections::IEnumerator^ GetEnumerator2() = System::Collections::IEnumerable::GetEnumerator;
+        virtual IEnumerator<IProvider^>^ GetEnumerator();
 
-        virtual System::Collections::IEnumerator^ GetEnumerator2() = System::Collections::IEnumerable::GetEnumerator
-        {
-            return gcnew enumerator(this);
-        }
-
-        virtual IEnumerator<IProvider^>^ GetEnumerator()
-        {
-            return gcnew enumerator(this);
-        }
+        
 
         // Inherited via ICollection
         virtual property int Count;
