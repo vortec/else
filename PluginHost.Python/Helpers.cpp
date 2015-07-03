@@ -4,6 +4,7 @@
 
 using namespace msclr::interop;
 using namespace System;
+using namespace System::Text;
 using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
@@ -90,10 +91,23 @@ namespace PythonPluginLoader {
             if (field->FieldType == System::String::typeid) {
                 // string
                 auto valueStr = dynamic_cast<String^>(field->GetValue(query));
-                if (!valueStr) {
+
+                if (!valueStr) {  // failed cast
                     valueStr = "";
                 }
-                auto fieldValue = context->marshal_as<const char*>(valueStr);
+                
+                char* fieldValue;
+                if (valueStr->Length) {
+                    // encode the text as UTF8
+                    array<Byte>^ encodedBytes = Encoding::UTF8->GetBytes(valueStr);
+                    // prevent GC moving the bytes around while the variable is on the stack
+                    pin_ptr<Byte> pinnedBytes = &encodedBytes[0];
+                    // typecast to char*
+                    fieldValue = reinterpret_cast<char*>(pinnedBytes);
+                }
+                else {
+                    fieldValue = "";
+                }
                 value = PyUnicode_FromString(fieldValue);
             }
             else if (field->FieldType == System::Boolean::typeid) {

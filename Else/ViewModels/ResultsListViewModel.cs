@@ -53,7 +53,7 @@ namespace Else.ViewModels
             if (e.Key == Key.Enter || e.Key == Key.Return) {
                 var item = Items[SelectedIndex];
                 try {
-                    Task.Run(() => { item.Launch(_engine.Query); });
+                    Task.Run(() => { item.Launch(_engine.Query); }).LogExceptions();
                 }
                 catch (Exception exception) {
                     _logger.Error("Plugin result launch threw an exception", exception);
