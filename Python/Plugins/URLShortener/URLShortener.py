@@ -27,10 +27,10 @@ def setup():
 def shorten_url(query):
     # check arguments is valid url
     if query['Arguments']:
-        # query bitly api
-        result = shorten(query['Arguments'])
         # hide the launcher window
         Else.app_commands.HideWindow()
+        # query bitly api
+        result = shorten(query['Arguments'])
         # copy shortened url to clipboard
         clipboard_set(result['url'])
 
