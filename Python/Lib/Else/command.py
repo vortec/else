@@ -15,7 +15,7 @@ class Command(BaseProvider):
     :param fallback: (optonal) if True, the command will be displayed when no other plugins provide results.
 
     """
-    def __init__(self, keyword, title, subtitle=None, icon=None, launch=None, requires_arguments=False, fallback=False):
+    def __init__(self, keyword, title, subtitle=None, launch=None, icon=None, requires_arguments=False, fallback=False):
         self.keyword = keyword
         self.title = title
         self.subtitle = subtitle
