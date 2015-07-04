@@ -42,7 +42,6 @@ namespace PythonPluginLoader {
         }
     }
     
-    
     PythonListIterator::PythonListIterator(PyObject* pythonList, Object^ lock)
     {
         _pythonList = pythonList;

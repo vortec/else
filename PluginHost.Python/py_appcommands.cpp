@@ -46,7 +46,7 @@ namespace PythonPluginLoader {
     static PyMethodDef appcommands_methods[] = {
         { "ShowWindow", else_appcommands_showwindow, METH_NOARGS, "Show Window" },
         { "HideWindow", else_appcommands_hidewindow, METH_NOARGS, "Hide Window" },
-        //{ "RequestUpdate", else_appcommands_requestupdate, METH_NOARGS, "Request Update" },
+        { "RequestUpdate", else_appcommands_requestupdate, METH_NOARGS, "Request Update" },
         { "RewriteQuery", else_appcommands_rewritequery, METH_VARARGS, "Rewrite Query" },
         { NULL, NULL, 0, NULL }
     };

@@ -1,10 +1,11 @@
 #include "stdafx.h"
 #include <msclr/marshal.h>
-#include "PythonPlugin.h"
+#include <msclr/lock.h>
 #include <msclr\auto_gcroot.h>
+#include "PythonPlugin.h"
 #include "py_else.h"
 #include "Helpers.h"
-#include <msclr/lock.h>
+
 
 using namespace System::IO;
 using namespace System::Collections::Generic;

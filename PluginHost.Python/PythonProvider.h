@@ -10,8 +10,6 @@ using namespace System::Collections::Generic;
 #include "Helpers.h"
 #include "Exceptions.h"
 #include <Python.h>
-//#include "ModuleWrapper.h"
-
 
 namespace PythonPluginLoader {
     
