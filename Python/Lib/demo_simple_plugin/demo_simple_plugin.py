@@ -1,5 +1,5 @@
 import Else
-import subprocess
+import webbrowser
 import urllib.parse
 
 PLUGIN_NAME = "GoogleSearch"
@@ -11,4 +11,5 @@ def open_browser(query):
     if query['Arguments']:
         args = urllib.parse.quote_plus(query['Arguments'])
         url = "https://www.google.com/search?q={}".format(args)
-        subprocess.call([r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe", url])
+        webbrowser.open(url)
+        Else.app_commands.HideWindow()
