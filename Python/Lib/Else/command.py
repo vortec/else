@@ -45,9 +45,9 @@ class Command(BaseProvider):
             print(''.join('!! ' + line for line in lines))  # Log it or whatever here
     def query(self, query, cancel_token):
         result = Result(title=self.title, subtitle=self.subtitle, icon=self.icon, launch=self.launch)
-        
         # attempt to replace {arguments} token in the title string
         if self.requires_arguments:
+            arguments = ""
             # check if our keyword was matched
             if self.keyword.startswith(query.get('Keyword')):
                 # use arguments then
@@ -57,6 +57,7 @@ class Command(BaseProvider):
                 arguments = query.get('Raw')
 
             # use nice ellipsis if no arguments
+
             arguments = arguments or "..."
 
             if result.title:
