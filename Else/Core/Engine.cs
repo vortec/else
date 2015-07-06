@@ -48,7 +48,6 @@ namespace Else.Core
         {
             _logger = logger;
             _pluginManager = pluginManager;
-
             BindingOperations.EnableCollectionSynchronization(ResultsList, SyncLock);
         }
 
@@ -87,8 +86,10 @@ namespace Else.Core
 
             // empty query, remove existing results
             if (Query.Empty) {
-                ResultsList.Clear();
-                ResultsList.BindingRefresh();
+                lock (ResultsList) {
+                    ResultsList.Clear();
+                    ResultsList.BindingRefresh();
+                }
                 return;
             }
 
@@ -157,12 +158,19 @@ namespace Else.Core
                 }
 
                 // query successful, show the results
-                ResultsList.Clear();
-                ResultsList.AddRange(queryResults);
+                lock (ResultsList) {
+                    ResultsList.Clear();
+                    ResultsList.AddRange(queryResults);
+                }
                 _lastQuery = query;
 
                 // trigger refresh of UI that is bound to the ResultsList
-                await Application.Current.Dispatcher.BeginInvoke(new Action(() => { ResultsList.BindingRefresh(); }));
+                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    lock (ResultsList) {
+                        ResultsList.BindingRefresh();
+                    }
+                }));
             }
             catch (OperationCanceledException) {
             }
@@ -188,7 +196,6 @@ namespace Else.Core
 
                         // query the provider and pass the remotable cancellable
                         return provider.ExecuteQueryFunc(Query, cancellable);
-
                     }, _cancelTokenSource.Token, TaskCreationOptions.AttachedToParent, TaskScheduler.Default);
                     tasks.Add(task);
                 }

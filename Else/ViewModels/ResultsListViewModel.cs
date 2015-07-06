@@ -48,29 +48,32 @@ namespace Else.ViewModels
         {
             var e = o as KeyEventArgs;
 
-            if (!Items.Any()) return;
+            lock (Items) {
+            
+                if (!Items.Any()) return;
 
-            if (e.Key == Key.Enter || e.Key == Key.Return) {
-                var item = Items[SelectedIndex];
-                try {
-                    Task.Run(() => { item.Launch(_engine.Query); }).LogExceptions();
+                if (e.Key == Key.Enter || e.Key == Key.Return) {
+                    var item = Items[SelectedIndex];
+                    try {
+                        Task.Run(() => { item.Launch(_engine.Query); }).LogExceptions();
+                    }
+                    catch (Exception exception) {
+                        _logger.Error("Plugin result launch threw an exception", exception);
+                    }
                 }
-                catch (Exception exception) {
-                    _logger.Error("Plugin result launch threw an exception", exception);
-                }
-            }
-            else {
-                if (e.Key == Key.Up) {
-                    IncrementIndex(-1, true);
-                }
-                if (e.Key == Key.Down) {
-                    IncrementIndex(1, true);
-                }
-                if (e.Key == Key.PageUp) {
-                    IncrementIndex(-6, false);
-                }
-                if (e.Key == Key.PageDown) {
-                    IncrementIndex(6, false);
+                else {
+                    if (e.Key == Key.Up) {
+                        IncrementIndex(-1, true);
+                    }
+                    if (e.Key == Key.Down) {
+                        IncrementIndex(1, true);
+                    }
+                    if (e.Key == Key.PageUp) {
+                        IncrementIndex(-6, false);
+                    }
+                    if (e.Key == Key.PageDown) {
+                        IncrementIndex(6, false);
+                    }
                 }
             }
         }
@@ -81,8 +84,10 @@ namespace Else.ViewModels
         /// <param name="index"></param>
         private void SelectIndex(int index)
         {
-            if (index >= 0 && index < Items.Count) {
-                SelectedIndex = index;
+            lock (Items) {
+                if (index >= 0 && index < Items.Count) {
+                    SelectedIndex = index;
+                }
             }
         }
 
@@ -93,29 +98,31 @@ namespace Else.ViewModels
         /// <param name="wrap">Wrap top->bottom and bottom->top.</param>
         private void IncrementIndex(int increment, bool wrap)
         {
-            if (increment != 0) {
-                var newIndex = SelectedIndex + increment;
-                if (newIndex < 0) {
-                    if (wrap) {
-                        // wrap to bottom
-                        newIndex = Items.Count - 1;
+            lock (Items) {
+                if (increment != 0) {
+                    var newIndex = SelectedIndex + increment;
+                    if (newIndex < 0) {
+                        if (wrap) {
+                            // wrap to bottom
+                            newIndex = Items.Count - 1;
+                        }
+                        else {
+                            // don't wrap, stop at top
+                            newIndex = 0;
+                        }
                     }
-                    else {
-                        // don't wrap, stop at top
-                        newIndex = 0;
+                    else if (newIndex >= Items.Count) {
+                        if (wrap) {
+                            // wrap to top
+                            newIndex = 0;
+                        }
+                        else {
+                            // don't wrap, stop at bottom
+                            newIndex = Items.Count - 1;
+                        }
                     }
+                    SelectIndex(newIndex);
                 }
-                else if (newIndex >= Items.Count) {
-                    if (wrap) {
-                        // wrap to top
-                        newIndex = 0;
-                    }
-                    else {
-                        // don't wrap, stop at bottom
-                        newIndex = Items.Count - 1;
-                    }
-                }
-                SelectIndex(newIndex);
             }
         }
     }
