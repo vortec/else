@@ -63,7 +63,6 @@ namespace PythonPluginLoader {
         if (PySequence_Check(pyResults)) {
             auto length = PySequence_Length(pyResults);
             if (length != -1) {
-                auto currentIndex = -1;
                 auto seq = PySequence_Fast(pyResults, "expected a sequence");
                 auto len = PySequence_Size(pyResults);
                 for (auto i = 0; i < len; i++) {
@@ -81,7 +80,6 @@ namespace PythonPluginLoader {
                         result->Launch = gcnew Action<Query^>(callback, &PythonLaunchCallback::launch);
                         callbacks.Add(callback);
                     }
-                    i++;
                     results->Add(result);
                 }
                 Py_DECREF(seq);
