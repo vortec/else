@@ -28,7 +28,7 @@ class ResultProvider(BaseProvider):
         if query.get('Keyword') and self.keyword:
             if query.get('KeywordComplete') and query.get('Keyword') == self.keyword:
                 return self.Interest.Exclusive
-            if not query.get('KeywordComplete') and query.get('Keyword').startswith(self.keyword):
+            if not query.get('KeywordComplete') and self.keyword.startswith(query.get('Keyword')):
                 return self.Interest.Shared
         
         if self.is_fallback:
