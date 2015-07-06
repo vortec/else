@@ -128,38 +128,44 @@ namespace PythonPluginLoader {
         delete context;
         return dict;
     }
-    bool GetBoolean(PyObject* result, const char* key)
+    bool GetBoolean(PyObject* object, const char* key)
     {
-        auto obj = PyObject_GetAttrString(result, key);
-        if (obj != nullptr && PyBool_Check(obj)) {
-            return obj == Py_True;
+        bool result = false;
+        auto attr = PyObject_GetAttrString(object, key);
+        if (attr != nullptr && PyBool_Check(attr)) {
+            result = attr == Py_True;
         }
+        Py_DECREF(attr);
         return false;
     }
-    String^ GetString(PyObject* result, const char* key)
+    String^ GetString(PyObject* object, const char* key)
     {
-        auto obj = PyObject_GetAttrString(result, key);
-        if (obj != nullptr && PyUnicode_Check(obj)) {
-            auto test = gcnew String(PyUnicode_AsUTF8(obj));
-            return test;
+        auto attr = PyObject_GetAttrString(object, key);
+        String^ result = gcnew String("");
+        if (attr != nullptr && PyUnicode_Check(attr)) {
+            result = gcnew String(PyUnicode_AsUTF8(attr));
         }
-        return "";
+        Py_DECREF(attr);
+        return result;
     }
-    long GetLong(PyObject* result, const char* key)
+    long GetLong(PyObject* object, const char* key)
     {
-        auto obj = PyObject_GetAttrString(result, key);
-        if (obj != nullptr && PyNumber_Check(obj)) {
-            auto num = PyLong_AsLong(obj);
-            return num;
+        long result = 0;
+        auto attr = PyObject_GetAttrString(object, key);
+        if (attr != nullptr && PyNumber_Check(attr)) {
+            result = PyLong_AsLong(attr);
         }
-        return 0;
+        Py_DECREF(attr);
+        return result;
     }
-    PyObject* GetMethod(PyObject* result, const char* key)
+    PyObject* GetMethod(PyObject* object, const char* key)
     {
-        auto method = PyObject_GetAttrString(result, key);
-        if (method != nullptr) { // && PyMethod_Check(method)
-            return method;
+        PyObject* result = nullptr;
+        auto attr = PyObject_GetAttrString(object, key);
+        if (attr != nullptr) { // && PyMethod_Check(method)
+            result = attr;
         }
-        return nullptr;
+        Py_DECREF(attr);
+        return result;
     }
 }

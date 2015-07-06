@@ -25,7 +25,7 @@ namespace PythonPluginLoader {
 
     IProvider^ PythonListIterator::enumerator::Current::get() {
         auto item = PySequence_Fast_GET_ITEM(_data->_pythonList, _currentIndex);
-        Py_INCREF(item);
+        //Py_INCREF(item);
         return gcnew PythonProvider(item, _lock);
     }
 
@@ -40,6 +40,7 @@ namespace PythonPluginLoader {
         
         if (_data->lockTaken) {
             Monitor::Exit(_lock);
+            Py_DECREF(_data->_pythonList);
         }
     }
     

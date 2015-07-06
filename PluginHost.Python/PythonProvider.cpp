@@ -37,6 +37,7 @@ namespace PythonPluginLoader {
                 interest = (ProviderInterest)n;
             }
         }
+        Py_XDECREF(result);
         
         return interest;
     }
@@ -66,7 +67,7 @@ namespace PythonPluginLoader {
                 auto seq = PySequence_Fast(pyResults, "expected a sequence");
                 auto len = PySequence_Size(pyResults);
                 for (auto i = 0; i < len; i++) {
-                    auto item = PySequence_Fast_GET_ITEM(pyResults, i);
+                    auto item = PySequence_Fast_GET_ITEM(seq, i);
                     // parse the result
                     auto result = gcnew Result();
                     result->Title = GetString(item, "title");
