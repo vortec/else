@@ -14,5 +14,6 @@ namespace PythonPluginLoader {
             void Init();
             bool initialized;
             PyThreadState* pystateMain;
+            Object^ _lock = gcnew Object();
     };
 }

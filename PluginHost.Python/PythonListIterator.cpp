@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PythonListIterator.h"
+#include <msclr/lock.h>
 
 using namespace System::Collections::Generic;
 
@@ -44,6 +45,7 @@ namespace PythonPluginLoader {
     
     PythonListIterator::PythonListIterator(PyObject* pythonList, Object^ lock)
     {
+        msclr::lock l(lock);
         _pythonList = pythonList;
         _length = (int)PySequence_Length(_pythonList);
         if (_length == -1) {

@@ -20,8 +20,9 @@ static const char* libPath = "C:\\Users\\James\\Repos\\Else\\Python\\Lib";
 namespace PythonPluginLoader {
 
 
-    PythonPlugin::PythonPlugin()
+    PythonPlugin::PythonPlugin(Object^ lock)
     {
+        _lock = lock;
     }    
     PythonPlugin::~PythonPlugin()
     {
@@ -136,9 +137,10 @@ namespace PythonPluginLoader {
         Py_DECREF(pyName);
         return name;
     }
-
-    ICollection<IProvider ^> ^ PythonPlugin::Providers::get()
+    
+    Collections::Generic::ICollection<IProvider ^> ^ PythonPlugin::Providers::get()
     {
+        msclr::lock l(_lock);
         PySwitchState();
         auto elseModule = PyImport_Import(PyUnicode_FromString("Else"));
         if (!elseModule) {
@@ -149,6 +151,7 @@ namespace PythonPluginLoader {
         if (!PySequence_Check(providers)) {
             throw gcnew PythonException("providers field is not a sequence");
         }
+        
         return gcnew PythonListIterator(providers, _lock);
     }
 }

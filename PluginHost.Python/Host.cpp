@@ -36,7 +36,7 @@ namespace PythonPluginLoader {
         
         marshal_context^ context = gcnew marshal_context();
     
-        auto plugin = gcnew PythonPlugin();
+        auto plugin = gcnew PythonPlugin(_lock);
         plugin->Load(path);
         return plugin;
     }

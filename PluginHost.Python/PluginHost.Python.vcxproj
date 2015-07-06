@@ -98,6 +98,7 @@ xcopy /y /d "$(ProjectDir)lib\python3-stdlib.zip" "$(OutDir)"
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PythonLaunchCallback.h" />
     <ClInclude Include="PythonPlugin.h" />
     <ClInclude Include="Host.h" />
     <ClInclude Include="py_appcommands.h" />
@@ -112,11 +113,11 @@ xcopy /y /d "$(ProjectDir)lib\python3-stdlib.zip" "$(OutDir)"
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="py_stdout.h" />
     <ClInclude Include="Stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="PythonLaunchCallback.cpp" />
     <ClCompile Include="PythonListIterator.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
@@ -130,7 +131,6 @@ xcopy /y /d "$(ProjectDir)lib\python3-stdlib.zip" "$(OutDir)"
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
       </ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="py_stdout.cpp" />
     <ClCompile Include="Stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

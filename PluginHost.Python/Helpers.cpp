@@ -114,10 +114,14 @@ namespace PythonPluginLoader {
                 // boolean
                 auto valueBool = dynamic_cast<Boolean^>(field->GetValue(query));
                 value = *valueBool ? Py_True : Py_False;
+                Py_INCREF(value);
             }
             else {
                 //Debug::Print("skipped field: {0}", field->Name);
+                value = Py_None;
+                Py_INCREF(value);
             }
+            
             PyDict_SetItemString(dict, fieldName, value);
             Py_DECREF(value);
         }

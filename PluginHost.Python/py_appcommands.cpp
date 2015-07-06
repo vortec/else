@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <vcclr.h>
 #include "py_appcommands.h"
 #include "PythonPlugin.h"
 using namespace System;

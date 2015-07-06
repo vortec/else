@@ -18,9 +18,9 @@
     <ClCompile Include="Helpers.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="py_stdout.cpp" />
     <ClCompile Include="Host.cpp" />
     <ClCompile Include="PythonPlugin.cpp" />
+    <ClCompile Include="PythonLaunchCallback.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
@@ -42,9 +42,9 @@
     <ClInclude Include="Helpers.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="py_stdout.h" />
     <ClInclude Include="Host.h" />
     <ClInclude Include="PythonPlugin.h" />
+    <ClInclude Include="PythonLaunchCallback.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Python">

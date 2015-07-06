@@ -11,7 +11,7 @@ namespace PythonPluginLoader {
     ref class PythonPlugin : Plugin
     {
         public:
-            PythonPlugin();
+            PythonPlugin(Object^ lock);
             ~PythonPlugin();
 
             /// <summary>
@@ -66,6 +66,6 @@ namespace PythonPluginLoader {
             /// <summary>
             /// A lock to ensure only 1 thread can access the cpython API (cpython is single threaded)
             /// </summary>
-            Object^ _lock = gcnew Object();
+            Object^ _lock;
     };
 }

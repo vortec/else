@@ -3,10 +3,12 @@
 #include <msclr/lock.h>
 #include "PythonProvider.h"
 #include "Helpers.h"
+#include "Exceptions.h"
 
 
 using namespace msclr::interop;
 using namespace System;
+using namespace System::Threading;
 
 namespace PythonPluginLoader {
 
@@ -35,16 +37,19 @@ namespace PythonPluginLoader {
                 interest = (ProviderInterest)n;
             }
         }
+        
         return interest;
     }
 
     List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
     {
         msclr::lock l(_lock);
+        
         // convert Query struct to a python dictionary
         auto queryDict = ConvertQueryToPyDict(query);
 
         auto results = gcnew System::Collections::Generic::List<Result^>();
+        
 
         PyObject* pyResults = PyObject_CallMethod(_instance, "query", "(O, i)", queryDict, 1);
         Py_DECREF(queryDict);
