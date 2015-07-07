@@ -1,11 +1,10 @@
 #include "stdafx.h"
 #include <msclr/marshal.h>
-#include <msclr/lock.h>
 #include <msclr\auto_gcroot.h>
 #include "PythonPlugin.h"
 #include "py_else.h"
 #include "Helpers.h"
-
+#include "Host.h"
 
 using namespace System::IO;
 using namespace System::Collections::Generic;
@@ -20,25 +19,24 @@ static const char* libPath = "C:\\Users\\James\\Repos\\Else\\Python\\Lib";
 namespace PythonPluginLoader {
 
 
-    PythonPlugin::PythonPlugin(Object^ lock)
+    PythonPlugin::PythonPlugin()
     {
-        _lock = lock;
     }    
     PythonPlugin::~PythonPlugin()
     {
+        Debug::Print("DESTRUCTOR");
         // finish our python environment
-        if (_pystate != nullptr) {
+        if (_thread != nullptr) {
             Py_DECREF(_module);
-            Py_EndInterpreter(_pystate);
-            _pystate = nullptr;
+            
+            //Py_EndInterpreter(_thread);
+            _thread = nullptr;
         }
         delete _self;
     }
 
-    void PythonPlugin::Load(String ^ path)
+    void PythonPlugin::Load(String ^ path, PyThreadState* hostThread)
     {
-        msclr::lock l(_lock);
-        
         auto info = gcnew DirectoryInfo(Path::GetDirectoryName(path));
         if (!info->Exists) {
             throw gcnew DirectoryNotFoundException(String::Format("Error: Directory does not exist: {0}", path));
@@ -48,9 +46,12 @@ namespace PythonPluginLoader {
         
         auto context = gcnew marshal_context();
 
-        // create new python interpreter and switch to it
-        _pystate = Py_NewInterpreter();
-        PySwitchState();
+        // switch to host thread (so we can create a NewInterpreter)
+        PyEval_RestoreThread(hostThread);
+        
+        // create new sub interpreter state
+        Debug::Print("plugin-load ~ new interpreter");
+        _thread = Py_NewInterpreter();  // switches thread
 
         // get sys.path
         auto pathObject = PySys_GetObject("path");  // borrowed ref
@@ -108,50 +109,62 @@ namespace PythonPluginLoader {
             Py_XDECREF(name);
             Py_XDECREF(setupFunc);
         }
+        PyEval_ReleaseThread(_thread);
     }
     
-    void PythonPlugin::PySwitchState()
+    //void PythonPlugin::PySwitchState()
+    //{
+    //    msclr::lock l(_lock);
+    //    //PyThreadState_Swap(_pystate);
+    //    
+    //}
+    //
+    /*void PythonPlugin::BeginPython()
     {
-        msclr::lock l(_lock);
-        PyThreadState_Swap(_pystate);
+        Debug::Print("plugin-generic ~ LOCK");
+        PyEval_RestoreThread(_pystate);
     }
-    
+    void PythonPlugin::EndPython()
+    {
+        Debug::Print("plugin-generic ~ UNLOCK");
+        PyEval_ReleaseThread(_pystate);
+    }*/
     void PythonPlugin::Setup()
     {
-        msclr::lock l(_lock);
-        PySwitchState();
+        PyEval_RestoreThread(_thread);
         auto setupFunc = PyObject_GetAttrString(_module, "setup");
         if (!PyEval_CallObject(setupFunc, NULL)) {
             throw gcnew PluginLoader::PluginLoadException(String::Format("Error: plugin setup() method threw an exception: {0}", getPythonTracebackString()));
         }
         Py_DECREF(setupFunc);
-        
+        PyEval_ReleaseThread(_thread);
     }   
 
     String^ PythonPlugin::Name::get()
     {
-        msclr::lock l(_lock);
-        PySwitchState();
+        PyEval_RestoreThread(_thread);
         auto pyName = PyObject_GetAttrString(_module, "PLUGIN_NAME");
         auto name = gcnew String(PyUnicode_AsUTF8(pyName));
         Py_DECREF(pyName);
+        PyEval_ReleaseThread(_thread);
         return name;
     }
     
     Collections::Generic::ICollection<IProvider ^> ^ PythonPlugin::Providers::get()
     {
-        msclr::lock l(_lock);
-        PySwitchState();
+        PyEval_RestoreThread(_thread);
         auto elseModule = PyImport_Import(PyUnicode_FromString("Else"));
         if (!elseModule) {
+            PyEval_ReleaseThread(_thread);
             throw gcnew PythonException("failed to import Else module");
         }
 
         auto providers = PyObject_GetAttrString(elseModule, "providers");
         if (!PySequence_Check(providers)) {
+            PyEval_ReleaseThread(_thread);
             throw gcnew PythonException("providers field is not a sequence");
         }
-        
-        return gcnew PythonListIterator(providers, _lock);
+        PyEval_ReleaseThread(_thread);
+        return gcnew PythonListIterator(providers, _thread);
     }
 }

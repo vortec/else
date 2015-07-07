@@ -9,18 +9,19 @@
 using namespace msclr::interop;
 using namespace System;
 using namespace System::Threading;
+using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
 
-    PythonProvider::PythonProvider(PyObject* instance, Object^ lock)
+    PythonProvider::PythonProvider(PyObject* instance, PyThreadState* thread)
     {
         _instance = instance;
-        _lock = lock;
+        _thread = thread;
     }
 
     ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query)
     {
-        msclr::lock l(_lock);
+        PyEval_RestoreThread(_thread);
         
         // convert Query struct to a python dictionary
         auto queryDict = ConvertQueryToPyDict(query);
@@ -28,6 +29,9 @@ namespace PythonPluginLoader {
     
         // call is_interested() on the provider
         PyObject* result = PyObject_CallMethod(_instance, "is_interested", "(O)", queryDict);
+        if (result == nullptr) {
+            Debug::Print("HERE");
+        }
         Py_DECREF(queryDict);
         // attempt to parse the result into ProviderInterest enum.
         if (PyLong_Check(result)) {
@@ -38,13 +42,13 @@ namespace PythonPluginLoader {
             }
         }
         Py_XDECREF(result);
-        
+        PyEval_ReleaseThread(_thread);
         return interest;
     }
 
     List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken)
     {
-        msclr::lock l(_lock);
+        PyEval_RestoreThread(_thread);
         
         // convert Query struct to a python dictionary
         auto queryDict = ConvertQueryToPyDict(query);
@@ -77,7 +81,7 @@ namespace PythonPluginLoader {
                     auto launch_callback = GetMethod(item, "launch");
                         
                     if (launch_callback != nullptr) {
-                        auto callback = gcnew PythonLaunchCallback(item, _lock);
+                        auto callback = gcnew PythonLaunchCallback(item, _thread);
                         result->Launch = gcnew Action<Query^>(callback, &PythonLaunchCallback::launch);
                         callbacks.Add(callback);
                     }
@@ -86,6 +90,7 @@ namespace PythonPluginLoader {
                 Py_DECREF(seq);
             }
         }
+        PyEval_ReleaseThread(_thread);
         return results;
     }
 }

@@ -8,10 +8,11 @@ namespace PythonPluginLoader {
     /// <summary>
     /// Provides an interface to the python plugin by using cpython api.
     /// </summary>
+    ref class Host;
     ref class PythonPlugin : Plugin
     {
         public:
-            PythonPlugin(Object^ lock);
+            PythonPlugin();
             ~PythonPlugin();
 
             /// <summary>
@@ -38,7 +39,7 @@ namespace PythonPluginLoader {
             /// Create a new python sub interpreter and load the plugin.
             /// </summary>
             /// <param name="path">The plugin absolute path (e.g. c:\plugins\URLShortener\URLShortener.py).</param>
-            void Load(String^ path);
+            void Load(String ^ path, PyThreadState* hostThread);
 
             /// <summary>
             /// Plugin setup. We relay the call onto the python plugin instance.
@@ -49,7 +50,8 @@ namespace PythonPluginLoader {
             /// <summary>
             /// Switch to our local python sub interpreter.
             /// </summary>
-            void PySwitchState();
+            /*void BeginPython();
+            void EndPython();*/
             
             /// <summary>
             /// pointer to the python plugin instance
@@ -59,13 +61,14 @@ namespace PythonPluginLoader {
             /// <summary>
             /// The python sub interpreter.
             /// </summary>
-            PyThreadState* _pystate = nullptr;
+            PyThreadState* _thread = nullptr;
+            
 
             gcroot<PythonPlugin^>* _self;
             
             /// <summary>
             /// A lock to ensure only 1 thread can access the cpython API (cpython is single threaded)
             /// </summary>
-            Object^ _lock;
+            Host^ _host;
     };
 }

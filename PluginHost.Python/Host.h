@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+
 using namespace Else::Extensibility;
 using namespace System;
 
@@ -13,7 +14,7 @@ namespace PythonPluginLoader {
         private:
             void Init();
             bool initialized;
-            PyThreadState* pystateMain;
             Object^ _lock = gcnew Object();
+            PyThreadState* _thread;
     };
 }

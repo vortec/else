@@ -7,6 +7,7 @@ using namespace msclr::interop;
 using namespace System::IO;
 using namespace Else::Extensibility;
 using namespace System::Runtime::InteropServices;
+using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
 
@@ -19,9 +20,12 @@ namespace PythonPluginLoader {
     void Host::Init()
     {
         if (!initialized) {
+            // initialize python
             Py_Initialize();
-            pystateMain = PyThreadState_Get();
+            PyEval_InitThreads();
             initialized = true;
+            // release GIL and thread
+            _thread = PyEval_SaveThread();
         }
     }    
     /// <summary>
@@ -36,8 +40,8 @@ namespace PythonPluginLoader {
         
         marshal_context^ context = gcnew marshal_context();
     
-        auto plugin = gcnew PythonPlugin(_lock);
-        plugin->Load(path);
+        auto plugin = gcnew PythonPlugin();
+        plugin->Load(path, _thread);
         return plugin;
     }
 

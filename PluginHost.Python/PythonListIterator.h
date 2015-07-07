@@ -2,6 +2,7 @@
 #include "PythonProvider.h"
 #include "Exceptions.h"
 
+
 using namespace System::Collections::Generic;
 using namespace System::Threading;
 
@@ -14,13 +15,13 @@ namespace PythonPluginLoader {
     {
     
         // IEnumerator implementation
-        ref struct enumerator : IEnumerator<IProvider^>
+        ref struct enumerator : IEnumerator<IProvider^>, IDisposable
         {
             PythonListIterator^ _data;
             int _currentIndex;
-            Object^ _lock;
+            PyThreadState* _thread;
 
-            enumerator(PythonListIterator^ data, Object^ lock);
+            enumerator(PythonListIterator^ data, PyThreadState* thread);
 
             virtual bool MoveNext() = IEnumerator<IProvider^>::MoveNext;
             property IProvider^ Current
@@ -37,10 +38,12 @@ namespace PythonPluginLoader {
         
         PyObject* _pythonList;
         int _length;
-        Object^ _lock;
-        bool lockTaken;
+        //PyThreadState* _pyState;
+        PyThreadState* _thread;
+        
 
-        PythonListIterator(PyObject* pythonList, Object^ lock);
+        PythonListIterator(PyObject* pythonList, PyThreadState* thread);
+        
         virtual System::Collections::IEnumerator^ GetEnumerator2() = System::Collections::IEnumerable::GetEnumerator;
         virtual IEnumerator<IProvider^>^ GetEnumerator();
 

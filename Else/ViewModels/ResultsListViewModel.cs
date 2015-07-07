@@ -49,13 +49,18 @@ namespace Else.ViewModels
             var e = o as KeyEventArgs;
 
             lock (Items) {
-            
                 if (!Items.Any()) return;
 
                 if (e.Key == Key.Enter || e.Key == Key.Return) {
                     var item = Items[SelectedIndex];
                     try {
-                        Task.Run(() => { item.Launch(_engine.Query); }).LogExceptions();
+                        Task.Run(() => { item.Launch(_engine.Query); }).ContinueWith(t =>
+                        {
+                            var aggException = t.Exception.Flatten();
+                            foreach (var exception in aggException.InnerExceptions) {
+                                _logger.Error("failed to launch result", exception);
+                            }
+                        });
                     }
                     catch (Exception exception) {
                         _logger.Error("Plugin result launch threw an exception", exception);

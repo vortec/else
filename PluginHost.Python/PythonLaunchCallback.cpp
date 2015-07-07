@@ -4,19 +4,21 @@
 #include "Helpers.h"
 #include "Exceptions.h"
 
+
 using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
     
-    PythonLaunchCallback::PythonLaunchCallback(PyObject* pyResultObject, Object^ lock)
+    PythonLaunchCallback::PythonLaunchCallback(PyObject* pyResultObject, PyThreadState* thread)
     {
         _pyResultObject = pyResultObject;
-        _lock = lock;
+        _thread = thread;
         Py_INCREF(_pyResultObject);
     }
     void PythonLaunchCallback::launch(Query^ query)
     {
-        msclr::lock l(_lock);
+        PyEval_RestoreThread(_thread);
+     
         // launch
         auto queryDict = ConvertQueryToPyDict(query);
         
@@ -29,16 +31,20 @@ namespace PythonPluginLoader {
             if (result == nullptr) {
                 if (PyErr_Occurred()) {
                     String^ tb = gcnew String(getPythonTraceback());
+                    PyEval_ReleaseThread(_thread);
                     throw gcnew PythonException(tb);
                 }
             }
         }
+        PyEval_ReleaseThread(_thread);
+     
     }
     PythonLaunchCallback::~PythonLaunchCallback()
     {
-        msclr::lock l(_lock);
+        PyEval_RestoreThread(_thread);
         if (_pyResultObject != nullptr) {
             Py_DECREF(_pyResultObject);
         }
+        PyEval_ReleaseThread(_thread);
     }
 }

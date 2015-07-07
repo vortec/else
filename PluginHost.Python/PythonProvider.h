@@ -12,11 +12,11 @@ namespace PythonPluginLoader {
     public ref class PythonProvider : IProvider
     {
     public:
-        PythonProvider(PyObject* instance, Object^ lock);
+        PythonProvider(PyObject* instance, PyThreadState* thread);
         virtual ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query);
         virtual List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken);
     private:
-        Object^ _lock;
+        PyThreadState* _thread;
         PyObject* _instance;
         List<PythonLaunchCallback^> callbacks;  // store callback delegates for later GC
     };
