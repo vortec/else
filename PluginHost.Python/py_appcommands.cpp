@@ -24,16 +24,19 @@ namespace PythonPluginLoader {
         getPlugin(self)->AppCommands->ShowWindow();
         return Py_None;
     }
+
     static PyObject* else_appcommands_hidewindow(PyObject* self, PyObject* args)
     {
         getPlugin(self)->AppCommands->HideWindow();
         return Py_None;
     }
+
     static PyObject* else_appcommands_requestupdate(PyObject* self, PyObject* args)
     {
         getPlugin(self)->AppCommands->RequestUpdate();
         return Py_None;
     }
+
     static PyObject* else_appcommands_rewritequery(PyObject* self, PyObject* args)
     {
         const char* query;
@@ -61,12 +64,9 @@ namespace PythonPluginLoader {
         NULL, NULL, NULL, NULL
     };
     
-
-
     PyObject* else_init_appcommands(void* plugin)
     {
         auto submodule = PyModule_Create(&appCommandsDef);
-        //PyDict_SetItemString(PyImport_GetModuleDict(), appCommandsDef.m_name, submodule);
         module_state* state = GETSTATE(submodule);
         state->plugin = plugin;
         Py_INCREF(submodule);

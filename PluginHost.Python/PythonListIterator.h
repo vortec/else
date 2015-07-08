@@ -24,30 +24,29 @@ namespace PythonPluginLoader {
             enumerator(PythonListIterator^ data, PyThreadState* thread);
 
             virtual bool MoveNext() = IEnumerator<IProvider^>::MoveNext;
+
             property IProvider^ Current
             {
                 virtual IProvider^ get() = IEnumerator<IProvider^>::Current::get;
             };
+
             property Object^ Current2
             {
                 virtual Object^ get() = System::Collections::IEnumerator::Current::get;
             };
+
             virtual void Reset() = IEnumerator<IProvider^>::Reset;
+
             ~enumerator();
         };
         
         PyObject* _pythonList;
         int _length;
-        //PyThreadState* _pyState;
         PyThreadState* _thread;
-        
 
         PythonListIterator(PyObject* pythonList, PyThreadState* thread);
-        
         virtual System::Collections::IEnumerator^ GetEnumerator2() = System::Collections::IEnumerable::GetEnumerator;
         virtual IEnumerator<IProvider^>^ GetEnumerator();
-
-        
 
         // Inherited via ICollection
         virtual property int Count;

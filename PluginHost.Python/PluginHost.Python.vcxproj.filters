@@ -9,9 +9,6 @@
     <ClCompile Include="py_appcommands.cpp">
       <Filter>Python</Filter>
     </ClCompile>
-    <ClCompile Include="PythonListIterator.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="PythonProvider.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -20,7 +17,12 @@
     </ClCompile>
     <ClCompile Include="Host.cpp" />
     <ClCompile Include="PythonPlugin.cpp" />
-    <ClCompile Include="PythonLaunchCallback.cpp" />
+    <ClCompile Include="PythonListIterator.cpp">
+      <Filter>Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="PythonLaunchCallback.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
@@ -33,9 +35,6 @@
     <ClInclude Include="Exceptions.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="PythonListIterator.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="PythonProvider.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -44,7 +43,12 @@
     </ClInclude>
     <ClInclude Include="Host.h" />
     <ClInclude Include="PythonPlugin.h" />
-    <ClInclude Include="PythonLaunchCallback.h" />
+    <ClInclude Include="PythonListIterator.h">
+      <Filter>Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="PythonLaunchCallback.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Python">

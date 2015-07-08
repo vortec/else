@@ -60,7 +60,7 @@ namespace Else.ViewModels
                             foreach (var exception in aggException.InnerExceptions) {
                                 _logger.Error("failed to launch result", exception);
                             }
-                        });
+                        }, TaskContinuationOptions.OnlyOnFaulted);
                     }
                     catch (Exception exception) {
                         _logger.Error("Plugin result launch threw an exception", exception);

@@ -76,8 +76,7 @@ namespace PythonPluginLoader {
         Py_DECREF(objectsRepresentation);
         return gcnew String(s);
     }
-
-
+    
     PyObject* ConvertQueryToPyDict(Else::Extensibility::Query ^query)
     {
         auto context = gcnew marshal_context();

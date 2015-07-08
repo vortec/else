@@ -4,7 +4,6 @@
 #include "Helpers.h"
 #include "Exceptions.h"
 
-
 using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
@@ -15,15 +14,14 @@ namespace PythonPluginLoader {
         _thread = thread;
         Py_INCREF(_pyResultObject);
     }
+    
     void PythonLaunchCallback::launch(Query^ query)
     {
         PyEval_RestoreThread(_thread);
      
         // launch
         auto queryDict = ConvertQueryToPyDict(query);
-        
         auto launchMethod = PyObject_GetAttrString(_pyResultObject, "launch");
-        
         
         if (PyCallable_Check(launchMethod)) {
             auto result = PyEval_CallFunction(launchMethod, "(O)", queryDict);
@@ -37,8 +35,8 @@ namespace PythonPluginLoader {
             }
         }
         PyEval_ReleaseThread(_thread);
-     
     }
+
     PythonLaunchCallback::~PythonLaunchCallback()
     {
         PyEval_RestoreThread(_thread);

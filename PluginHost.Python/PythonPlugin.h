@@ -11,12 +11,14 @@ namespace PythonPluginLoader {
     ref class Host;
     ref class PythonPlugin : Plugin
     {
-        public:
-            PythonPlugin();
+        public:            
+            /// <summary>
+            /// Clean up any python state
+            /// </summary>
             ~PythonPlugin();
 
             /// <summary>
-            /// Get the name of the plugin by accessing the python module variable PLUGIN_NAME
+            /// Get the plugin name.
             /// </summary>
             virtual property String^ Name {
                 String^ get() override;
@@ -42,17 +44,12 @@ namespace PythonPluginLoader {
             void Load(String ^ path, PyThreadState* hostThread);
 
             /// <summary>
-            /// Plugin setup. We relay the call onto the python plugin instance.
+            /// Plugin setup.
             /// </summary>
             virtual void Setup() override;
 
         private:
-            /// <summary>
-            /// Switch to our local python sub interpreter.
-            /// </summary>
-            /*void BeginPython();
-            void EndPython();*/
-            
+
             /// <summary>
             /// pointer to the python plugin instance
             /// </summary>
@@ -63,9 +60,11 @@ namespace PythonPluginLoader {
             /// </summary>
             PyThreadState* _thread = nullptr;
             
-
+            /// <summary>
+            /// A pointer to this object, this object should not be moved by GC while this pointer exists.
+            /// </summary>
             gcroot<PythonPlugin^>* _self;
-            
+
             /// <summary>
             /// A lock to ensure only 1 thread can access the cpython API (cpython is single threaded)
             /// </summary>

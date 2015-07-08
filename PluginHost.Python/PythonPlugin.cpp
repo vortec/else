@@ -17,22 +17,17 @@ static const char* libPath = "C:\\Users\\James\\Repos\\Else\\Python\\Lib";
 
 
 namespace PythonPluginLoader {
-
-
-    PythonPlugin::PythonPlugin()
-    {
-    }    
+    
     PythonPlugin::~PythonPlugin()
     {
-        Debug::Print("DESTRUCTOR");
+        // todo: check this
         // finish our python environment
         if (_thread != nullptr) {
             Py_DECREF(_module);
-            
-            //Py_EndInterpreter(_thread);
+            Py_EndInterpreter(_thread);
             _thread = nullptr;
+            delete _self;
         }
-        delete _self;
     }
 
     void PythonPlugin::Load(String ^ path, PyThreadState* hostThread)
@@ -46,12 +41,12 @@ namespace PythonPluginLoader {
         
         auto context = gcnew marshal_context();
 
-        // switch to host thread (so we can create a NewInterpreter)
+        // switch to host thread (so we can create a NewInterpreter) and acquire gil
         PyEval_RestoreThread(hostThread);
         
         // create new sub interpreter state
         Debug::Print("plugin-load ~ new interpreter");
-        _thread = Py_NewInterpreter();  // switches thread
+        _thread = Py_NewInterpreter();  // switches thread state
 
         // get sys.path
         auto pathObject = PySys_GetObject("path");  // borrowed ref
@@ -75,10 +70,14 @@ namespace PythonPluginLoader {
         PyList_Insert(pathObject, 0, PyUnicode_FromString(venv_site_packages));
         Py_DECREF(venv_site_packages);*/
         
+        
 
-        // setup our helper module
+        // gcroot this instance of PythonPlugin, so we can have get a void* pointer
         _self = new gcroot<PythonPlugin^>(this);
+        // setup the python "_else" module (pass the void* this pointer)
         else_init_module(_self);
+        // remove the gcroot
+        delete _self;
 
         // import the plugin
         auto moduleName = PyUnicode_FromString(context->marshal_as<const char*>(pluginName));
@@ -88,6 +87,7 @@ namespace PythonPluginLoader {
         // first failure point, the python module failed to import (e.g. invalid python code)
         if (!_module) {
             auto exception = String::Format("Error: Failed to load module: {0}", getPythonTracebackString());
+            PyEval_ReleaseThread(_thread);
             throw gcnew PluginLoader::PluginLoadException(exception);
         }
         
@@ -99,9 +99,13 @@ namespace PythonPluginLoader {
         // the plugin must have PLUGIN_NAME and setup() defined
         try {
             if (!name || (!PyBytes_Check(name) && !PyUnicode_Check(name))) {
+                // release thread and GIL
+                PyEval_ReleaseThread(_thread);
                 throw gcnew PluginLoader::PluginLoadException(String::Format("Error: bad attribute 'PLUGIN_NAME' (expected string)"));
             }
             if (!setupFunc || !PyCallable_Check(setupFunc)) {
+                // release thread and GIL
+                PyEval_ReleaseThread(_thread);
                 throw gcnew PluginLoader::PluginLoadException(String::Format("Error: bad attribute 'setup' (expected method)"));
             }
         }
@@ -109,43 +113,40 @@ namespace PythonPluginLoader {
             Py_XDECREF(name);
             Py_XDECREF(setupFunc);
         }
+        // release thread and GIL
         PyEval_ReleaseThread(_thread);
     }
-    
-    //void PythonPlugin::PySwitchState()
-    //{
-    //    msclr::lock l(_lock);
-    //    //PyThreadState_Swap(_pystate);
-    //    
-    //}
-    //
-    /*void PythonPlugin::BeginPython()
-    {
-        Debug::Print("plugin-generic ~ LOCK");
-        PyEval_RestoreThread(_pystate);
-    }
-    void PythonPlugin::EndPython()
-    {
-        Debug::Print("plugin-generic ~ UNLOCK");
-        PyEval_ReleaseThread(_pystate);
-    }*/
+        
+    /// <summary>
+    /// Call the python method 'setup' of the plugin module.
+    /// </summary>
     void PythonPlugin::Setup()
     {
         PyEval_RestoreThread(_thread);
+
         auto setupFunc = PyObject_GetAttrString(_module, "setup");
         if (!PyEval_CallObject(setupFunc, NULL)) {
+            PyEval_ReleaseThread(_thread);
             throw gcnew PluginLoader::PluginLoadException(String::Format("Error: plugin setup() method threw an exception: {0}", getPythonTracebackString()));
         }
         Py_DECREF(setupFunc);
+
         PyEval_ReleaseThread(_thread);
     }   
-
+    
+    /// <summary>
+    /// Get the name from the 'PLUGIN_NAME' attribute of the module.
+    /// </summary>
     String^ PythonPlugin::Name::get()
     {
+        String^ name = "";
         PyEval_RestoreThread(_thread);
+
         auto pyName = PyObject_GetAttrString(_module, "PLUGIN_NAME");
-        auto name = gcnew String(PyUnicode_AsUTF8(pyName));
-        Py_DECREF(pyName);
+        if (pyName) {
+            name = gcnew String(PyUnicode_AsUTF8(pyName));
+            Py_DECREF(pyName);
+        }
         PyEval_ReleaseThread(_thread);
         return name;
     }

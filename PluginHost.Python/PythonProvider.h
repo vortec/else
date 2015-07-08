@@ -5,10 +5,10 @@ using namespace System::Collections::Generic;
 
 #include "PythonLaunchCallback.h"
 
-namespace PythonPluginLoader {
-    
-    
-
+namespace PythonPluginLoader {    
+    /// <summary>
+    /// Wraps a python provider instance.
+    /// </summary>
     public ref class PythonProvider : IProvider
     {
     public:
@@ -18,7 +18,7 @@ namespace PythonPluginLoader {
     private:
         PyThreadState* _thread;
         PyObject* _instance;
-        List<PythonLaunchCallback^> callbacks;  // store callback delegates for later GC
+        List<PythonLaunchCallback^> callbacks;
     };
 
 }
