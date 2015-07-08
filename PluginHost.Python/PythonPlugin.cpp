@@ -76,8 +76,6 @@ namespace PythonPluginLoader {
         _self = new gcroot<PythonPlugin^>(this);
         // setup the python "_else" module (pass the void* this pointer)
         else_init_module(_self);
-        // remove the gcroot
-        delete _self;
 
         // import the plugin
         auto moduleName = PyUnicode_FromString(context->marshal_as<const char*>(pluginName));
