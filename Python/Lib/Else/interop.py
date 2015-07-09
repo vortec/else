@@ -3,7 +3,6 @@ try:
     from _else import app_commands
 except ImportError:
     # import failed
-    print("c extension not available")
     from Else import mock_app_commands as app_commands
 
 providers = []

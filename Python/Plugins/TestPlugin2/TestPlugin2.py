@@ -2,11 +2,11 @@ import sys
 sys.path.append("c:\\users\\james\\repos\\else\\python\\lib")
 import Else
 import logging
-logging.basicConfig(filename="c:\\users\\james\\repos\\else\\python\\plugins\\testplugin\\testplugin.log", level=logging.DEBUG)
+logging.basicConfig(filename="c:\\users\\james\\repos\\else\\python\\plugins\\testplugin2\\testplugin2.log", level=logging.DEBUG)
 
 PLUGIN_NAME = "TestPlugin"
 def setup():
-    Else.add_command(Else.Command('testplugin', 'Test Plugin', 'Test {arguments}', requires_arguments=True))
+    Else.add_command(Else.Command('testplugin2', 'Test Plugin2', 'Test2 {arguments}', requires_arguments=True))
 
 def hello():
     print("hello")

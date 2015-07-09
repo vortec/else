@@ -45,7 +45,6 @@ namespace PythonPluginLoader {
         PyEval_RestoreThread(hostThread);
         
         // create new sub interpreter state
-        Debug::Print("plugin-load ~ new interpreter");
         _thread = Py_NewInterpreter();  // switches thread state
 
         // get sys.path
