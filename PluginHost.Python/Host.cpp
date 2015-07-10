@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include <msclr/marshal.h>
 #include "Host.h"
-#include "pythonplugin.h"
+#include "PythonPlugin.h"
+
 
 using namespace msclr::interop;
 using namespace System::IO;
@@ -20,7 +21,7 @@ namespace PythonPluginLoader {
             PyEval_InitThreads();
             initialized = true;
             // release GIL and thread
-            _thread = PyEval_SaveThread();
+            _mainThread = gcnew PythonThread(PyEval_SaveThread());
         }
     }
     
@@ -31,7 +32,7 @@ namespace PythonPluginLoader {
 
         // load plugin
         auto plugin = gcnew PythonPlugin();
-        plugin->Load(path, _thread);
+        plugin->Load(path, _mainThread);
 
         return plugin;
     }

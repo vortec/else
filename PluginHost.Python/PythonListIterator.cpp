@@ -7,7 +7,7 @@ using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
 
-    PythonListIterator::enumerator::enumerator(PythonListIterator^ data, PyThreadState* thread)
+    PythonListIterator::enumerator::enumerator(PythonListIterator^ data, PythonThread^ thread)
     {
         _data = data;
         _thread = thread;
@@ -24,9 +24,8 @@ namespace PythonPluginLoader {
     }
 
     IProvider^ PythonListIterator::enumerator::Current::get() {
-        PyEval_RestoreThread(_thread);
+        auto lock = _thread->AcquireLock();
         auto item = PySequence_Fast_GET_ITEM(_data->_pythonList, _currentIndex);
-        PyEval_ReleaseThread(_thread);
         return gcnew PythonProvider(item, _thread);
     }
 
@@ -38,19 +37,18 @@ namespace PythonPluginLoader {
 
     PythonListIterator::enumerator::~enumerator()
     {
-        PyEval_RestoreThread(_thread);
-        
+        auto lock = _thread->AcquireLock();
         Py_DECREF(_data->_pythonList);
-        PyEval_ReleaseThread(_thread);
     }
-    PythonListIterator::PythonListIterator(PyObject* pythonList, PyThreadState* thread)
+    PythonListIterator::PythonListIterator(PyObject* pythonList, PythonThread^ thread)
     {
         _thread = thread;
         // check the python list is valid
-        PyEval_RestoreThread(_thread);
+        //auto lock = _thread->AcquireLock();
+        
         _pythonList = pythonList;
         _length = (int)PySequence_Length(_pythonList);
-        PyEval_ReleaseThread(_thread);
+        
         if (_length == -1) {
             throw gcnew PythonException("bad python list");
         }

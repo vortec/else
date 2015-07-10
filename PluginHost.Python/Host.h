@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "PythonThread.h"
 
 using namespace Else::Extensibility;
 using namespace System;
@@ -27,6 +28,6 @@ namespace PythonPluginLoader {
             void Init();
             bool initialized;
 
-            PyThreadState* _thread;
+            PythonThread^ _mainThread;
     };
 }

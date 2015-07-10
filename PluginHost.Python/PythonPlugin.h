@@ -3,6 +3,7 @@ using namespace System;
 using namespace Else::Extensibility;
 #include "exceptions.h"
 #include "PythonListIterator.h"
+#include "PythonThread.h"
 
 namespace PythonPluginLoader {    
     /// <summary>
@@ -41,7 +42,7 @@ namespace PythonPluginLoader {
             /// Create a new python sub interpreter and load the plugin.
             /// </summary>
             /// <param name="path">The plugin absolute path (e.g. c:\plugins\URLShortener\URLShortener.py).</param>
-            void Load(String ^ path, PyThreadState* hostThread);
+            void Load(String ^ path, PythonThread^ hostThread);
 
             /// <summary>
             /// Plugin setup.
@@ -58,7 +59,7 @@ namespace PythonPluginLoader {
             /// <summary>
             /// The python sub interpreter.
             /// </summary>
-            PyThreadState* _thread = nullptr;
+            PythonThread^ _thread;
             
             /// <summary>
             /// A pointer to this object, this object should not be moved by GC while this pointer exists.

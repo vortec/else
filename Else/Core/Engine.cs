@@ -215,7 +215,8 @@ namespace Else.Core
                     throw;
                 }
                 catch (Exception e) {
-                    _logger.Error("Plugin query threw an exception", e);
+                    _logger.Error("Plugin query threw an exception: {0}", e.Message);
+                    
                 }
             }
             return results;

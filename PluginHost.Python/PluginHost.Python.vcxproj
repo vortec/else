@@ -101,6 +101,8 @@ xcopy /y /d "$(ProjectDir)lib\python3-stdlib.zip" "$(OutDir)"
     <ClInclude Include="PythonLaunchCallback.h" />
     <ClInclude Include="PythonPlugin.h" />
     <ClInclude Include="Host.h" />
+    <ClInclude Include="PythonThread.h" />
+    <ClInclude Include="PythonThreadLock.h" />
     <ClInclude Include="py_appcommands.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="Helpers.h" />
@@ -124,6 +126,8 @@ xcopy /y /d "$(ProjectDir)lib\python3-stdlib.zip" "$(OutDir)"
     </ClCompile>
     <ClCompile Include="PythonPlugin.cpp" />
     <ClCompile Include="Host.cpp" />
+    <ClCompile Include="PythonThread.cpp" />
+    <ClCompile Include="PythonThreadLock.cpp" />
     <ClCompile Include="py_appcommands.cpp" />
     <ClCompile Include="Helpers.cpp" />
     <ClCompile Include="py_else.cpp" />

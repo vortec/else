@@ -4,6 +4,7 @@ using namespace System;
 using namespace System::Collections::Generic;
 
 #include "PythonLaunchCallback.h"
+#include "PythonThread.h"
 
 namespace PythonPluginLoader {    
     /// <summary>
@@ -12,11 +13,11 @@ namespace PythonPluginLoader {
     public ref class PythonProvider : IProvider
     {
     public:
-        PythonProvider(PyObject* instance, PyThreadState* thread);
+        PythonProvider(PyObject* instance, PythonThread^ thread);
         virtual ProviderInterest PythonProvider::ExecuteIsInterestedFunc(Query ^query);
         virtual List<Result ^> ^ PythonProvider::ExecuteQueryFunc(Query ^query, ITokenSource ^cancelToken);
     private:
-        PyThreadState* _thread;
+        PythonThread^ _thread;
         PyObject* _instance;
         List<PythonLaunchCallback^> callbacks;
     };

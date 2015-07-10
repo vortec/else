@@ -1,6 +1,7 @@
 #pragma once
 #include "PythonProvider.h"
 #include "Exceptions.h"
+#include "PythonThread.h"
 
 
 using namespace System::Collections::Generic;
@@ -19,9 +20,9 @@ namespace PythonPluginLoader {
         {
             PythonListIterator^ _data;
             int _currentIndex;
-            PyThreadState* _thread;
+            PythonThread^ _thread;
 
-            enumerator(PythonListIterator^ data, PyThreadState* thread);
+            enumerator(PythonListIterator^ data, PythonThread^ thread);
 
             virtual bool MoveNext() = IEnumerator<IProvider^>::MoveNext;
 
@@ -42,9 +43,9 @@ namespace PythonPluginLoader {
         
         PyObject* _pythonList;
         int _length;
-        PyThreadState* _thread;
+        PythonThread^ _thread;
 
-        PythonListIterator(PyObject* pythonList, PyThreadState* thread);
+        PythonListIterator(PyObject* pythonList, PythonThread^ thread);
         virtual System::Collections::IEnumerator^ GetEnumerator2() = System::Collections::IEnumerable::GetEnumerator;
         virtual IEnumerator<IProvider^>^ GetEnumerator();
 

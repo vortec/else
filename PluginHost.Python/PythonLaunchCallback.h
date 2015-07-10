@@ -1,13 +1,15 @@
 #pragma once
 using namespace Else::Extensibility;
 
+#include "PythonThread.h"
+
 namespace PythonPluginLoader {
     /// <summary>
     /// Stores a pointer to a python Result() object that can later be executed by calling launch()
     /// </summary>
     public ref class PythonLaunchCallback {
     public:
-        PythonLaunchCallback(PyObject* pyResultObject, PyThreadState* thread);
+        PythonLaunchCallback(PyObject* pyResultObject, PythonThread^ thread);
 
         /// <summary>
         /// call the Result.launch() method.
@@ -21,6 +23,6 @@ namespace PythonPluginLoader {
         /// Pointer to the result object
         /// </summary>
         PyObject* _pyResultObject;
-        PyThreadState* _thread;
+        PythonThread^ _thread;
     };
 }

@@ -8,8 +8,7 @@ PLUGIN_NAME = "TestPlugin"
 def setup():
     Else.add_command(Else.Command('testplugin', 'Test Plugin', 'Test {arguments}', requires_arguments=True))
 
-def hello():
-    print("hello")
+
 
 
 from threading import Event, Thread
@@ -21,7 +20,7 @@ class TimerThread(Thread):
         self.label = label
         self.repeat_delay = repeat_delay
         self.counter = 0
-        
+
     def run(self):
         while not self.stop.wait(self.repeat_delay):
             logging.debug("{} ~ {} seconds [{}]".format(self.label, self.repeat_delay, self.counter))

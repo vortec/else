@@ -23,6 +23,8 @@
     <ClCompile Include="PythonLaunchCallback.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="PythonThread.cpp" />
+    <ClCompile Include="PythonThreadLock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
@@ -49,6 +51,8 @@
     <ClInclude Include="PythonLaunchCallback.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="PythonThread.h" />
+    <ClInclude Include="PythonThreadLock.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Python">

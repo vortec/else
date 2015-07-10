@@ -8,7 +8,7 @@ using namespace System::Diagnostics;
 
 namespace PythonPluginLoader {
     
-    PythonLaunchCallback::PythonLaunchCallback(PyObject* pyResultObject, PyThreadState* thread)
+    PythonLaunchCallback::PythonLaunchCallback(PyObject* pyResultObject, PythonThread^ thread)
     {
         _pyResultObject = pyResultObject;
         _thread = thread;
@@ -17,7 +17,7 @@ namespace PythonPluginLoader {
     
     void PythonLaunchCallback::launch(Query^ query)
     {
-        PyEval_RestoreThread(_thread);
+        auto lock = _thread->AcquireLock();
      
         // launch
         auto queryDict = ConvertQueryToPyDict(query);
@@ -29,20 +29,17 @@ namespace PythonPluginLoader {
             if (result == nullptr) {
                 if (PyErr_Occurred()) {
                     String^ tb = gcnew String(getPythonTraceback());
-                    PyEval_ReleaseThread(_thread);
                     throw gcnew PythonException(tb);
                 }
             }
         }
-        PyEval_ReleaseThread(_thread);
     }
 
     PythonLaunchCallback::~PythonLaunchCallback()
     {
-        PyEval_RestoreThread(_thread);
+        auto lock = _thread->AcquireLock();
         if (_pyResultObject != nullptr) {
             Py_DECREF(_pyResultObject);
         }
-        PyEval_ReleaseThread(_thread);
     }
 }
