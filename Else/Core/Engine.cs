@@ -156,7 +156,9 @@ namespace Else.Core
                 if (!queryResults.Any()) {
                     queryResults.AddRange(await ProcessProviderQueryAsync(fallback));
                 }
-
+                if (_cancelTokenSource.IsCancellationRequested) {
+                    return;
+                }
                 // query successful, show the results
                 lock (ResultsList) {
                     ResultsList.Clear();
@@ -216,7 +218,6 @@ namespace Else.Core
                 }
                 catch (Exception e) {
                     _logger.Error("Plugin query threw an exception: {0}", e.Message);
-                    
                 }
             }
             return results;
