@@ -1,42 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using NLog;
-using NLog.Common;
 
 namespace Else.Extensibility
 {
     public abstract class Plugin : MarshalByRefObject
     {
-        /// <summary>
-        /// Name for display only (e.g. "MyPlugin")
-        /// </summary>
-        public string Name;
-        
-        /// <summary>
-        /// The language the plugin was written in (e.g. "C#" or"Python")
-        /// </summary>
-        public string PluginLanguage;
-        
-        /// <summary>
-        /// The containing directory (e.g. %appdata%\Else\Plugins\MyPlugin)
-        /// </summary>
-        public string RootDir;
-
+        public PluginLoader Owner;
         /// <summary>
         /// The application commands available for plugin execution
         /// </summary>
         public IAppCommands AppCommands;
 
         /// <summary>
-        /// Providers available for querying (these are the objects that respond to a query with results)
-        /// </summary>
-        public List<BaseProvider> Providers = new List<BaseProvider>();
-
-        /// <summary>
         /// The logger
         /// </summary>
         public RemoteLogger Logger;
+
+        /// <summary>
+        /// Name for display only (e.g. "MyPlugin")
+        /// </summary>
+        public virtual string Name { get; set; }
+
+        /// <summary>
+        /// The containing directory (e.g. %appdata%\Else\Plugins\MyPlugin)
+        /// </summary>
+        public string RootDir;
+
+        /// <summary>
+        /// Providers available for querying (these are the objects that respond to a query with results)
+        /// </summary>
+        public virtual ICollection<IProvider> Providers { get; } = new List<IProvider>();
+
+        /// <summary>
+        /// The language the plugin was written in (e.g. "C#" or"Python")
+        /// </summary>
+        public virtual string PluginLanguage => "C#";
+
 
         /// <summary>
         /// Plugin setup
@@ -69,6 +69,11 @@ namespace Else.Extensibility
         public string GetPath(string filename)
         {
             return Path.Combine(RootDir, filename);
+        }
+
+        public void Unload()
+        {
+            Owner?.UnLoad(this);
         }
     }
 }

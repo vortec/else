@@ -48,7 +48,6 @@ namespace Else.Core
         {
             _logger = logger;
             _pluginManager = pluginManager;
-
             BindingOperations.EnableCollectionSynchronization(ResultsList, SyncLock);
         }
 
@@ -87,8 +86,10 @@ namespace Else.Core
 
             // empty query, remove existing results
             if (Query.Empty) {
-                ResultsList.Clear();
-                ResultsList.BindingRefresh();
+                lock (ResultsList) {
+                    ResultsList.Clear();
+                    ResultsList.BindingRefresh();
+                }
                 return;
             }
 
@@ -102,7 +103,7 @@ namespace Else.Core
             catch (TaskCanceledException) {
             }
             catch (AggregateException) {
-                // we already log these exceptions in ProcessProviderQueryAsync()
+                // we already log these exceptions in ProcessProviderQueryAsync()...
                 // foreach (var e in ae.Flatten().InnerExceptions) {
                 //     _logger.Error("Plugin query threw an exception", e);
                 // }
@@ -116,9 +117,9 @@ namespace Else.Core
         private async Task ExecuteQuery(string query)
         {
             // determine which providers are able to respond to this query, and sort them into groups
-            var exclusive = new List<BaseProvider>(); // todo: consider removing exclusive
-            var shared = new List<BaseProvider>();
-            var fallback = new List<BaseProvider>();
+            var exclusive = new List<IProvider>();
+            var shared = new List<IProvider>();
+            var fallback = new List<IProvider>();
             foreach (var p in Plugins) {
                 foreach (var c in p.Providers) {
                     var interest = c.ExecuteIsInterestedFunc(Query);
@@ -155,20 +156,29 @@ namespace Else.Core
                 if (!queryResults.Any()) {
                     queryResults.AddRange(await ProcessProviderQueryAsync(fallback));
                 }
-
+                if (_cancelTokenSource.IsCancellationRequested) {
+                    return;
+                }
                 // query successful, show the results
-                ResultsList.Clear();
-                ResultsList.AddRange(queryResults);
+                lock (ResultsList) {
+                    ResultsList.Clear();
+                    ResultsList.AddRange(queryResults);
+                }
                 _lastQuery = query;
 
                 // trigger refresh of UI that is bound to the ResultsList
-                await Application.Current.Dispatcher.BeginInvoke(new Action(() => { ResultsList.BindingRefresh(); }));
+                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    lock (ResultsList) {
+                        ResultsList.BindingRefresh();
+                    }
+                }));
             }
             catch (OperationCanceledException) {
             }
         }
 
-        private async Task<List<Result>> ProcessProviderQueryAsync(List<BaseProvider> providers)
+        private async Task<List<Result>> ProcessProviderQueryAsync(List<IProvider> providers)
         {
             // invoke Query() on each provider, collect the returned Task() objects
             var tasks = new List<Task<List<Result>>>();
@@ -188,7 +198,6 @@ namespace Else.Core
 
                         // query the provider and pass the remotable cancellable
                         return provider.ExecuteQueryFunc(Query, cancellable);
-
                     }, _cancelTokenSource.Token, TaskCreationOptions.AttachedToParent, TaskScheduler.Default);
                     tasks.Add(task);
                 }
@@ -208,7 +217,7 @@ namespace Else.Core
                     throw;
                 }
                 catch (Exception e) {
-                    _logger.Error("Plugin query threw an exception", e);
+                    _logger.Error("Plugin query threw an exception: {0}", e.Message);
                 }
             }
             return results;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Else.Extensibility
 {
-    public class BaseProvider : MarshalByRefObject
+    public class BaseProvider : MarshalByRefObject, IProvider
     {
         public Func<Query, ProviderInterest> IsInterestedFunc;
         public Func<Query, ITokenSource, List<Result>> QueryFunc;

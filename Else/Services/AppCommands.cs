@@ -2,6 +2,7 @@
 using Else.Core;
 using Else.Extensibility;
 using Else.Views;
+using static Else.Helpers.UI;
 
 namespace Else.Services
 {
@@ -24,7 +25,7 @@ namespace Else.Services
         /// </summary>
         public void ShowWindow()
         {
-            _launcherWindow.ShowWindow();
+            UiInvoke(() => { _launcherWindow.ShowWindow(); });
         }
 
         /// <summary>
@@ -32,16 +33,16 @@ namespace Else.Services
         /// </summary>
         public void HideWindow()
         {
-            _launcherWindow.HideWindow();
+            UiInvoke(() => { _launcherWindow.HideWindow(); });
         }
 
         /// <summary>
-        /// Changes the text of the query input TextBox.
+        /// Changes the text of the query input box.
         /// </summary>
         /// <param name="query">The query.</param>
         public void RewriteQuery(string query)
         {
-            _launcherWindow.ViewModel.LauncherViewModel.RewriteQueryCommand?.Execute(query);
+            UiInvoke(() => { _launcherWindow.ViewModel.LauncherViewModel.RewriteQueryCommand?.Execute(query); });
         }
 
         /// <summary>

@@ -33,6 +33,11 @@ namespace Else.Helpers
             return false;
         }
 
+        public static void UiInvoke(Action action)
+        {
+            Application.Current.Dispatcher.Invoke(action);
+        }
+
         /// <summary>
         /// Finds a Child of a given item in the visual tree. 
         /// </summary>
