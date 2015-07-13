@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using Autofac.Extras.NLog;
 using Autofac.Features.Indexed;
 using Else.Extensibility;
@@ -51,15 +52,21 @@ namespace Else.Core
             var timer = new Stopwatch();
             timer.Start();
 
+            var tasks = new List<Task>();
+
+            // iterate through each plugin directory (e.g. c:\else\plugins)
             foreach (var sourceDirectory in sources) {
+                // iterate through each subdir that may contain a plugin (e.g. c:\else\plugins\urlshortener
                 foreach (var subdir in Directory.EnumerateDirectories(sourceDirectory)) {
-                    try {
-                        LoadPluginFromDirectory(subdir);
-                    }
-                    catch (Exception e) {
-                        _logger.Error($"Failed to load plugin {subdir}", e);
-                    }
+                    // attempt to load the plugin
+                    tasks.Add(Task.Run(() => LoadPluginFromDirectory(subdir)));
                 }
+            }
+            try {
+                Task.WaitAll(tasks.ToArray());
+            }
+            catch (AggregateException ae) {
+                Debugger.Break();
             }
             timer.Stop();
             _logger.Debug("Plugins initialization took {0}ms", timer.ElapsedMilliseconds);

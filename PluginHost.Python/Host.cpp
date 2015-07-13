@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <msclr/marshal.h>
+#include <msclr/lock.h>
 #include "Host.h"
 #include "PythonPlugin.h"
 
@@ -15,6 +16,7 @@ namespace PythonPluginLoader {
     
     void Host::Init()
     {
+        msclr::lock l(_pythonLock);
         if (!initialized) {
             // initialize python
             Py_Initialize();

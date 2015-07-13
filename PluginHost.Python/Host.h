@@ -29,5 +29,6 @@ namespace PythonPluginLoader {
             bool initialized;
 
             PythonThread^ _mainThread;
+            Object^ _pythonLock = gcnew Object();
     };
 }

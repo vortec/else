@@ -105,7 +105,6 @@ namespace Else.Core
 
     //    public Assembly Resolve(object sender, ResolveEventArgs args)
     //    {
-    //        Debug.Print("HERE");
     //        var name = new AssemblyName(args.Name);
     //        foreach (var path in Paths) {
     //            var dllPath = Path.Combine(path, string.Format("{0}.dll", name.Name));
