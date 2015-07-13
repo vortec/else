@@ -37,15 +37,16 @@ namespace Else.Core
         /// </summary>
         public void DiscoverPlugins()
         {
-            //var sources = new[]
-            //{
-            //    _paths.GetAppPath("Plugins"),
-            //    _paths.GetUserPath("Plugins")
-            //};
-            var sources = new[]
-            {
-                @"C:\Users\James\Repos\Else\Python\Plugins"
+            var sources = new List<string>{
+                _paths.GetAppPath("Plugins"),
+                _paths.GetUserPath("Plugins")
             };
+            
+            // if running from visual studio, append our python plugin path (python plugins in the GIT repository)
+            if (System.Diagnostics.Debugger.IsAttached) {
+                var pythonPluginPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName,@"Python\Plugins");
+                sources.Add(pythonPluginPath);
+            }
 
             var timer = new Stopwatch();
             timer.Start();
