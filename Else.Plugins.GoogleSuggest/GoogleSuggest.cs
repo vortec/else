@@ -6,12 +6,11 @@ using System.Net.Http;
 using System.Runtime.Caching;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
 using Else.Extensibility;
 using Flurl;
 using Newtonsoft.Json;
 
-namespace Else.Plugin.Web
+namespace Else.Plugin.GoogleSuggest
 {
     class GoogleSuggest : Extensibility.Plugin
     {
@@ -46,7 +45,8 @@ namespace Else.Plugin.Web
                             SubTitle = "Search google for " + suggestion,
                             Launch = query1 =>
                             {
-                                //Web.OpenProviderSearch("http://google.co.uk/search?q={0}", suggestion);
+                                Process.Start($"http://google.co.uk/search?q={suggestion}");
+
                             }
                         }).ToList();
                         return results;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Else.Extensibility;
 
 namespace Else.Plugin.Web
@@ -68,9 +69,12 @@ namespace Else.Plugin.Web
         /// Opens the browser.
         /// </summary>
         /// <param name="url">The URL.</param>
-        public static void OpenBrowser(string url)
+        private void OpenBrowser(string url)
         {
-            Process.Start("chrome.exe", url);
+            //Process.Start("chrome.exe", url);
+            Process.Start(url);
+            AppCommands.HideWindow();
+
         }
 
         /// <summary>
@@ -78,7 +82,7 @@ namespace Else.Plugin.Web
         /// </summary>
         /// <param name="providerUrl">The provider URL.</param>
         /// <param name="keywords">The search keywords.</param>
-        public static void OpenProviderSearch(string providerUrl, string keywords)
+        private void OpenProviderSearch(string providerUrl, string keywords)
         {
             var url = string.Format(providerUrl, Uri.EscapeDataString(keywords));
             OpenBrowser(url);
