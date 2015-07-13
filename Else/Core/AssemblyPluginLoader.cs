@@ -56,7 +56,7 @@ namespace Else.Core
                 return plugin;
             }
             catch (Exception e) {
-                throw new PluginLoadException("Failed to initialize plugin {0} - {1}", e);
+                throw new PluginLoadException($"Failed to initialize plugin (path={path})", e);
             }
         }
 
