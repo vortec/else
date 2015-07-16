@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -20,7 +21,7 @@ namespace Else.Core
     {
         private readonly ILogger _logger;
         private readonly Paths _paths;
-        private readonly Dictionary<Plugin, AppDomain> _pluginDomains = new Dictionary<Plugin, AppDomain>();
+        private readonly ConcurrentDictionary<Plugin, AppDomain> _pluginDomains = new ConcurrentDictionary<Plugin, AppDomain>();
         private readonly ClientSponsor _sponsor = new ClientSponsor();
 
         public AssemblyPluginLoader(ILogger logger, Paths paths)
@@ -52,7 +53,7 @@ namespace Else.Core
                 lease.Register(_sponsor);
 
                 // store the appdomain used for the plugin (so we can unload it)
-                _pluginDomains.Add(plugin, appDomain);
+                _pluginDomains.TryAdd(plugin, appDomain);
                 return plugin;
             }
             catch (Exception e) {
