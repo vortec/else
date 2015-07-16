@@ -22,9 +22,15 @@
         /// </summary>
         /// <param name="query"></param>
         void RewriteQuery(string query);
-
+        /// <summary>
+        /// Set the windows clipboard text
+        /// </summary>
+        /// <param name="text">The text.</param>
         void ClipboardSetText(string text);
-
+        /// <summary>
+        /// Get the windows clipboard text
+        /// </summary>
+        /// <returns></returns>
         string ClipboardGetText();
     }
 }
