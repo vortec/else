@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Threading.Tasks;
-using NLog;
+using System.Windows;
 
 namespace Else.Lib
 {
@@ -14,6 +13,10 @@ namespace Else.Lib
                     break;
                 }
             }
+        }
+        public static void UiInvoke(Action action)
+        {
+            Application.Current.Dispatcher.Invoke(action);
         }
     }
 }
