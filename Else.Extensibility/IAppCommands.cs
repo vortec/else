@@ -22,5 +22,9 @@
         /// </summary>
         /// <param name="query"></param>
         void RewriteQuery(string query);
+
+        void ClipboardSetText(string text);
+
+        string ClipboardGetText();
     }
 }

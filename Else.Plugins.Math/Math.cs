@@ -46,7 +46,7 @@ namespace Else.Plugin.Math
                             Launch = info =>
                             {
                                 AppCommands.HideWindow();
-                                Clipboard.SetText(strMathResult);
+                                AppCommands.ClipboardSetText(strMathResult);
                             }
                         };
                     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using Else.Core;
 using Else.Extensibility;
 using Else.Views;
@@ -51,6 +52,16 @@ namespace Else.Services
         public void RequestUpdate()
         {
             _engine.Value.RequestUpdate();
+        }
+
+        public void ClipboardSetText(string text)
+        {
+            Clipboard.SetText(text);
+        }
+
+        public string ClipboardGetText()
+        {
+            return Clipboard.GetText();
         }
 
         public override object InitializeLifetimeService()
