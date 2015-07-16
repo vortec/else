@@ -66,7 +66,11 @@ namespace Else.Core
                 Task.WaitAll(tasks.ToArray());
             }
             catch (AggregateException ae) {
-                Debugger.Break();
+                // improve
+                _logger.Debug("failed to load plugins:");
+                foreach (var e in ae.InnerExceptions) {
+                    _logger.Debug(e.ToString());
+                }
             }
             timer.Stop();
             _logger.Debug("Plugins initialization took {0}ms", timer.ElapsedMilliseconds);
