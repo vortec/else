@@ -116,6 +116,12 @@ namespace Else.Core
         /// <param name="query">The query.</param>
         private async Task ExecuteQuery(string query)
         {
+            await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                lock (ResultsList) {
+                    ResultsList.Clear();
+                }
+            }));
             // determine which providers are able to respond to this query, and sort them into groups
             var exclusive = new List<IProvider>();
             var shared = new List<IProvider>();
