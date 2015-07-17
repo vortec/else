@@ -1,6 +1,7 @@
 from Else.baseprovider import BaseProvider
 import sys
 from Else.result import Result
+from Else.interop import app_commands
 import traceback
 
 class Command(BaseProvider):
@@ -35,16 +36,16 @@ class Command(BaseProvider):
             return self.Interest.Fallback
 
         return self.Interest.Nil
-    # wut?
-    def query2(self, query, cancel_token):
-        try:
-            self.query(query, cancel_token)
-        except Exception:
-            exc_type, exc_value, exc_traceback = sys.exc_info()
-            lines = traceback.format_exception(exc_type, exc_value, exc_traceback)
-            print(''.join('!! ' + line for line in lines))  # Log it or whatever here
+
+    def handle_launch(self, query):
+        if self.requires_arguments and (not query.get('KeywordComplete') or not query.get('Arguments')):
+            # auto complete the query
+            app_commands.RewriteQuery(self.keyword + " ")
+        else:
+            self.launch(query)
+    
     def query(self, query, cancel_token):
-        result = Result(title=self.title, subtitle=self.subtitle, icon=self.icon, launch=self.launch)
+        result = Result(title=self.title, subtitle=self.subtitle, icon=self.icon, launch=self.handle_launch)
         # attempt to replace {arguments} token in the title string
         if self.requires_arguments:
             arguments = ""
