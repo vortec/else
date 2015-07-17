@@ -14,9 +14,5 @@ namespace Else.Lib
                 }
             }
         }
-        public static void UiInvoke(Action action)
-        {
-            Application.Current.Dispatcher.Invoke(action);
-        }
     }
 }

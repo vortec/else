@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using Autofac.Extras.NLog;
+using Else.Helpers;
 using Else.Interop;
 using Else.Properties;
 using Squirrel;
@@ -245,7 +246,7 @@ namespace Else.Services
             }
             // don't restart if any windows are open
             var windowsAreOpen = false;
-            Application.Current.Dispatcher.Invoke(() =>
+            UI.UiInvoke(() =>
             {
                 var windows = Application.Current.Windows.OfType<Window>().Where(w => w.Visibility == Visibility.Visible);
                 if (windows.Any()) {
@@ -290,7 +291,7 @@ namespace Else.Services
             // we can't use WaitForInputIdle because we probably don't have
             // whatever WaitForInputIdle considers a message loop.
             Thread.Sleep(500);
-            Application.Current.Dispatcher.Invoke(() => { Application.Current.Shutdown(); });
+            UI.UiInvoke((() => { Application.Current.Shutdown(); }));
         }
     }
 }

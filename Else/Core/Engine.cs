@@ -8,6 +8,7 @@ using System.Windows.Data;
 using Autofac.Extras.NLog;
 using Else.DataTypes;
 using Else.Extensibility;
+using Else.Helpers;
 
 namespace Else.Core
 {
@@ -116,12 +117,14 @@ namespace Else.Core
         /// <param name="query">The query.</param>
         private async Task ExecuteQuery(string query)
         {
-            await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            // lock the resultslist and clear
+            UI.UiInvoke(() =>
             {
                 lock (ResultsList) {
                     ResultsList.Clear();
                 }
-            }));
+            });
+
             // determine which providers are able to respond to this query, and sort them into groups
             var exclusive = new List<IProvider>();
             var shared = new List<IProvider>();
@@ -173,12 +176,12 @@ namespace Else.Core
                 _lastQuery = query;
 
                 // trigger refresh of UI that is bound to the ResultsList
-                await Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+                UI.UiInvoke(() =>
                 {
                     lock (ResultsList) {
                         ResultsList.BindingRefresh();
                     }
-                }));
+                });
             }
             catch (OperationCanceledException) {
             }
