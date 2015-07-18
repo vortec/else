@@ -53,16 +53,6 @@ namespace PythonPluginLoader {
         const char* sPluginDir = context->marshal_as<const char*>(pluginDir);
         PyList_Insert(pathObject, 0, PyUnicode_FromString(sPluginDir));
 
-        // append our custom lib path
-        auto customLibPath = PyUnicode_FromString("C:\\Users\\James\\Repos\\Else\\Python\\Lib");
-        PyList_Insert(pathObject, 0, customLibPath);
-        Py_DECREF(customLibPath);
-
-        // append our zipped python standard library
-        auto pythonLibZip = PyUnicode_FromString("C:\\Users\\James\\Repos\\Else\\PluginHost.Python\\lib\\python3-stdlib.zip");
-        PyList_Insert(pathObject, 0, pythonLibZip);
-        Py_DECREF(pythonLibZip);
-
         // check if module is a VENV module, and add site-packages
         /*const char* venv_site_packages = context->marshal_as<const char*>(Path::Combine(pluginDir, "Lib\\site-packages"));
         PyList_Insert(pathObject, 0, PyUnicode_FromString(venv_site_packages));

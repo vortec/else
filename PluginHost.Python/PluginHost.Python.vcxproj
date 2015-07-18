@@ -47,8 +47,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)include;$(VC_IncludePath);$(UniversalCRT_IncludePath);$(WindowsSDK_IncludePath)</IncludePath>
-    <LibraryPath>$(ProjectDir)lib;$(VC_LibraryPath_x64);$(UniversalCRT_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;</LibraryPath>
+    <IncludePath>$(ProjectDir)include;$(VC_IncludePath);$(UniversalCRT_IncludePath);$(WindowsSDK_IncludePath);C:\Program Files (x86)\Windows Kits\10\Include\10.0.10069.0\shared;C:\Program Files (x86)\Windows Kits\10\Include\10.0.10069.0\um</IncludePath>
+    <LibraryPath>$(ProjectDir)lib;$(VC_LibraryPath_x64);$(UniversalCRT_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(NETFXKitsDir)Lib\um\x64;C:\Program Files (x86)\Windows Kits\10\Lib\10.0.10069.0\um\x64</LibraryPath>
     <IntDir>$(SolutionDir)Build\$(Configuration)\obj\</IntDir>
     <OutDir>$(SolutionDir)Build\$(Configuration)\</OutDir>
   </PropertyGroup>
@@ -74,9 +74,8 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /y /d "$(ProjectDir)lib\python35.dll" "$(OutDir)"
-xcopy /y /d "$(ProjectDir)lib\python3-stdlib.zip" "$(OutDir)"
-</Command>
-      <Message>Copy python35.dll to output directory</Message>
+xcopy /i /s /y /d "$(SolutionDir)Python\Lib" "$(OutDir)PythonLib"</Command>
+      <Message>Copy python dll and library</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

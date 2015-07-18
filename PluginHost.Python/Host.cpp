@@ -18,10 +18,22 @@ namespace PythonPluginLoader {
     {
         msclr::lock l(_pythonLock);
         if (!initialized) {
-            // initialize python
-            Py_Initialize();
+			// set PYTHONPATH environment variable so python can find the standard library.
+			auto dir = AppDomain::CurrentDomain->BaseDirectory;
+			auto paths = gcnew array<String^> {
+				Path::Combine(dir, "PythonLib"),
+				Path::Combine(dir, "PythonLib\\python35.zip")
+			};
+
+			auto pythonPath = String::Join(";", paths);
+			Environment::SetEnvironmentVariable("PYTHONPATH", pythonPath, EnvironmentVariableTarget::Process);
+
+
+			// initialize python
+			Py_Initialize();
             PyEval_InitThreads();
             initialized = true;
+
             // release GIL and thread
             _mainThread = gcnew PythonThread(PyEval_SaveThread());
         }
@@ -31,7 +43,6 @@ namespace PythonPluginLoader {
     {
         // initialize python
         Init();
-
         // load plugin
         auto plugin = gcnew PythonPlugin();
         plugin->Load(path, _mainThread);
