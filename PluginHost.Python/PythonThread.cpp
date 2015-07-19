@@ -17,12 +17,12 @@ PythonThreadLock PythonThread::AcquireLock()
 
 void PythonThread::Acquire()
 {
-    _semaphore->WaitOne();
+    _mutex->WaitOne();
     PyEval_RestoreThread(threadState);
 }
 
 void PythonThread::Release()
 {
     PyEval_ReleaseThread(threadState);
-    _semaphore->Release();
+	_mutex->ReleaseMutex();
 }

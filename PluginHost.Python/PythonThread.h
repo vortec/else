@@ -34,6 +34,7 @@ public:
     PyThreadState* threadState = nullptr;
 
 private:
-    Semaphore^ _semaphore = gcnew Semaphore(1, 1);
+	// static mutex for restricting access to python API
+	static Mutex^ _mutex = gcnew Mutex();
 };
 

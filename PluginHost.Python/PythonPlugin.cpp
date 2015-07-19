@@ -33,15 +33,19 @@ namespace PythonPluginLoader {
         auto pluginName = info->Name;       // e.g. "URLShortener"
         
         auto context = gcnew marshal_context();
-
-        // switch to host thread (so we can create a NewInterpreter) and acquire gil
-        PyEval_RestoreThread(hostThread->threadState);
-
+		
+        // switch to host thread (so we can create a NewInterpreter)
+		hostThread->Acquire();
+		
         // create new sub interpreter state
         auto state = Py_NewInterpreter();  // automatically switches thread state
-        // release it
-        PyEval_ReleaseThread(state);
+		
+										   // switch back to host thread state
+		PyThreadState_Swap(hostThread->threadState);
 
+        // release host thread
+		hostThread->Release();
+		
         // switch to new interpreter thread
         _thread = gcnew PythonThread(state);
         auto lock = _thread->AcquireLock();
@@ -57,10 +61,8 @@ namespace PythonPluginLoader {
         /*const char* venv_site_packages = context->marshal_as<const char*>(Path::Combine(pluginDir, "Lib\\site-packages"));
         PyList_Insert(pathObject, 0, PyUnicode_FromString(venv_site_packages));
         Py_DECREF(venv_site_packages);*/
-        
-        
 
-        // gcroot this instance of PythonPlugin, so we can have get a void* pointer
+        // gcroot this instance of PythonPlugin, so we can get a void* pointer
         _self = new gcroot<PythonPlugin^>(this);
         // setup the python "_else" module (pass the void* this pointer)
         else_init_module(_self);
