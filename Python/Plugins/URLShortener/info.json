@@ -1,0 +1,6 @@
+{
+    "name" : "URL Shortener",
+    "version" : "0.1",
+    "description" : "Provides URL shortening services using the Bitly API",
+    "author" : "James Hutchby"
+}

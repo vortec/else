@@ -99,7 +99,7 @@ xcopy /i /s /y /d "$(SolutionDir)Python\Lib" "$(OutDir)PythonLib"</Command>
   <ItemGroup>
     <ClInclude Include="PythonLaunchCallback.h" />
     <ClInclude Include="PythonPlugin.h" />
-    <ClInclude Include="Host.h" />
+    <ClInclude Include="PythonPluginLoader.h" />
     <ClInclude Include="PythonThread.h" />
     <ClInclude Include="PythonThreadLock.h" />
     <ClInclude Include="py_appcommands.h" />
@@ -124,7 +124,7 @@ xcopy /i /s /y /d "$(SolutionDir)Python\Lib" "$(OutDir)PythonLib"</Command>
       </ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="PythonPlugin.cpp" />
-    <ClCompile Include="Host.cpp" />
+    <ClCompile Include="PythonPluginLoader.cpp" />
     <ClCompile Include="PythonThread.cpp" />
     <ClCompile Include="PythonThreadLock.cpp" />
     <ClCompile Include="py_appcommands.cpp" />

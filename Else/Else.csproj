@@ -197,12 +197,13 @@
     <Compile Include="Converter\UriToImageConverter.cs" />
     <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Core\AssemblyPluginLoader.cs" />
-    <None Include="Core\IronPythonPluginWrapper.cs" />
+    <Compile Include="DesignerData\Plugins.cs" />
     <Compile Include="Interop\Win32Signatures.cs" />
     <Compile Include="Lib\ImageCache.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
     <Compile Include="Lib\TrayIcon.cs" />
     <Compile Include="Interop\Win32MessagePump.cs" />
+    <Compile Include="Lib\ViewModelCollectionWrapper.cs" />
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\Updater.cs" />
     <Compile Include="ViewModels\AboutWindowViewModel.cs" />
@@ -210,6 +211,7 @@
     <Compile Include="ViewModels\LauncherViewModel.cs" />
     <Compile Include="ViewModels\Interfaces\IResultsListViewModel.cs" />
     <Compile Include="ViewModels\LauncherWindowViewModel.cs" />
+    <Compile Include="ViewModels\PluginManagerViewModel.cs" />
     <Compile Include="ViewModels\ResultsListViewModel.cs" />
     <Compile Include="ViewModels\ThemeEditorLauncherViewModel.cs" />
     <Compile Include="ViewModels\ThemeEditorResultsListViewModel.cs" />
@@ -236,6 +238,9 @@
     <Compile Include="Services\ThemeManager.cs" />
     <Compile Include="Helpers\UI.cs" />
     <Compile Include="DataTypes\BindingResultsList.cs" />
+    <Compile Include="Views\PluginManagerWindow.xaml.cs">
+      <DependentUpon>PluginManagerWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SplashScreenWindow.xaml.cs">
       <DependentUpon>SplashScreenWindow.xaml</DependentUpon>
     </Compile>
@@ -279,6 +284,10 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings.cs" />
+    <Page Include="Views\PluginManagerWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\SplashScreenWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

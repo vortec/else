@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Autofac.Extras.NLog;
 using Autofac.Features.Indexed;
 using Else.Extensibility;
 using Else.Services;
+using Newtonsoft.Json;
 
 namespace Else.Core
 {
@@ -19,7 +21,8 @@ namespace Else.Core
         private readonly ILogger _logger;
         private readonly Paths _paths;
         private readonly IIndex<string, Func<PluginLoader>> _pluginWrapperFunc;
-        public readonly List<Plugin> Plugins = new List<Plugin>();
+        public readonly BindingList<Plugin> LoadedPlugins = new BindingList<Plugin>();
+        public readonly BindingList<PluginInfo> KnownPlugins = new BindingList<PluginInfo>();
 
         public PluginManager(
             IIndex<string, Func<PluginLoader>> pluginWrapperFunc,
@@ -42,10 +45,11 @@ namespace Else.Core
                 _paths.GetAppPath("Plugins"),
                 _paths.GetUserPath("Plugins")
             };
-            
+
             // if running from visual studio, append our python plugin path (python plugins in the GIT repository)
-            if (System.Diagnostics.Debugger.IsAttached) {
-                var pythonPluginPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName,@"Python\Plugins");
+            if (Debugger.IsAttached)
+            {
+                var pythonPluginPath = Path.Combine(Directory.GetParent(System.IO.Directory.GetCurrentDirectory()).Parent.FullName, @"Python\Plugins");
                 sources.Add(pythonPluginPath);
             }
 
@@ -55,20 +59,25 @@ namespace Else.Core
             var tasks = new List<Task>();
 
             // iterate through each plugin directory (e.g. c:\else\plugins)
-            foreach (var sourceDirectory in sources) {
+            foreach (var sourceDirectory in sources)
+            {
                 // iterate through each subdir that may contain a plugin (e.g. c:\else\plugins\urlshortener
-                foreach (var subdir in Directory.EnumerateDirectories(sourceDirectory)) {
+                foreach (var subdir in Directory.EnumerateDirectories(sourceDirectory))
+                {
                     // attempt to load the plugin
                     tasks.Add(Task.Run(() => LoadPluginFromDirectory(subdir)));
                 }
             }
-            try {
+            try
+            {
                 Task.WaitAll(tasks.ToArray());
             }
-            catch (AggregateException ae) {
+            catch (AggregateException ae)
+            {
                 // improve
                 _logger.Debug("failed to load plugins:");
-                foreach (var e in ae.InnerExceptions) {
+                foreach (var e in ae.InnerExceptions)
+                {
                     _logger.Debug(e.ToString());
                 }
             }
@@ -76,36 +85,110 @@ namespace Else.Core
             _logger.Debug("Plugins initialization took {0}ms", timer.ElapsedMilliseconds);
         }
 
-        /// <summary>
-        /// Loads a plugin from its directory.
-        /// </summary>
-        /// <param name="pluginDirectory">The plugin directory (e.g. %appdata%\Else\Plugin\FileSystem.</param>
-        public void LoadPluginFromDirectory(string pluginDirectory)
+        public class PluginInfo
         {
-            // e.g. "FileSystem"
+            public string Directory;
+            public string File;
+            public string DirectoryName;
+            public Plugin Instance;
+
+            // fields from info.json
+            public string name;
+            public string version;
+            public string description;
+            public string author;
+        };
+
+        /// <summary>
+        /// Given a plugin directory (e.g. Plugins\FileSystem), try and find the main program (e.g. Plugins\FileSystem\FileSystem.py)
+        /// </summary>
+        /// <param name="pluginDirectory"></param>
+        /// <exception cref="FileNotFoundException">Could not find the plugin's main program.</exception>
+        /// <returns></returns>
+        private string FindMainPluginFile(string pluginDirectory)
+        {
             var pluginName = new DirectoryInfo(pluginDirectory).Name;
 
-            foreach (var file in Directory.EnumerateFiles(pluginDirectory)) {
-                if (Path.GetFileNameWithoutExtension(file) == pluginName) {
+            foreach (var filename in Directory.EnumerateFiles(pluginDirectory))
+            {
+                if (Path.GetFileNameWithoutExtension(filename) == pluginName)
+                {
                     // e.g. "FileSystem.ext"
-                    var extension = Path.GetExtension(file);
+                    var extension = Path.GetExtension(filename);
                     // get the wrapper type for the extension (e.g. .py gets PythonPluginWrapper)
                     Func<PluginLoader> wrapperFactory;
-                    if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory)) {
-                        // load the plugin via the wrapper
-                        var wrapper = _pluginWrapperFunc[extension]();
-                        var plugin = wrapper.Load(file);
-                        // setup the plugin instance
-                        plugin.RootDir = pluginDirectory;
-                        plugin.AppCommands = _appCommands.Value;
-                        plugin.Logger = new RemoteLogger(pluginName);
-                        plugin.Setup();
-                        // all done
-                        Plugins.Add(plugin);
-                        _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
+
+                    if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory))
+                    {
+                        return filename;
                     }
                 }
             }
+            throw new FileNotFoundException($"Failed to find main plugin file in {pluginDirectory}");
+        }
+
+        /// <summary>
+        /// Loads a plugin from its directory.
+        /// </summary>
+        /// <remarks>
+        /// Plugins are expected to:
+        ///     a) Have their own directory (e.g. %appdata%\Else\Plugin\FileSystem)
+        ///     b) Have an entry file that matches the plugin directory (e.g. %appdata%\Else\Plugin\FileSystem\FileSystem.py)
+        ///     c) Have an "info.json" file (e.g. %appdata%\Else\Plugin\FileSystem\info.json)
+        /// </remarks>
+        /// <param name="pluginDirectory">The plugin directory (e.g. %appdata%\Else\Plugin\FileSystem.</param>
+        public void LoadPluginFromDirectory(string pluginDirectory)
+        {
+            // determine path to info.json
+            var infoPath = Path.Combine(pluginDirectory, "info.json");
+            if (!File.Exists(infoPath))
+            {
+                throw new FileNotFoundException("plugin manifest not found", infoPath);
+            }
+            // parse info.json
+            dynamic deserialized = JsonConvert.DeserializeObject(File.ReadAllText(infoPath));
+            PluginInfo info = deserialized.ToObject<PluginInfo>();
+            info.Directory = pluginDirectory;
+
+            // try and find main plugin file (e.g. FileSystem.py)
+            info.File = FindMainPluginFile(pluginDirectory); // this will throw if not found
+
+            // otherwise all is good.
+            // we don't actually know whether it will load successfully yet or not, but we make it available for later loading
+            KnownPlugins.Add(info);
+            Debug.Print($"discovered plugin {info.Directory}");
+        }
+
+        /// <summary>
+        /// Attempt to load a plugin
+        /// </summary>
+        /// <param name="info"></param>
+        public void LoadPlugin(PluginInfo info)
+        {
+            Func<PluginLoader> wrapperFactory;
+            var extension = Path.GetExtension(info.File);
+            if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory))
+            {
+                // load the plugin via the wrapper
+                var wrapper = _pluginWrapperFunc[extension]();
+                var plugin = wrapper.Load(info.File);
+                // setup the plugin instance
+                plugin.RootDir = info.Directory;
+                plugin.AppCommands = _appCommands.Value;
+                plugin.Logger = new RemoteLogger("fix_me");  // this needs to be removed, and be consistent with the python plugins
+                plugin.Setup();
+                info.Instance = plugin;
+
+                // all done
+                LoadedPlugins.Add(plugin);
+                _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
+            }
+        }
+
+        public void UnloadPlugin(PluginInfo info)
+        {
+            info.Instance.Unload();
+            info.Instance = null;
         }
     }
 }

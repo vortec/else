@@ -21,6 +21,7 @@ using Else.ViewModels;
 using Else.ViewModels.Interfaces;
 using Else.Views;
 using NLog;
+using Else.PythonPluginLoader;
 
 namespace Else
 {
@@ -114,9 +115,14 @@ namespace Else
                     }
                     scope.Resolve<Updater>().BeginAutoUpdates();
                 }
+                var pluginWindow = scope.Resolve<PluginManagerWindow>();
+                pluginWindow.Show();
             }
             // trigger custom OnStartupComplete event, this is used by the theme editor.
             OnStartupComplete?.Invoke(this, EventArgs.Empty);
+
+
+            
         }
 
         public void SetupAutoFac()
@@ -142,7 +148,7 @@ namespace Else
 
             // plugin wrappers
             builder.RegisterType<AssemblyPluginLoader>().Keyed<PluginLoader>(".dll").SingleInstance();
-            builder.RegisterType<PythonPluginLoader.Host>().Keyed<PluginLoader>(".py").SingleInstance();
+            builder.RegisterType<PythonPluginLoader.PythonPluginLoader>().Keyed<PluginLoader>(".py").SingleInstance();
 
             // instances
             builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
@@ -151,6 +157,7 @@ namespace Else
             // windows
             builder.RegisterType<ThemesWindow>();
             builder.RegisterType<AboutWindow>();
+            builder.RegisterType<PluginManagerWindow>();
 
             // register ViewModels
             builder.RegisterType<ThemeEditorViewModel>();
@@ -161,6 +168,7 @@ namespace Else
             builder.RegisterType<AboutWindowViewModel>();
             builder.RegisterType<ThemeEditorLauncherViewModel>();
             builder.RegisterType<ThemeEditorResultsListViewModel>();
+            builder.RegisterType<PluginManagerViewModel>();
 
 
             builder.RegisterInstance(this).As<App>();

@@ -60,7 +60,7 @@ namespace Simulator
                         pluginManager.LoadPluginFromDirectory(options.PluginDirectory);
 
                         // check if any plugins were successfully loaded
-                        if (!pluginManager.Plugins.Any()) {
+                        if (!pluginManager.LoadedPlugins.Any()) {
                             // failure
                             _logger.Fatal("No plugins found");
                             _app.Shutdown();
