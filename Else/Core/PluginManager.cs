@@ -187,8 +187,11 @@ namespace Else.Core
 
         public void UnloadPlugin(PluginInfo info)
         {
-            info.Instance.Unload();
+            var plugin = info.Instance;
+            LoadedPlugins.Remove(plugin);
+            plugin.Unload();
             info.Instance = null;
+            _logger.Debug("Unloaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
         }
     }
 }

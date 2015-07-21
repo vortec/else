@@ -63,8 +63,11 @@ namespace Else.Core
 
         public override void UnLoad(Plugin plugin)
         {
-            // todo: implement plugin + assembly unloading.
-            Debug.Print("unloading assembly plugin");
+            // unload appdomain
+            AppDomain domain;
+            if (_pluginDomains.TryRemove(plugin, out domain)) {
+                AppDomain.Unload(domain);
+            }
         }
 
         public class PluginLoaderProxy : MarshalByRefObject

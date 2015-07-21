@@ -1,6 +1,7 @@
 ﻿using System;
 using Else.Core;
 using Else.Extensibility;
+using Else.Helpers;
 using Else.Lib;
 
 namespace Else.ViewModels
@@ -28,10 +29,10 @@ namespace Else.ViewModels
             set
             {
                 if (value) {
-                    PluginManager.LoadPlugin(Model);
+                    UI.UiInvoke(() => PluginManager.LoadPlugin(Model));
                 }
                 else {
-                    PluginManager.UnloadPlugin(Model);
+                    UI.UiInvoke(() => PluginManager.UnloadPlugin(Model));
                 }
             }
         }
