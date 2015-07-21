@@ -1,0 +1,6 @@
+﻿{
+    "name" : "Web Services",
+    "version" : "0.1",
+    "description" : "Provides access to search providers such as google",
+    "author" : "James Hutchby"
+}
