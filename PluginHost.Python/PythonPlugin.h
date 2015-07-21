@@ -50,6 +50,8 @@ namespace Else {
 			/// </summary>
 			virtual void Setup() override;
 
+			virtual void Unload() override;
+
 		private:
 
 			/// <summary>

@@ -116,6 +116,14 @@ namespace Else {
 			Py_DECREF(setupFunc);
 		}
 
+		void PythonPlugin::Unload()
+		{
+			Debug::Print("UNLOADING PYTHON PLUGIN");
+			PyEval_RestoreThread(_thread->threadState);
+			Py_EndInterpreter(_thread->threadState);
+			PyEval_ReleaseLock();
+		}
+
 		/// <summary>
 		/// Get the name from the 'PLUGIN_NAME' attribute of the module.
 		/// </summary>
@@ -148,5 +156,7 @@ namespace Else {
 			}
 			return gcnew PythonListIterator(providers, _thread);
 		}
+
+
 	}
 }

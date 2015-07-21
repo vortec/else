@@ -47,12 +47,12 @@ namespace Else {
 			// load plugin
 			auto plugin = gcnew PythonPlugin();
 			plugin->Load(path, _mainThread);
-
 			return plugin;
 		}
 
-		void PythonPluginLoader::UnLoad(Plugin ^ plugin)
+		void PythonPluginLoader::UnLoad(Plugin^ plugin)
 		{
+			
 			throw gcnew System::NotImplementedException();
 		}
 	}
