@@ -22,7 +22,7 @@ namespace Else.Lib
         /// <summary>
         /// Sets a property and raises PropertyChanged event.
         /// </summary>
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] String propertyName = null)
+        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
         {
             if (Equals(storage, value)) {
                 return false;

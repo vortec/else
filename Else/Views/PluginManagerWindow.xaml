@@ -19,7 +19,7 @@
                         <DataTemplate>
                             <DockPanel Margin="20 30 20 5">
                                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Height="20" VerticalAlignment="Top" Margin="0 7">
-                                    <CheckBox  VerticalAlignment="Center" Margin="0 1 0 0" IsChecked="{Binding Enabled}" Content="Enabled" FontWeight="Bold" >
+                                    <CheckBox  VerticalAlignment="Center" Margin="0 1 0 0" IsChecked="{Binding Enabled, Mode=TwoWay}" Content="Enabled" FontWeight="Bold" >
                                     </CheckBox>
                                     <TextBlock Margin="15 0 0 0" TextDecorations="Underline" VerticalAlignment="Center">
                                         <Hyperlink>Remove</Hyperlink>

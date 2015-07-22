@@ -181,6 +181,7 @@ namespace Else.Core
 
                 // all done
                 LoadedPlugins.Add(plugin);
+                
                 _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
             }
         }
@@ -189,9 +190,15 @@ namespace Else.Core
         {
             var plugin = info.Instance;
             LoadedPlugins.Remove(plugin);
-            plugin.Unload();
-            info.Instance = null;
-            _logger.Debug("Unloaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
+            try {
+                plugin.Unload();
+            }
+            catch (AppDomainUnloadedException) {
+            }
+            finally {
+                info.Instance = null;
+                _logger.Debug("Unloaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
+            }
         }
     }
 }

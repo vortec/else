@@ -1,13 +1,18 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Threading;
+using System.Threading.Tasks;
 using Else.Core;
 using Else.Extensibility;
 using Else.Helpers;
 using Else.Lib;
+using Else.Model;
 
 namespace Else.ViewModels
 {
-    public class PluginViewModel : IViewModelModelProp<PluginManager.PluginInfo>
+    public class PluginViewModel : IViewModelModelProp<PluginManager.PluginInfo>, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
         public PluginManager PluginManager;
 
         public PluginViewModel()
@@ -29,16 +34,18 @@ namespace Else.ViewModels
             set
             {
                 if (value) {
-                    UI.UiInvoke(() => PluginManager.LoadPlugin(Model));
+                    // this is prolyl BAD : ! adgfhjk; 
+                    Task.Run(() => PluginManager.LoadPlugin(Model))
+                        .ContinueWith(task => PropertyChanged(this, new PropertyChangedEventArgs("Enabled")));
+
                 }
                 else {
-                    UI.UiInvoke(() => PluginManager.UnloadPlugin(Model));
+                    Task.Run(() => PluginManager.UnloadPlugin(Model))
+                        .ContinueWith(task => PropertyChanged(this, new PropertyChangedEventArgs("Enabled")));
                 }
+
             }
         }
-
-
-
 
 
         public PluginManager.PluginInfo Model { get; set; }
