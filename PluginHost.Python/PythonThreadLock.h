@@ -1,22 +1,22 @@
 #pragma once
 
 namespace Else {
-	namespace PythonPluginLoader {
+    namespace PythonPluginLoader {
 
-		ref class PythonThread;
+        ref class PythonThread;
 
-		public ref class PythonThreadLock
-		{
-		public:
-			PythonThreadLock(PythonThread^ thread);
+        public ref class PythonThreadLock
+        {
+        public:
+            PythonThreadLock(PythonThread^ thread);
 
-			// copy constructor
-			PythonThreadLock(const PythonThreadLock% obj);
-			~PythonThreadLock();
-		private:
-			PythonThread^ _thread;
+            // copy constructor
+            PythonThreadLock(const PythonThreadLock% obj);
+            ~PythonThreadLock();
+        private:
+            PythonThread^ _thread;
 
-		};
+        };
 
-	}
+    }
 }

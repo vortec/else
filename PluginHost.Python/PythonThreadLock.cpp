@@ -5,23 +5,23 @@
 using namespace System::Diagnostics;
 
 namespace Else {
-	namespace PythonPluginLoader {
+    namespace PythonPluginLoader {
 
-		PythonThreadLock::PythonThreadLock(PythonThread^ thread)
-		{
-			_thread = thread;
-		}
+        PythonThreadLock::PythonThreadLock(PythonThread^ thread)
+        {
+            _thread = thread;
+        }
 
-		PythonThreadLock::~PythonThreadLock()
-		{
-			_thread->Release();
-		}
+        PythonThreadLock::~PythonThreadLock()
+        {
+            _thread->Release();
+        }
 
 
-		PythonThreadLock::PythonThreadLock(const PythonThreadLock% obj)
-		{
-			_thread = obj._thread;
-		}
+        PythonThreadLock::PythonThreadLock(const PythonThreadLock% obj)
+        {
+            _thread = obj._thread;
+        }
 
-	}
+    }
 }

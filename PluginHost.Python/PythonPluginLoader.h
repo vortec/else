@@ -6,31 +6,31 @@ using namespace Else::Extensibility;
 using namespace System;
 
 namespace Else {
-	namespace PythonPluginLoader {
-		public ref class PythonPluginLoader : PluginLoader
-		{
-		public:
-			/// <summary>
-			/// Load a plugin from a plugin directory and return it.
-			/// </summary>
-			/// <param name="path">The plugin directory.</param>
-			Plugin^ Load(String^ path) override;
+    namespace PythonPluginLoader {
+        public ref class PythonPluginLoader : PluginLoader
+        {
+        public:
+            /// <summary>
+            /// Load a plugin from a plugin directory and return it.
+            /// </summary>
+            /// <param name="path">The plugin directory.</param>
+            Plugin^ Load(String^ path) override;
 
-			/// <summary>
-			/// Unload a plugin (remove its python environment)
-			/// </summary>
-			/// <param name="plugin">The plugin.</param>
-			void UnLoad(Plugin^ plugin) override;
+            /// <summary>
+            /// Unload a plugin (remove its python environment)
+            /// </summary>
+            /// <param name="plugin">The plugin.</param>
+            void UnLoad(Plugin^ plugin) override;
 
-		private:
-			/// <summary>
-			/// Initializes the python environment only once.
-			/// </summary>
-			void Init();
-			bool initialized;
+        private:
+            /// <summary>
+            /// Initializes the python environment only once.
+            /// </summary>
+            void Init();
+            bool initialized;
 
-			PythonThread^ _mainThread;
-			Object^ _pythonLock = gcnew Object();
-		};
-	}
+            PythonThread^ _mainThread;
+            Object^ _pythonLock = gcnew Object();
+        };
+    }
 }
