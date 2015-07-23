@@ -11,7 +11,6 @@ namespace Else.ViewModels
 {
     public class ThemesWindowViewModel : ObservableObject
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         private readonly ThemeManager _themeManager;
 
         /// <summary>
