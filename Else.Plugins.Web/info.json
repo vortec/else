@@ -1,4 +1,5 @@
 ﻿{
+    "guid" : "c6e30a27-644e-4877-a61a-c3a8ed479ecd",
     "name" : "Web Services",
     "version" : "0.1",
     "description" : "Provides access to search providers such as google",

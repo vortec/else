@@ -1,0 +1,7 @@
+﻿{
+    "guid" : "3bd11618-9dfc-47cd-aacf-c9432bb835d4",
+    "name" : "System Commands",
+    "version" : "0.1",
+    "description" : "System commands like shutdown, sleep",
+    "author" : "James Hutchby"
+}
