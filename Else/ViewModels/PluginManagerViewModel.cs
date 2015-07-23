@@ -10,7 +10,7 @@ using Else.Model;
 
 namespace Else.ViewModels
 {
-    public class PluginViewModel : IViewModelModelProp<PluginManager.PluginInfo>, INotifyPropertyChanged
+    public class PluginViewModel : IViewModelModelProp<PluginInfo>, INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
         public PluginManager PluginManager;
@@ -30,36 +30,31 @@ namespace Else.ViewModels
 
         public bool Enabled
         {
-            get { return Model.Instance != null; }
+            get { return Model.Enabled; }
             set
             {
-                if (value) {
-                    // this is prolyl BAD : ! adgfhjk; 
-                    Task.Run(() => PluginManager.LoadPlugin(Model))
-                        .ContinueWith(task => PropertyChanged(this, new PropertyChangedEventArgs("Enabled")));
-
-                }
-                else {
-                    Task.Run(() => PluginManager.UnloadPlugin(Model))
+                if (value != Model.Enabled) {
+                    Model.Enabled = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("Enabled"));
+                    Task.Run(() => PluginManager.LoadOrUnload(Model))
                         .ContinueWith(task => PropertyChanged(this, new PropertyChangedEventArgs("Enabled")));
                 }
-
             }
         }
 
 
-        public PluginManager.PluginInfo Model { get; set; }
+        public PluginInfo Model { get; set; }
     }
 
     public class PluginManagerViewModel
     {
         public PluginManagerViewModel(PluginManager pluginManager)
         {
-            Func<PluginManager.PluginInfo, PluginViewModel> factory =
+            Func<PluginInfo, PluginViewModel> factory =
                 model => new PluginViewModel {PluginManager = pluginManager, Model = model};
-            Items = new ViewModelCollectionWrapper<PluginViewModel, PluginManager.PluginInfo>(pluginManager.KnownPlugins, factory);
+            Items = new ViewModelCollectionWrapper<PluginViewModel, PluginInfo>(pluginManager.KnownPlugins, factory);
         }
 
-        public ViewModelCollectionWrapper<PluginViewModel, PluginManager.PluginInfo> Items { get; set; }
+        public ViewModelCollectionWrapper<PluginViewModel, PluginInfo> Items { get; set; }
     }
 }

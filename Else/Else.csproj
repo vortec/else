@@ -195,6 +195,7 @@
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
     <Compile Include="Converter\UriToImageConverter.cs" />
+    <Compile Include="Core\PluginInfo.cs" />
     <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Core\AssemblyPluginLoader.cs" />
     <Compile Include="DesignerData\Plugins.cs" />

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Autofac.Extras.NLog;
 using Autofac.Features.Indexed;
@@ -85,20 +86,6 @@ namespace Else.Core
             _logger.Debug("Plugins initialization took {0}ms", timer.ElapsedMilliseconds);
         }
 
-        public class PluginInfo
-        {
-            public string Directory;
-            public string File;
-            public string DirectoryName;
-            public Plugin Instance;
-
-            // fields from info.json
-            public string name;
-            public string version;
-            public string description;
-            public string author;
-        };
-
         /// <summary>
         /// Given a plugin directory (e.g. Plugins\FileSystem), try and find the main program (e.g. Plugins\FileSystem\FileSystem.py)
         /// </summary>
@@ -153,9 +140,19 @@ namespace Else.Core
             // try and find main plugin file (e.g. FileSystem.py)
             info.File = FindMainPluginFile(pluginDirectory); // this will throw if not found
 
+            // check if the plugin is already loaded
+            lock (KnownPlugins) {
+                if (KnownPlugins.Any(pluginInfo => pluginInfo.guid == info.guid)) {
+                    _logger.Debug($"Skipping plugin guid={info.guid}, it's already loaded");
+                    return;
+                }
+            }
+
             // otherwise all is good.
             // we don't actually know whether it will load successfully yet or not, but we make it available for later loading
-            KnownPlugins.Add(info);
+            lock (KnownPlugins) {
+                KnownPlugins.Add(info);
+            }
             Debug.Print($"discovered plugin {info.Directory}");
         }
 
@@ -180,16 +177,34 @@ namespace Else.Core
                 info.Instance = plugin;
 
                 // all done
-                LoadedPlugins.Add(plugin);
-                
+                lock (LoadedPlugins) {
+                    LoadedPlugins.Add(plugin);
+                }
+
                 _logger.Debug("Loaded Plugin [{0}]: {1}", plugin.PluginLanguage, plugin.Name);
+            }
+        }
+
+        public void LoadOrUnload(PluginInfo info)
+        {
+            lock (info.LoadLock) {
+                if (info.Instance == null && info.Enabled) {
+                    // load
+                    LoadPlugin(info);
+                }
+                else if (info.Instance != null && !info.Enabled) {
+                    // unload
+                    UnloadPlugin(info);
+                }
             }
         }
 
         public void UnloadPlugin(PluginInfo info)
         {
             var plugin = info.Instance;
-            LoadedPlugins.Remove(plugin);
+            lock (LoadedPlugins) {
+                LoadedPlugins.Remove(plugin);
+            }
             try {
                 plugin.Unload();
             }
