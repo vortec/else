@@ -1,23 +1,95 @@
-﻿using System.ComponentModel;
-using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using Else.Services;
+using Newtonsoft.Json;
+using NLog;
+using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 
-namespace Else.Properties
+namespace Else
 {
-    // This class allows you to handle specific events on the settings class:
-    //  The SettingChanging event is raised before a setting's value is changed.
-    //  The PropertyChanged event is raised after a setting's value is changed.
-    //  The SettingsLoaded event is raised after the setting values are loaded.
-    //  The SettingsSaving event is raised before the setting values are saved.
-    internal sealed partial class Settings
+    public class Settings
     {
-        private void SettingChangingEventHandler(object sender, SettingChangingEventArgs e)
+        private readonly Paths _paths;
+        private readonly Logger _logger;
+
+        /// <summary>
+        /// Path to the user settings json file
+        /// </summary>
+        private string _path;
+
+        /// <summary>
+        /// An instance of the Default settings
+        /// </summary>
+        public SettingsData Default = new SettingsData();
+
+        /// <summary>
+        /// User settings
+        /// </summary>
+        public SettingsData User;
+
+        public Settings(Paths paths, Logger logger)
         {
-            // Add code to handle the SettingChangingEvent event here.
+            _paths = paths;
+            _logger = logger;
         }
 
-        private void SettingsSavingEventHandler(object sender, CancelEventArgs e)
+        /// <summary>
+        /// Load the user json file, or use defaults
+        /// </summary>
+        public void Setup()
         {
-            // Add code to handle the SettingsSaving event here.
+            _path = _paths.GetUserPath("Settings.json");
+            _logger.Debug($"Using settings file {_path}");
+
+            // try and load the json file
+            if (File.Exists(_path)) {
+                User = JsonConvert.DeserializeObject<SettingsData>(File.ReadAllText(_path), new JsonSerializerSettings
+                {
+                    Error =
+                        HandleDeserializationError
+                });
+            }
+            else {
+                // no existing settings, use defaults.
+                User = new SettingsData();
+            }
+
+            if (User.EnabledPlugins == null) {
+                User.EnabledPlugins = new HashSet<Guid>();
+            }
         }
+
+        /// <summary>
+        /// Skip deserialization errors, prevents throwing of an exception during deserialization, instead it uses defaults.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void HandleDeserializationError(object sender, ErrorEventArgs args)
+        {
+            //var currentError = args.ErrorContext.Error.Message;
+            args.ErrorContext.Handled = true;
+        }
+
+        /// <summary>
+        /// Write all settings to the json file.
+        /// </summary>
+        public void Save()
+        {
+            File.WriteAllText(_path, JsonConvert.SerializeObject(User));
+        }
+
+        /// <summary>
+        /// Default settings.
+        /// </summary>
+        public class SettingsData
+        {
+            public bool AutoHideLauncher = true;
+            public bool AutoUpdate = true;
+            public HashSet<Guid> EnabledPlugins = new HashSet<Guid>();
+            public bool FadeInWindow = true;
+            public bool FirstLaunch = true;
+            public string Theme = "Light";
+        };
     }
 }

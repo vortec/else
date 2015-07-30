@@ -13,16 +13,18 @@ namespace Else.Views
         public static string WindowTitle = "Else Launcher";
         public readonly LauncherWindowViewModel ViewModel;
         private readonly SplashScreenWindow _splashScreenWindow;
+        private readonly Settings _settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
         /// <param name="viewModel"></param>
-        public LauncherWindow(LauncherWindowViewModel viewModel, SplashScreenWindow splashScreenWindow)
+        public LauncherWindow(LauncherWindowViewModel viewModel, SplashScreenWindow splashScreenWindow, Settings settings)
         {
             InitializeComponent();
             ViewModel = viewModel;
             _splashScreenWindow = splashScreenWindow;
+            _settings = settings;
             DataContext = viewModel;
             Title = WindowTitle;
         }
@@ -36,7 +38,7 @@ namespace Else.Views
             _splashScreenWindow.Close();
             if (Visibility != Visibility.Visible) {
                 // check if we should do fade
-                if (Settings.Default.FadeInWindow) {
+                if (_settings.User.FadeInWindow) {
                     Opacity = 0;
                     Show();
                     Activate();
@@ -84,7 +86,7 @@ namespace Else.Views
         /// </summary>
         private void OnDeactivated(object sender, EventArgs e)
         {
-            if (Settings.Default.AutoHideLauncher) {
+            if (_settings.User.AutoHideLauncher) {
                 HideWindow();
             }
         }

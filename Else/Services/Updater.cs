@@ -44,6 +44,7 @@ namespace Else.Services
         private static DateTime _lastActivity;
 
         private readonly ILogger _logger;
+        private readonly Settings _settings;
 
         /// <summary>
         /// The minimum UI idle time before restart
@@ -91,9 +92,10 @@ namespace Else.Services
         /// Initializes a new instance of the <see cref="Updater"/> class and begins auto-update timer.
         /// </summary>
         /// <param name="logger">The logger.</param>
-        public Updater(ILogger logger)
+        public Updater(ILogger logger, Settings settings)
         {
             _logger = logger;
+            _settings = settings;
             UpdateManager = new UpdateManager(UpdateUrl, AppName, FrameworkVersion.Net45);
         }
 
@@ -177,7 +179,7 @@ namespace Else.Services
         /// </summary>
         public async Task UpdateApp()
         {
-            if (!Settings.Default.AutoUpdate) {
+            if (!_settings.User.AutoUpdate) {
                 // automatic updates are disabled.
                 return;
             }
