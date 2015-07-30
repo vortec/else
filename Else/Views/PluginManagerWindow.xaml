@@ -3,18 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Else.Views"
         xmlns:designerData="clr-namespace:Else.DesignerData"
-        d:DataContext=""
-        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance designerData:MockPluginManagerViewModel, IsDesignTimeCreatable=True}"
+        WindowStartupLocation="CenterScreen"
         Title="Plugins" Width="600" Height="500">
-    
     <Grid>
-        
             <!--<TextBlock HorizontalAlignment="Center" Margin="40" x:Name="NoPluginsMessage">No plugins loaded</TextBlock>-->
             <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ItemsControl ItemsSource="{Binding Items}" d:DataContext="{d:DesignInstance d:Type=designerData:Plugins, IsDesignTimeCreatable=True}">
+            <ItemsControl ItemsSource="{Binding Items}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
                             <DockPanel Margin="20 30 20 5">
@@ -31,7 +28,6 @@
                                     <TextBlock.Text>
                                         <MultiBinding StringFormat="This is the description for the {0} plugin, it's {1}">
                                             <Binding Path="Name"></Binding>
-                                            <Binding Path="PluginLanguage"></Binding>
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>

@@ -166,7 +166,7 @@ namespace Else.Core
                     }
                 }
                 catch (Exception e) {
-                    _logger.Debug("Failed to load or unload plugin", e);
+                    _logger.Warn("An error occurred while loading or unloading a plugin", e);
                 }
             }
         }

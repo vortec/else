@@ -25,8 +25,9 @@ namespace Else.ViewModels
         }
 
         public string Name => Model.name;
-        //public string PluginLanguage => Model.PluginLanguage;
-
+        public string Author => Model.author;
+        public string Description => Model.description;
+        public string Version => Model.version;
 
         public bool Enabled
         {

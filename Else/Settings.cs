@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Autofac.Extras.NLog;
 using Else.Services;
 using Newtonsoft.Json;
 using NLog;
@@ -10,8 +11,9 @@ namespace Else
 {
     public class Settings
     {
+        
         private readonly Paths _paths;
-        private readonly Logger _logger;
+        private readonly ILogger _logger;
 
         /// <summary>
         /// Path to the user settings json file
@@ -28,7 +30,7 @@ namespace Else
         /// </summary>
         public SettingsData User;
 
-        public Settings(Paths paths, Logger logger)
+        public Settings(Paths paths, ILogger logger)
         {
             _paths = paths;
             _logger = logger;

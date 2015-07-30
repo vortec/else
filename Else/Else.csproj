@@ -201,10 +201,9 @@
     <Compile Include="Core\PluginInfo.cs" />
     <Compile Include="Core\PluginManager.cs" />
     <Compile Include="Core\AssemblyPluginLoader.cs" />
-    <Compile Include="DesignerData\Plugins.cs" />
+    <Compile Include="DesignerData\MockPluginManagerViewModel.cs" />
     <Compile Include="Interop\Win32Signatures.cs" />
     <Compile Include="Lib\ImageCache.cs" />
-    <Compile Include="Lib\JsonFile.cs" />
     <Compile Include="Lib\ObservableObject.cs" />
     <Compile Include="Lib\TrayIcon.cs" />
     <Compile Include="Interop\Win32MessagePump.cs" />
