@@ -38,14 +38,16 @@ namespace Else.Services
 
         private readonly ILogger _logger;
         private readonly Func<Theme> _themeFactory;
+        private readonly Settings _settings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="T:System.Object"/> class.
         /// </summary>
-        public ThemeManager(ILogger logger, Func<Theme> themeFactory)
+        public ThemeManager(ILogger logger, Func<Theme> themeFactory, Settings settings)
         {
             _logger = logger;
             _themeFactory = themeFactory;
+            _settings = settings;
         }
 
         /// <summary>
@@ -97,13 +99,12 @@ namespace Else.Services
         public void ApplyThemeFromSettings()
         {
             try {
-                ApplyTheme(Settings.Default.Theme);
+                ApplyTheme(_settings.User.Theme);
             }
             catch (InvalidOperationException) {
                 // configured theme does not exist, restore the default
-                var defaultTheme = Settings.Default.Properties["Theme"].DefaultValue as string;
                 try {
-                    ApplyTheme(defaultTheme);
+                    ApplyTheme(_settings.User.Theme);
                 }
                 catch {
                     // erk, default theme does not exit
@@ -155,8 +156,8 @@ namespace Else.Services
         public void SaveSettings()
         {
             if (ActiveTheme != null) {
-                Settings.Default.Theme = ActiveTheme.GUID;
-                Settings.Default.Save();
+                _settings.User.Theme = ActiveTheme.GUID;
+                _settings.Save();
             }
         }
     }

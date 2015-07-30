@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -14,7 +13,6 @@ using Else.Extensibility;
 using Else.Interop;
 using Else.Lib;
 using Else.Model;
-using Else.Properties;
 using Else.Services;
 using Else.Services.Interfaces;
 using Else.ViewModels;
@@ -79,9 +77,14 @@ namespace Else
                     Current.Shutdown();
                 }
 
-                // print user config path 
-                var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
-                _logger.Info("Local user config path: {0}", config.FilePath);
+                var settings = scope.Resolve<Settings>();
+                try {
+                    settings.Setup();
+                }
+                catch (FileNotFoundException notFound) {
+                    Debug.Fail(notFound.Message);
+                    Current.Shutdown();
+                }
 
                 // initialize themes and scan the disk for themes
                 var themeManager = scope.Resolve<ThemeManager>();
@@ -105,15 +108,18 @@ namespace Else
                     _trayIcon = scope.Resolve<TrayIcon>();
                     _trayIcon.Setup();
 
+
                     // show splash screen on the first run
-                    if (!Settings.Default.FirstLaunch) {
+                    if (settings.User.FirstLaunch) {
                         var splashScreen = scope.Resolve<SplashScreenWindow>();
                         splashScreen.ShowWindow();
-                        Settings.Default.FirstLaunch = true;
-                        Settings.Default.Save();
+                        settings.User.FirstLaunch = false;
+                        settings.Save();
                     }
                     scope.Resolve<Updater>().BeginAutoUpdates();
                 }
+                var pluginWindow = scope.Resolve<PluginManagerWindow>();
+                pluginWindow.Show();
             }
             // trigger custom OnStartupComplete event, this is used by the theme editor.
             OnStartupComplete?.Invoke(this, EventArgs.Empty);
@@ -142,7 +148,7 @@ namespace Else
 
             // plugin wrappers
             builder.RegisterType<AssemblyPluginLoader>().Keyed<PluginLoader>(".dll").SingleInstance();
-            builder.RegisterType<PythonPluginLoader.Host>().Keyed<PluginLoader>(".py").SingleInstance();
+            builder.RegisterType<PythonPluginLoader.PythonPluginLoader>().Keyed<PluginLoader>(".py").SingleInstance();
 
             // instances
             builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
@@ -151,6 +157,7 @@ namespace Else
             // windows
             builder.RegisterType<ThemesWindow>();
             builder.RegisterType<AboutWindow>();
+            builder.RegisterType<PluginManagerWindow>();
 
             // register ViewModels
             builder.RegisterType<ThemeEditorViewModel>();
@@ -161,9 +168,12 @@ namespace Else
             builder.RegisterType<AboutWindowViewModel>();
             builder.RegisterType<ThemeEditorLauncherViewModel>();
             builder.RegisterType<ThemeEditorResultsListViewModel>();
-
+            builder.RegisterType<PluginManagerViewModel>();
 
             builder.RegisterInstance(this).As<App>();
+
+            // config.json reader
+            builder.RegisterType<Settings>().SingleInstance();
 
             // build container
             Container = builder.Build();

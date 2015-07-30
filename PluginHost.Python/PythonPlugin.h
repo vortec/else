@@ -5,14 +5,15 @@ using namespace Else::Extensibility;
 #include "PythonListIterator.h"
 #include "PythonThread.h"
 
-namespace PythonPluginLoader {    
-    /// <summary>
-    /// Provides an interface to the python plugin by using cpython api.
-    /// </summary>
-    ref class Host;
-    ref class PythonPlugin : Plugin
-    {
-        public:            
+namespace Else {
+    namespace PythonPluginLoader {
+        /// <summary>
+        /// Provides an interface to the python plugin by using cpython api.
+        /// </summary>
+        ref class PythonPluginLoader;
+        ref class PythonPlugin : Plugin
+        {
+        public:
             /// <summary>
             /// Clean up any python state
             /// </summary>
@@ -49,18 +50,20 @@ namespace PythonPluginLoader {
             /// </summary>
             virtual void Setup() override;
 
+            virtual void Unload() override;
+
         private:
 
             /// <summary>
             /// pointer to the python plugin instance
             /// </summary>
-            PyObject* _module;            
+            PyObject* _module;
 
             /// <summary>
             /// The python sub interpreter.
             /// </summary>
             PythonThread^ _thread;
-            
+
             /// <summary>
             /// A pointer to this object, this object should not be moved by GC while this pointer exists.
             /// </summary>
@@ -69,6 +72,7 @@ namespace PythonPluginLoader {
             /// <summary>
             /// A lock to ensure only 1 thread can access the cpython API (cpython is single threaded)
             /// </summary>
-            Host^ _host;
-    };
+            PythonPluginLoader^ _host;
+        };
+    }
 }

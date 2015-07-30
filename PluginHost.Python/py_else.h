@@ -1,4 +1,6 @@
 #pragma once
-namespace PythonPluginLoader {
-    void else_init_module(void* plugin);
+namespace Else {
+    namespace PythonPluginLoader {
+        void else_init_module(void* plugin);
+    }
 }

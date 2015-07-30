@@ -5,9 +5,10 @@
 using namespace Else::Extensibility;
 using namespace System;
 
-namespace PythonPluginLoader {
-    public ref class Host : PluginLoader
-    {
+namespace Else {
+    namespace PythonPluginLoader {
+        public ref class PythonPluginLoader : PluginLoader
+        {
         public:
             /// <summary>
             /// Load a plugin from a plugin directory and return it.
@@ -30,5 +31,6 @@ namespace PythonPluginLoader {
 
             PythonThread^ _mainThread;
             Object^ _pythonLock = gcnew Object();
-    };
+        };
+    }
 }

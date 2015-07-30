@@ -7,10 +7,12 @@ namespace Else.ViewModels
     public class AboutWindowViewModel : ObservableObject
     {
         private readonly Updater _updater;
+        private readonly Settings _settings;
 
-        public AboutWindowViewModel(Updater updater)
+        public AboutWindowViewModel(Updater updater, Settings settings)
         {
             _updater = updater;
+            _settings = settings;
         }
 
         /// <summary>
@@ -34,13 +36,13 @@ namespace Else.ViewModels
         /// </summary>
         public bool AutomaticUpdatesEnabled
         {
-            get { return Settings.Default.AutoUpdate; }
+            get { return _settings.User.AutoUpdate; }
             set
             {
-                if (Settings.Default.AutoUpdate != value) {
+                if (_settings.User.AutoUpdate != value) {
                     // has changed
-                    Settings.Default.AutoUpdate = value;
-                    Settings.Default.Save();
+                    _settings.User.AutoUpdate = value;
+                    _settings.Save();
                     OnPropertyChanged();
                 }
             }

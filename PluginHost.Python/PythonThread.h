@@ -4,37 +4,42 @@
 
 using namespace System::Threading;
 
-/// <summary>
-/// This class represents a python thread.
-/// It provides access to the underlying python thread, and also an extra locking facility, because
-/// python's locking causes deadlock if you try and lock twice in the same thread.
-/// </summary>
-public ref class PythonThread
-{
+namespace Else {
+    namespace PythonPluginLoader {
 
-public:
-    PythonThread(PyThreadState* pyThread);
-    
-    /// <summary>
-    /// Acquires the lock on this python thread and switches the thread state, once acquired, the callee can call python api's safely.
-    /// </summary>
-    void Acquire();
+        /// <summary>
+        /// This class represents a python thread.
+        /// It provides access to the underlying python thread, and also an extra locking facility, because
+        /// python's locking causes deadlock if you try and lock twice in the same thread.
+        /// </summary>
+        public ref class PythonThread
+        {
 
-    /// <summary>
-    /// Acquires the lock on this python thread and switches the thread state, 1and returns a lock object which will automatically release the lock upon dispose()
-    /// </summary>
-    /// <returns>The lock object</returns>
-    PythonThreadLock AcquireLock();
-    
-    /// <summary>
-    /// Releases this instance.
-    /// </summary>
-    void Release();
+        public:
+            PythonThread(PyThreadState* pyThread);
 
-    PyThreadState* threadState = nullptr;
+            /// <summary>
+            /// Acquires the lock on this python thread and switches the thread state, once acquired, the callee can call python api's safely.
+            /// </summary>
+            void Acquire();
 
-private:
-	// static mutex for restricting access to python API
-	static Mutex^ _mutex = gcnew Mutex();
-};
+            /// <summary>
+            /// Acquires the lock on this python thread and switches the thread state, 1and returns a lock object which will automatically release the lock upon dispose()
+            /// </summary>
+            /// <returns>The lock object</returns>
+            PythonThreadLock AcquireLock();
 
+            /// <summary>
+            /// Releases this instance.
+            /// </summary>
+            void Release();
+
+            PyThreadState* threadState = nullptr;
+
+        private:
+            // static mutex for restricting access to python API
+            static Mutex^ _mutex = gcnew Mutex();
+        };
+
+    }
+}

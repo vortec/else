@@ -57,10 +57,10 @@ namespace Simulator
                     using (var scope = _app.Container.BeginLifetimeScope()) {
                         // attempt to load the plugin
                         var pluginManager = scope.Resolve<PluginManager>();
-                        pluginManager.LoadPluginFromDirectory(options.PluginDirectory);
+                        pluginManager.FindPluginInDirectory(options.PluginDirectory);
 
                         // check if any plugins were successfully loaded
-                        if (!pluginManager.Plugins.Any()) {
+                        if (!pluginManager.LoadedPlugins.Any()) {
                             // failure
                             _logger.Fatal("No plugins found");
                             _app.Shutdown();

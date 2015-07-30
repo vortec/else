@@ -21,7 +21,7 @@
                         SelectionMode="Single"
                         DockPanel.Dock="Top"
                         BorderThickness="0"
-                        d:DataContext="{d:DesignInstance Type=designerData:Themes, IsDesignTimeCreatable=True}"
+                        d:DataContext="{d:DesignInstance d:Type=designerData:Themes, IsDesignTimeCreatable=True}"
                         ItemsSource="{Binding Items}"
                         SelectedItem="{Binding SelectedItem}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">

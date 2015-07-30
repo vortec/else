@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -55,7 +56,7 @@ namespace Else.Core
         /// <summary>
         /// Activated plugins
         /// </summary>
-        public List<Plugin> Plugins => _pluginManager.Plugins;
+        public BindingList<Plugin> LoadedPlugins => _pluginManager.LoadedPlugins;
 
         /// <summary>
         /// A plugin has requested that we execute the query again (perhaps it has different results for us)
@@ -129,7 +130,7 @@ namespace Else.Core
             var exclusive = new List<IProvider>();
             var shared = new List<IProvider>();
             var fallback = new List<IProvider>();
-            foreach (var p in Plugins) {
+            foreach (var p in LoadedPlugins) {
                 foreach (var c in p.Providers) {
                     var interest = c.ExecuteIsInterestedFunc(Query);
                     switch (interest) {

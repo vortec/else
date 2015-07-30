@@ -71,7 +71,7 @@ namespace Else.Extensibility
             return Path.Combine(RootDir, filename);
         }
 
-        public void Unload()
+        public virtual void Unload()
         {
             Owner?.UnLoad(this);
         }

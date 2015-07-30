@@ -1,0 +1,7 @@
+{
+    "guid" : "d2c45fe2-8117-4a02-872b-74d7229b269a",
+    "name" : "URL Shortener",
+    "version" : "0.1",
+    "description" : "Provides URL shortening services using the Bitly API",
+    "author" : "James Hutchby"
+}

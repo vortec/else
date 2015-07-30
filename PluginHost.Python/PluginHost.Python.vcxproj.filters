@@ -15,7 +15,6 @@
     <ClCompile Include="Helpers.cpp">
       <Filter>Lib</Filter>
     </ClCompile>
-    <ClCompile Include="Host.cpp" />
     <ClCompile Include="PythonPlugin.cpp" />
     <ClCompile Include="PythonListIterator.cpp">
       <Filter>Lib</Filter>
@@ -25,6 +24,7 @@
     </ClCompile>
     <ClCompile Include="PythonThread.cpp" />
     <ClCompile Include="PythonThreadLock.cpp" />
+    <ClCompile Include="PythonPluginLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
@@ -43,7 +43,6 @@
     <ClInclude Include="Helpers.h">
       <Filter>Lib</Filter>
     </ClInclude>
-    <ClInclude Include="Host.h" />
     <ClInclude Include="PythonPlugin.h" />
     <ClInclude Include="PythonListIterator.h">
       <Filter>Lib</Filter>
@@ -53,6 +52,7 @@
     </ClInclude>
     <ClInclude Include="PythonThread.h" />
     <ClInclude Include="PythonThreadLock.h" />
+    <ClInclude Include="PythonPluginLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Python">
