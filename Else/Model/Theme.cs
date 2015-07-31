@@ -4,14 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
-using Autofac.Extras.NLog;
 using Else.Services;
 using Newtonsoft.Json;
 
 namespace Else.Model
 {
     public class Theme {
-        private readonly ILogger _logger;
+        private readonly Autofac.Extras.NLog.ILogger _logger;
         private readonly Func<Theme> _themeFactory;
         private readonly Paths _paths;
 
@@ -66,7 +65,7 @@ namespace Else.Model
             
         }
 
-        public Theme(Func<Theme> themeFactory, Paths paths, ILogger logger)
+        public Theme(Func<Theme> themeFactory, Paths paths, Autofac.Extras.NLog.ILogger logger)
         {
             _themeFactory = themeFactory;
             _paths = paths;
@@ -79,7 +78,7 @@ namespace Else.Model
         public void SetupNew()
         {
             GUID = Guid.NewGuid().ToString();
-            FilePath = _paths.GetUserPath(String.Format("themes/{0}.json", GUID));
+            FilePath = _paths.GetUserPath($"themes/{GUID}.json");
         }
 
         /// <summary>

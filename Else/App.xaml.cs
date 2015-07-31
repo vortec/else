@@ -25,7 +25,7 @@ namespace Else
     public partial class App
     {
         private Mutex _instanceMutex;
-        private Logger _logger;
+        private NLog.ILogger _logger;
         private TrayIcon _trayIcon;
         public IContainer Container;
         public bool RunningFromSimulator;
@@ -151,7 +151,7 @@ namespace Else
             builder.RegisterType<PythonPluginLoader.PythonPluginLoader>().Keyed<PluginLoader>(".py").SingleInstance();
 
             // instances
-            builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (ILogger));
+            builder.RegisterType<Theme>().UsingConstructor(typeof (Func<Theme>), typeof (Paths), typeof (Autofac.Extras.NLog.ILogger));
             builder.RegisterType<AssemblyPluginLoader>();
 
             // windows
@@ -265,11 +265,11 @@ namespace Else
         private void OnUnhandledException(string message, Exception exception)
         {
             // log the exception
-            _logger.Fatal(message, exception);
+            _logger.Fatal(exception, message);
 
             // show messagebox to the user
             var title = "An unhandled exception occurred: " + exception.Message;
-            var msg = string.Format("{0} Exception", Assembly.GetExecutingAssembly().GetName().Name);
+            var msg = $"{Assembly.GetExecutingAssembly().GetName().Name} Exception";
             MessageBox.Show(title, msg, MessageBoxButton.OK, MessageBoxImage.Error);
 
             // prevent .NET "application has stopped working.." window

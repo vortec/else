@@ -4,7 +4,7 @@ using System.IO;
 using Autofac.Extras.NLog;
 using Else.Services;
 using Newtonsoft.Json;
-using NLog;
+
 using ErrorEventArgs = Newtonsoft.Json.Serialization.ErrorEventArgs;
 
 namespace Else

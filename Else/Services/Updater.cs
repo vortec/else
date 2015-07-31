@@ -96,7 +96,7 @@ namespace Else.Services
         {
             _logger = logger;
             _settings = settings;
-            UpdateManager = new UpdateManager(UpdateUrl, AppName, FrameworkVersion.Net45);
+            UpdateManager = new UpdateManager(UpdateUrl, AppName);
         }
 
         public void Dispose()
