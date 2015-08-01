@@ -10,6 +10,7 @@ using Autofac.Extras.NLog;
 using Else.DataTypes;
 using Else.Extensibility;
 using Else.Helpers;
+#pragma warning disable 4014 // disable warning about no await on BeginQuery() calls (we don't care about the result)
 
 namespace Else.Core
 {
@@ -74,7 +75,7 @@ namespace Else.Core
             BeginQuery(query);
         }
 
-        public async void BeginQuery(string query)
+        public async Task BeginQuery(string query)
         {
             // parse the query
             Query.Parse(query);
@@ -100,7 +101,7 @@ namespace Else.Core
 
             // execute the query in a new thread
             try {
-                await Task.Factory.StartNew(async () => { await ExecuteQuery(query); }, _cancelTokenSource.Token);
+                await Task.Run(async () => { await ExecuteQuery(query); }, _cancelTokenSource.Token);
             }
             catch (TaskCanceledException) {
             }
@@ -119,12 +120,9 @@ namespace Else.Core
         private async Task ExecuteQuery(string query)
         {
             // lock the resultslist and clear
-            UI.UiInvoke(() =>
-            {
-                lock (ResultsList) {
-                    ResultsList.Clear();
-                }
-            });
+            lock (ResultsList) {
+                ResultsList.Clear();
+            }
 
             // determine which providers are able to respond to this query, and sort them into groups
             var exclusive = new List<IProvider>();
@@ -177,12 +175,10 @@ namespace Else.Core
                 _lastQuery = query;
 
                 // trigger refresh of UI that is bound to the ResultsList
-                UI.UiInvoke(() =>
-                {
-                    lock (ResultsList) {
-                        ResultsList.BindingRefresh();
-                    }
-                });
+                lock (ResultsList) {
+                    ResultsList.BindingRefresh();
+                }
+                
             }
             catch (OperationCanceledException) {
             }
