@@ -9,12 +9,33 @@ namespace Else.Extensibility
     public class Query : MarshalByRefObject
     {
         /// <summary>
-        /// Everything after the Keyword
+        /// Regex for detecting a path (e.g. c:\test)
+        /// </summary>
+        private static readonly Regex PathRegex = new Regex(@"^[A-Za-z]:\\",
+            RegexOptions.IgnoreCase & RegexOptions.Compiled);
+
+        /// <summary>
+        /// The entire query string as provided by the user
+        /// </summary>
+        public string Raw;
+
+        /// <summary>
+        /// First word of the query,  e.g. if query was 'google bbc', Keyword is 'google'
+        /// </summary>
+        public string Keyword;
+
+        /// <summary>
+        /// Everything after the Keyword, e.g. if query was 'google bbc', Arguments is 'bbc'
         /// </summary>
         public string Arguments;
 
         /// <summary>
-        /// Query is empty
+        /// The keyword is complete (there is a space)
+        /// </summary>
+        public bool KeywordComplete;
+
+        /// <summary>
+        /// Query is an empty string
         /// </summary>
         public bool Empty;
 
@@ -28,25 +49,14 @@ namespace Else.Extensibility
         /// </summary>
         public bool IsPath;
 
-        /// <summary>
-        /// First word of the query,  e.g. if query was 'google bbc', Keyword is 'google'
-        /// </summary>
-        public string Keyword;
+        public Query()
+        {
+        }
 
-        /// <summary>
-        /// The keyword is complete (there is a space)
-        /// </summary>
-        public bool KeywordComplete;
-
-        /// <summary>
-        /// Regex for detecting a path (e.g. c:\test)
-        /// </summary>
-        static readonly Regex PathRegex = new Regex(@"^[a-z]:\\", RegexOptions.IgnoreCase & RegexOptions.Compiled);
-
-        /// <summary>
-        /// The entire query string as provided by the user
-        /// </summary>
-        public string Raw;
+        public Query(string query)
+        {
+            Parse(query);
+        }
 
         /// <summary>
         /// Parses the specified query into different fields.
@@ -54,6 +64,10 @@ namespace Else.Extensibility
         /// <param name="query">The query.</param>
         public void Parse(string query)
         {
+            if (string.IsNullOrEmpty(query)) {
+                query = "";
+            }
+
             Raw = query;
 
             var index = query.IndexOf(' ');
