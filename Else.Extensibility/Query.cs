@@ -69,6 +69,11 @@ namespace Else.Extensibility
             }
 
             Raw = query;
+            IsPath = PathRegex.IsMatch(query);
+
+            if (IsPath) {
+                return;
+            }
 
             var index = query.IndexOf(' ');
             if (index != -1) {
@@ -85,8 +90,6 @@ namespace Else.Extensibility
             }
             HasArguments = !string.IsNullOrEmpty(Arguments);
             Empty = string.IsNullOrEmpty(Raw.Trim());
-            Raw = query;
-            IsPath = PathRegex.IsMatch(query);
         }
     }
 }

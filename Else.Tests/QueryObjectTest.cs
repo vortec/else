@@ -6,47 +6,47 @@ namespace Else.Tests
     [TestFixture]
     class QueryObjectTest
     {
-        [TestCase]
-        public void ParseQueryTest()
+        [Test]
+        public void TestEmptyQuery()
         {
-            var query = new Query();
-            
-            // Test empty query
-            query.Parse("");
-
-            Assert.AreEqual("", query.Raw);
-            Assert.AreEqual("", query.Keyword);
-            Assert.AreEqual("", query.Arguments);
+            var query = new Query("");
+            Assert.That(query.Raw, Is.EqualTo(""));
+            Assert.That(query.Keyword, Is.EqualTo(""));
+            Assert.That(query.Arguments, Is.EqualTo(""));
             Assert.IsFalse(query.KeywordComplete);
             Assert.IsTrue(query.Empty);
             Assert.IsFalse(query.HasArguments);
             Assert.IsFalse(query.IsPath);
+        }
 
-            // Test query with arguments
-            var q = "google search argument";
-            query.Parse(q);
-
-            Assert.AreEqual(q, query.Raw);
-            Assert.AreEqual("google", query.Keyword);
-            Assert.AreEqual("search argument", query.Arguments);
+        [Test]
+        public void TestQueryWithKeywordAndArguments()
+        {
+            var query = new Query("google search argument");
+            Assert.That(query.Raw, Is.EqualTo("google search argument"));
+            Assert.That(query.Keyword, Is.EqualTo("google"));
+            Assert.That(query.Arguments, Is.EqualTo("search argument"));
             Assert.IsTrue(query.KeywordComplete);
             Assert.IsFalse(query.Empty);
             Assert.IsTrue(query.HasArguments);
             Assert.IsFalse(query.IsPath);
+        }
 
-            // Test query with no arguments
-            query.Parse("the_keyword");
+        [Test]
+        public void TestQueryWithKeyword()
+        {
+            var query = new Query("the_keyword");
             Assert.AreEqual("the_keyword", query.Keyword);
             Assert.IsFalse(query.HasArguments);
             Assert.IsFalse(query.KeywordComplete);
+        }
 
-            // test path query
-            query.Parse(@"C:\\Users\\james\\Directory\\File");
+        [Test]
+        public void TestQueryWithPath()
+        {
+            var query = new Query(@"C:\\Program Files\\Directory\\File");
             Assert.IsTrue(query.IsPath);
-
-            // test constructor
-            var q2 = new Query("yahoo keyword");
-            Assert.AreEqual("yahoo keyword", q2.Raw);
+            Assert.IsFalse(query.HasArguments);
         }
     }
 }
