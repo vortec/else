@@ -23,9 +23,13 @@ namespace Else.Tests
         public void TestQueryWithKeyword()
         {
             var query = new Query("the_keyword");
-            Assert.AreEqual("the_keyword", query.Keyword);
-            Assert.IsFalse(query.HasArguments);
+            Assert.That(query.Raw, Is.EqualTo("the_keyword"));
+            Assert.That(query.Keyword, Is.EqualTo("the_keyword"));
+            Assert.That(query.Arguments, Is.Empty);
             Assert.IsFalse(query.KeywordComplete);
+            Assert.IsFalse(query.Empty);
+            Assert.IsFalse(query.HasArguments);
+            Assert.IsFalse(query.IsPath);
         }
 
         [Test]
@@ -45,8 +49,13 @@ namespace Else.Tests
         public void TestQueryWithPath()
         {
             var query = new Query(@"C:\\Program Files\\Directory\\File");
-            Assert.IsTrue(query.IsPath);
+            Assert.That(query.Raw, Is.EqualTo(@"C:\\Program Files\\Directory\\File"));
+            Assert.That(query.Keyword, Is.Empty);
+            Assert.That(query.Arguments, Is.Empty);
+            Assert.IsFalse(query.KeywordComplete);
+            Assert.IsFalse(query.Empty);
             Assert.IsFalse(query.HasArguments);
+            Assert.IsTrue(query.IsPath);
         }
     }
 }

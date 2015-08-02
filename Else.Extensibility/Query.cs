@@ -64,11 +64,19 @@ namespace Else.Extensibility
         /// <param name="query">The query.</param>
         public void Parse(string query)
         {
+            // if null is provided, use an empty string
             if (string.IsNullOrEmpty(query)) {
                 query = "";
             }
 
             Raw = query;
+            Keyword = "";
+            Arguments = "";
+            KeywordComplete = false;
+            Empty = string.IsNullOrEmpty(Raw.Trim());
+            HasArguments = false;
+
+            // check if the query is a path
             IsPath = PathRegex.IsMatch(query);
 
             if (IsPath) {
@@ -89,7 +97,6 @@ namespace Else.Extensibility
                 KeywordComplete = false;
             }
             HasArguments = !string.IsNullOrEmpty(Arguments);
-            Empty = string.IsNullOrEmpty(Raw.Trim());
         }
     }
 }
