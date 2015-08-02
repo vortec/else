@@ -21,19 +21,19 @@ namespace Else.Core
         private readonly Lazy<AppCommands> _appCommands;
         private readonly ILogger _logger;
         private readonly Paths _paths;
-        private readonly IIndex<string, Func<PluginLoader>> _pluginWrapperFunc;
+        private readonly IIndex<string, Func<PluginLoader>> _pluginLoaderFactory;
         private readonly Settings _settings;
         public readonly BindingList<PluginInfo> KnownPlugins = new BindingList<PluginInfo>();
         public readonly BindingList<Plugin> LoadedPlugins = new BindingList<Plugin>();
 
         public PluginManager(
-            IIndex<string, Func<PluginLoader>> pluginWrapperFunc,
+            IIndex<string, Func<PluginLoader>> pluginLoaderFactory,
             Lazy<AppCommands> appCommands,
             Paths paths,
             Settings settings,
             ILogger logger)
         {
-            _pluginWrapperFunc = pluginWrapperFunc;
+            _pluginLoaderFactory = pluginLoaderFactory;
             _appCommands = appCommands;
             _paths = paths;
             _settings = settings;
@@ -69,9 +69,13 @@ namespace Else.Core
                     // attempt to load the plugin
                     try {
                         var info = FindPluginInDirectory(subdir);
+                        // check if the plugin is already loaded
+                        if (KnownPlugins.Any(pluginInfo => pluginInfo.guid == info.guid)) {
+                            throw new PluginLoader.PluginLoadException($"Skipping plugin guid={info.guid}, it's already loaded");
+                        }
                         Debug.Print($"Discovered plugin {info.Directory}");
                         KnownPlugins.Add(info);
-                        // check if the plugin is enabled in user config
+                        // enable the plugin if it exists in the user config
                         if (_settings.User.EnabledPlugins.Contains(info.guid)) {
                             info.Enabled = true;
                             Task.Run(() => LoadOrUnload(info));
@@ -109,11 +113,6 @@ namespace Else.Core
             // try and find main plugin file (e.g. FileSystem.py)
             info.File = FindMainPluginFile(pluginDirectory); // this will throw if not found
 
-            // check if the plugin is already loaded
-            if (KnownPlugins.Any(pluginInfo => pluginInfo.guid == info.guid)) {
-                throw new PluginLoader.PluginLoadException($"Skipping plugin guid={info.guid}, it's already loaded");
-            }
-
             return info;
         }
 
@@ -134,7 +133,7 @@ namespace Else.Core
                     // get the wrapper type for the extension (e.g. .py gets PythonPluginWrapper)
                     Func<PluginLoader> wrapperFactory;
 
-                    if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory)) {
+                    if (_pluginLoaderFactory.TryGetValue(extension, out wrapperFactory)) {
                         return filename;
                     }
                 }
@@ -142,6 +141,11 @@ namespace Else.Core
             throw new FileNotFoundException($"Failed to find main plugin file in {pluginDirectory}");
         }
 
+        /// <summary>
+        /// Load or Unload the plugin defined by <paramref name="info"/>, if Enabled is true the plugin will be loaded.
+        /// This method is thread safe.
+        /// </summary>
+        /// <param name="info"></param>
         public void LoadOrUnload(PluginInfo info)
         {
             lock (info.LoadLock) {
@@ -179,9 +183,9 @@ namespace Else.Core
         {
             Func<PluginLoader> wrapperFactory;
             var extension = Path.GetExtension(info.File);
-            if (_pluginWrapperFunc.TryGetValue(extension, out wrapperFactory)) {
+            if (_pluginLoaderFactory.TryGetValue(extension, out wrapperFactory)) {
                 // load the plugin via the wrapper
-                var wrapper = _pluginWrapperFunc[extension]();
+                var wrapper = _pluginLoaderFactory[extension]();
                 var plugin = wrapper.Load(info.File);
                 // setup the plugin instance
                 plugin.RootDir = info.Directory;
