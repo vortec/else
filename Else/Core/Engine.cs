@@ -20,7 +20,7 @@ namespace Else.Core
     public class Engine
     {
         /// <summary>
-        ///  lock for synchronization of ResultsList
+        ///  lock for synchronization of Results
         /// </summary>
         private static readonly object SyncLock = new object();
 
@@ -43,15 +43,15 @@ namespace Else.Core
         public Query Query = new Query();
 
         /// <summary>
-        /// The results list
+        /// Results of the last executed query
         /// </summary>
-        public BindingResultsList ResultsList = new BindingResultsList();
+        public BindingResultsList Results = new BindingResultsList();
 
         public Engine(ILogger logger, PluginManager pluginManager)
         {
             _logger = logger;
             _pluginManager = pluginManager;
-            BindingOperations.EnableCollectionSynchronization(ResultsList, SyncLock);
+            BindingOperations.EnableCollectionSynchronization(Results, SyncLock);
         }
 
         /// <summary>
@@ -89,9 +89,9 @@ namespace Else.Core
 
             // empty query, remove existing results
             if (Query.Empty) {
-                lock (ResultsList) {
-                    ResultsList.Clear();
-                    ResultsList.BindingRefresh();
+                lock (Results) {
+                    Results.Clear();
+                    Results.BindingRefresh();
                 }
                 return;
             }
@@ -114,14 +114,14 @@ namespace Else.Core
         }
 
         /// <summary>
-        /// Update ResultsList by querying plugins.
+        /// Update Results by querying plugins.
         /// </summary>
         /// <param name="query">The query.</param>
         private async Task ExecuteQuery(string query)
         {
-            // lock the resultslist and clear
-            lock (ResultsList) {
-                ResultsList.Clear();
+            // clear the result list
+            lock (Results) {
+                Results.Clear();
             }
 
             // determine which providers are able to respond to this query, and sort them into groups
@@ -149,7 +149,7 @@ namespace Else.Core
             _cancelTokenSource = new CancellationTokenSource();
 
             try {
-                // store results for this query temporarily before adding to ResultsList, in case the query is cancelled
+                // store results for this query temporarily before adding to Results, in case the query is cancelled
                 var queryResults = new List<Result>();
 
                 // if we have any exclusive providers, we ignore all other providers
@@ -168,15 +168,15 @@ namespace Else.Core
                     return;
                 }
                 // query successful, show the results
-                lock (ResultsList) {
-                    ResultsList.Clear();
-                    ResultsList.AddRange(queryResults);
+                lock (Results) {
+                    Results.Clear();
+                    Results.AddRange(queryResults);
                 }
                 _lastQuery = query;
 
-                // trigger refresh of UI that is bound to the ResultsList
-                lock (ResultsList) {
-                    ResultsList.BindingRefresh();
+                // trigger refresh of UI that is bound to the Results
+                lock (Results) {
+                    Results.BindingRefresh();
                 }
                 
             }

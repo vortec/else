@@ -26,7 +26,7 @@ namespace Else.ViewModels
         }
 
         public RelayCommand PreviewKeyDown { get; set; }
-        public BindingResultsList Items => _engine.ResultsList;
+        public BindingResultsList Items => _engine.Results;
 
         public int SelectedIndex
         {
