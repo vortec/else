@@ -20,6 +20,15 @@ namespace Else.Tests
         }
 
         [Test]
+        public void TestQueryWithKeyword()
+        {
+            var query = new Query("the_keyword");
+            Assert.AreEqual("the_keyword", query.Keyword);
+            Assert.IsFalse(query.HasArguments);
+            Assert.IsFalse(query.KeywordComplete);
+        }
+
+        [Test]
         public void TestQueryWithKeywordAndArguments()
         {
             var query = new Query("google search argument");
@@ -30,15 +39,6 @@ namespace Else.Tests
             Assert.IsFalse(query.Empty);
             Assert.IsTrue(query.HasArguments);
             Assert.IsFalse(query.IsPath);
-        }
-
-        [Test]
-        public void TestQueryWithKeyword()
-        {
-            var query = new Query("the_keyword");
-            Assert.AreEqual("the_keyword", query.Keyword);
-            Assert.IsFalse(query.HasArguments);
-            Assert.IsFalse(query.KeywordComplete);
         }
 
         [Test]
