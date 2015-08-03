@@ -50,10 +50,7 @@ namespace Else.Model
         }
         public string GUID {
             get {
-                if (Config.ContainsKey("GUID")) {
-                    return Config["GUID"];
-                }
-                return Path.GetFileNameWithoutExtension(FilePath);
+                return Config["GUID"];
             }
             set {
                 Config["GUID"] = value;
@@ -70,15 +67,6 @@ namespace Else.Model
             _themeFactory = themeFactory;
             _paths = paths;
             _logger = logger;
-        }
-
-        /// <summary>
-        /// Generates a new GUID for this theme, and also a new path based on that GUID.
-        /// </summary>
-        public void SetupNew()
-        {
-            GUID = Guid.NewGuid().ToString();
-            FilePath = _paths.GetUserPath($"themes/{GUID}.json");
         }
 
         /// <summary>
@@ -192,12 +180,13 @@ namespace Else.Model
         }
         
         /// <summary>
-        /// Returns a clone of this instance (with new GUID)
+        /// Returns a clone of this instance (with new GUID and file path)
         /// </summary>
         public Theme Duplicate()
         {
             var clone = Clone();
-            clone.SetupNew();
+            clone.GUID = Guid.NewGuid().ToString();
+            clone.FilePath = clone._paths.GetUserPath($"themes/{clone.GUID}.json");
             clone.Editable = true;
             clone.Save();
             return clone;
