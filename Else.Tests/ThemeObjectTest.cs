@@ -1,26 +1,44 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Versioning;
+using System.Windows.Media;
 using Else.Model;
 using Newtonsoft.Json;
 using NUnit.Framework;
-
 
 namespace Else.Tests
 {
     [TestFixture]
     internal class ThemeObjectTest
     {
+        private readonly Dictionary<string, string> _themeDict = new Dictionary<string, string>
+        {
+            {"Name", "Light"},
+            {"Author", "James Hutchby"},
+            {"WindowBorderColor", "#7F363636"},
+            {"WindowBackgroundColor", "White"},
+            {"QueryBoxBackgroundColor", "White"},
+            {"QueryBoxTextColor", "Black"},
+            {"ResultBackgroundColor", "White"},
+            {"ResultSelectedBackgroundColor", "#EEEDEF"},
+            {"ResultTitleColor", "Black"},
+            {"ResultSubTitleColor", "#777777"},
+            {"GUID", "Light"}
+        };
+
+        private readonly string[] _colorKeys =
+        {
+            "WindowBorderColor", "WindowBackgroundColor", "QueryBoxBackgroundColor", "QueryBoxTextColor",
+            "ResultBackgroundColor", "ResultSelectedBackgroundColor", "ResultTitleColor", "ResultSubTitleColor"
+        };
+
         private string _themePath;
-        private string _testThemePath;
+
         [SetUp]
         public void Setup()
         {
-            // copy predefined theme (json file), to a temporary file
-            var startupPath = Environment.CurrentDirectory;
-            _testThemePath = Path.Combine(startupPath, "Data\\test_theme.json");
+            // serialize _themeDict to json file _themePath
             _themePath = Path.GetTempFileName();
-            File.Copy(_testThemePath, _themePath, true);
+            File.WriteAllText(_themePath, JsonConvert.SerializeObject(_themeDict));
         }
 
         [TearDown]
@@ -31,30 +49,15 @@ namespace Else.Tests
         }
 
         [Test]
-        public void TestLoadTheme()
+        public void TestLoad()
         {
             var theme = new Theme();
             theme.LoadFromPath(_themePath);
-            Assert.That(theme.Name, Is.EqualTo("Light"));
-            Assert.That(theme.Author, Is.EqualTo("by James Hutchby"));
-            Assert.That(theme.Config["WindowBorderColor"], Is.EqualTo("#7F363636"));
-            Assert.That(theme.Config["WindowBackgroundColor"], Is.EqualTo("White"));
-            Assert.That(theme.Config["QueryBoxBackgroundColor"], Is.EqualTo("White"));
-            Assert.That(theme.Config["QueryBoxTextColor"], Is.EqualTo("Black"));
-            Assert.That(theme.Config["ResultBackgroundColor"], Is.EqualTo("White"));
-            Assert.That(theme.Config["ResultSelectedBackgroundColor"], Is.EqualTo("#EEEDEF"));
-            Assert.That(theme.Config["ResultTitleColor"], Is.EqualTo("Black"));
-            Assert.That(theme.Config["ResultSubTitleColor"], Is.EqualTo("#777777"));
-            Assert.That(theme.Config["GUID"], Is.EqualTo("Light"));
-        }
 
-        [Test]
-        public void TestLoadWithBadPath()
-        {
-            var theme = new Theme();
-            var randomPath = Path.Combine("c:\\", Path.GetRandomFileName());
-            Assert.Throws<FileNotFoundException>(() => theme.LoadFromPath(randomPath));
-
+            // Assert the loaded theme has expected values
+            foreach (var field in _themeDict) {
+                Assert.That(theme.Config[field.Key], Is.EqualTo(field.Value));
+            }
         }
 
         [Test]
@@ -62,9 +65,9 @@ namespace Else.Tests
         {
             // create new file
             var corruptThemePath = Path.GetTempFileName();
-            
+
             // load the test theme file, and write a corrupt version
-            var contents = File.ReadAllText(_testThemePath);
+            var contents = File.ReadAllText(_themePath);
             contents = contents.Replace("{", "!!!");
             File.WriteAllText(corruptThemePath, contents);
 
@@ -75,14 +78,79 @@ namespace Else.Tests
                 theme.LoadFromPath(corruptThemePath);
             }, Throws.Exception.TypeOf<JsonReaderException>());
         }
-        
-        // todo:
-        // test save
-        // test delete
-        // test resource dictionary
-        // test clone
-        // test duplicate
-        // test copy from
 
+        [Test]
+        public void TestLoadWithBadPath()
+        {
+            var theme = new Theme();
+            var randomPath = Path.Combine("c:\\", Path.GetRandomFileName());
+            Assert.Throws<FileNotFoundException>(() => theme.LoadFromPath(randomPath));
+        }
+
+        [Test]
+        public void TestDelete()
+        {
+            // copy test theme
+            var copyPath = Path.GetTempFileName();
+            File.Copy(_themePath, copyPath, true);
+
+            // load the copy
+            var theme = new Theme();
+            theme.LoadFromPath(copyPath);
+
+            // delete
+            theme.Delete();
+
+            // assert the file does not exist
+            Assert.That(File.Exists(copyPath), Is.False);
+        }
+
+        [Test]
+        public void TestResourceDictionary()
+        {
+            var theme = new Theme();
+            theme.LoadFromPath(_themePath);
+
+            var resourceDictionary = theme.ToResourceDictionary();
+            // test the resource dictionary for correctness by comparing each color
+            foreach (var colorKey in _colorKeys) {
+                var actualColor = ((SolidColorBrush) resourceDictionary[colorKey]).Color;
+                var expectedColor =
+                    ((SolidColorBrush) new BrushConverter().ConvertFromString(_themeDict[colorKey])).Color;
+                Assert.That(actualColor, Is.EqualTo(expectedColor));
+            }
+        }
+
+        [Test]
+        public void TestSave()
+        {
+            // load test theme
+            var theme = new Theme();
+            theme.LoadFromPath(_themePath);
+
+            // export to another path
+            var themeSavePath = Path.GetTempFileName();
+            theme.Save(themeSavePath);
+
+            // load the export
+            var exportedTheme = new Theme();
+            exportedTheme.LoadFromPath(themeSavePath);
+
+            // Assert the loaded theme has expected values
+            foreach (var field in _themeDict) {
+                Assert.That(theme.Config[field.Key], Is.EqualTo(field.Value));
+            }
+        }
+
+        //public void TestClone()
+        //{
+        //}
+
+        //public void TestDuplicate()
+        //{
+        //}
+        //public void TestCopyFrom()
+        //{
+        //}
     }
 }
