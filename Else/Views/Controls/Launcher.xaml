@@ -3,13 +3,18 @@
 	x:Name="LauncherControl"
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 	xmlns:controls="clr-namespace:Else.Views.Controls"
 	xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
 	xmlns:ei="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 	xmlns:behaviours="clr-namespace:Else.Behaviours"
+    xmlns:designerData="clr-namespace:Else.DesignerData"
+    mc:Ignorable="d"
 	Height="350" Width="555"
 	UseLayoutRounding="True"
 	DataContext="{Binding LauncherViewModel}"
+    d:DataContext="{d:DesignInstance designerData:MockLauncherViewModel, IsDesignTimeCreatable=True}"
 	Loaded="Launcher_OnLoaded"
 	Background="Transparent">
 
@@ -51,7 +56,6 @@
 									<Setter Property="ContentTemplate">
 										<Setter.Value>
 											<DataTemplate>
-
 												<Border
 													Background="{Binding RelativeSource={RelativeSource AncestorType={x:Type TextBox}},Path=Background}"
 													RenderOptions.ClearTypeHint="Enabled">

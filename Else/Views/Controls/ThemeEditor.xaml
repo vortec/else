@@ -5,7 +5,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls1="clr-namespace:Else.Views.Controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:else="clr-namespace:Else"
+             xmlns:designerData="clr-namespace:Else.DesignerData"
              DataContext="{Binding ThemeEditorViewModel}"
+             d:DataContext="{d:DesignInstance designerData:MockThemeEditorViewModel, IsDesignTimeCreatable=True}"
              mc:Ignorable="d"
              d:DesignHeight="480" d:DesignWidth="600">
     <i:Interaction.Triggers>
@@ -14,23 +17,24 @@
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <Grid>
-		<StackPanel VerticalAlignment="Center">
-			<controls1:Launcher x:Name="Launcher" VerticalAlignment="Top" />
-			<TextBlock x:Name="HoveredElementInfo" HorizontalAlignment="Center" Foreground="#EBEBEB" FontSize="18" Text=""
-			           Margin="15" />
-		</StackPanel>
-		<StackPanel Orientation="Horizontal"
-		            HorizontalAlignment="Right"
-		            VerticalAlignment="Bottom"
-		            Margin="20 10"
-		            Visibility="{Binding HasChanged, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
-			<StackPanel.Resources>
-				<Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-					<Setter Property="Margin" Value="10 0 0 0" />
-				</Style>
-			</StackPanel.Resources>
-			<Button Name="SaveButton" Content="Save" Command="{Binding SaveCommand}" />
-			<Button Name="RevertButton" Content="Revert" Command="{Binding RevertCommand}" />
-		</StackPanel>
-	</Grid>
+        <StackPanel VerticalAlignment="Center">
+            <controls1:Launcher x:Name="Launcher" VerticalAlignment="Top" />
+            <TextBlock x:Name="HoveredElementInfo" HorizontalAlignment="Center" Foreground="#EBEBEB" FontSize="18"
+                       Text=""
+                       Margin="15" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Margin="20 10"
+                    Visibility="{Binding HasChanged, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <StackPanel.Resources>
+                <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                    <Setter Property="Margin" Value="10 0 0 0" />
+                </Style>
+            </StackPanel.Resources>
+            <Button Name="SaveButton" Content="Save" Command="{Binding SaveCommand}" />
+            <Button Name="RevertButton" Content="Revert" Command="{Binding RevertCommand}" />
+        </StackPanel>
+    </Grid>
 </UserControl>

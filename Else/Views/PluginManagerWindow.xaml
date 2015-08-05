@@ -9,36 +9,39 @@
         WindowStartupLocation="CenterScreen"
         Title="Plugins" Width="600" Height="500">
     <Grid>
-            <!--<TextBlock HorizontalAlignment="Center" Margin="40" x:Name="NoPluginsMessage">No plugins loaded</TextBlock>-->
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <!--<TextBlock HorizontalAlignment="Center" Margin="40" x:Name="NoPluginsMessage">No plugins loaded</TextBlock>-->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
             <ItemsControl ItemsSource="{Binding Items}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <DockPanel Margin="20 30 20 5">
-                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Height="20" VerticalAlignment="Top" Margin="0 7">
-                                    <CheckBox  VerticalAlignment="Center" Margin="0 1 0 0" IsChecked="{Binding Enabled, Mode=TwoWay}" Content="Enabled" FontWeight="Bold" >
-                                    </CheckBox>
-                                    <TextBlock Margin="15 0 0 0" TextDecorations="Underline" VerticalAlignment="Center">
-                                        <Hyperlink>Remove</Hyperlink>
-                                    </TextBlock>
-                                </StackPanel>
-                                <StackPanel Margin="0 0 20 0">
-                                    <TextBlock FontSize="16" FontFamily="Segoe UI Semibold" Text="{Binding Name}"/>
-                                    <TextBlock TextWrapping="WrapWithOverflow" Foreground="#FF575757">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel Margin="20 30 20 5">
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Height="20"
+                                        VerticalAlignment="Top" Margin="0 7">
+                                <CheckBox VerticalAlignment="Center" Margin="0 1 0 0"
+                                          IsChecked="{Binding Enabled, Mode=TwoWay}" Content="Enabled"
+                                          FontWeight="Bold" />
+                                <TextBlock Margin="15 0 0 0" TextDecorations="Underline" VerticalAlignment="Center">
+                                    <Hyperlink>Remove</Hyperlink>
+                                </TextBlock>
+                            </StackPanel>
+                            <StackPanel Margin="0 0 20 0">
+                                <TextBlock FontSize="16" FontFamily="Segoe UI Semibold" Text="{Binding Name}" />
+                                <TextBlock TextWrapping="WrapWithOverflow" Foreground="#FF575757">
                                     <TextBlock.Text>
-                                        <MultiBinding StringFormat="This is the description for the {0} plugin, it's {1}">
-                                            <Binding Path="Name"></Binding>
+                                        <MultiBinding
+                                            StringFormat="This is the description for the {0} plugin, it's {1}">
+                                            <Binding Path="Name" />
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                </StackPanel>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-                    
-            </ScrollViewer>
+                            </StackPanel>
+                        </DockPanel>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </ScrollViewer>
     </Grid>
 
-    
+
 </Window>

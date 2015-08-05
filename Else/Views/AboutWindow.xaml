@@ -9,9 +9,7 @@
         Title="About Else" Height="210" Width="300">
     <Grid>
         <StackPanel Margin="15">
-            <StackPanel.Resources>
-            </StackPanel.Resources>
-
+            
             <StackPanel Orientation="Horizontal">
                 <Image Source="pack://application:,,,/Else;component/Resources/AppIcon256.png" Width="48" HorizontalAlignment="Left" VerticalAlignment="Center" />
                 <StackPanel Margin="20 0">

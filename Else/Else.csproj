@@ -197,6 +197,9 @@
     </ApplicationDefinition>
     <Compile Include="Behaviours\EventToCommandBehaviour.cs" />
     <Compile Include="Behaviours\FocusExtension.cs" />
+    <Compile Include="DesignerData\MockLauncherViewModel.cs" />
+    <Compile Include="DesignerData\MockResultsListViewModel.cs" />
+    <Compile Include="DesignerData\MockThemeEditorViewModel.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Converter\UriToImageConverter.cs" />
     <Compile Include="Core\PluginInfo.cs" />
@@ -217,10 +220,12 @@
     <Compile Include="ViewModels\Interfaces\IResultsListViewModel.cs" />
     <Compile Include="ViewModels\LauncherWindowViewModel.cs" />
     <Compile Include="ViewModels\PluginManagerViewModel.cs" />
+    <Compile Include="ViewModels\PluginViewModel.cs" />
     <Compile Include="ViewModels\ResultsListViewModel.cs" />
     <Compile Include="ViewModels\ThemeEditorLauncherViewModel.cs" />
     <Compile Include="ViewModels\ThemeEditorResultsListViewModel.cs" />
     <Compile Include="ViewModels\ThemesWindowViewModel.cs" />
+    <Compile Include="ViewModels\ThemeViewModel.cs" />
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>
@@ -231,7 +236,7 @@
       <DependentUpon>Launcher.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\LastItemInContainerConverter.cs" />
-    <Compile Include="DesignerData\Themes.cs" />
+    <Compile Include="DesignerData\MockThemesWindowViewModel.cs" />
     <Compile Include="Services\Interfaces\IColorPickerWindow.cs" />
     <Compile Include="Services\ColorPickerWindow.cs" />
     <Compile Include="Lib\RelayCommand.cs" />

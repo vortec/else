@@ -62,9 +62,6 @@ namespace Else
                     return;
                 }
 
-                // override default wpf themes
-                SetupWpfTheme();
-
                 // ensure data directories exist
                 var paths = scope.Resolve<Paths>();
                 try {
@@ -175,49 +172,6 @@ namespace Else
 
             // build container
             Container = builder.Build();
-        }
-
-        /// <summary>
-        /// Setup WPF base themes.
-        /// <remarks>
-        /// WPF fails to setup the default themes when a custom theme is used.
-        /// Also windows 8 wpf styles differ from styles used by the US (e.g. buttons)
-        /// </remarks>
-        /// </summary>
-        private void SetupWpfTheme()
-        {
-            var win8Version = new Version(6, 2, 9200, 0);
-            Resources.BeginInit();
-            // add specific styles per platform
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT && Environment.OSVersion.Version >= win8Version) {
-                // its win8 or higher.
-                var theme =
-                    LoadComponent(
-                        new Uri(
-                            @"PresentationFramework.Aero2;V4.0.0.0;31bf3856ad364e35;component\themes\aero2.normalcolor.xaml",
-                            UriKind.Relative)) as ResourceDictionary;
-                Resources.MergedDictionaries.Insert(0, theme);
-                var win8Styles =
-                    LoadComponent(new Uri(@"/Else;component/Resources/win8_styles_fix.xaml", UriKind.Relative)) as
-                        ResourceDictionary;
-                Resources.MergedDictionaries.Insert(1, win8Styles);
-            }
-            else {
-                // e.g. windows 7 or winxp
-                var theme =
-                    LoadComponent(
-                        new Uri(
-                            @"PresentationFramework.Aero;V3.0.0.0;31bf3856ad364e35;component\themes/Aero.NormalColor.xaml",
-                            UriKind.Relative)) as ResourceDictionary;
-                Resources.MergedDictionaries.Insert(0, theme);
-            }
-
-
-            var styles =
-                LoadComponent(new Uri(@"/Else;component/Resources/styles.xaml", UriKind.Relative)) as ResourceDictionary;
-            Resources.MergedDictionaries.Add(styles);
-
-            Resources.EndInit();
         }
 
         protected override void OnExit(ExitEventArgs e)

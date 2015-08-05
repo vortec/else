@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:designerData="clr-namespace:Else.DesignerData"
              mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance designerData:MockResultsListViewModel, IsDesignTimeCreatable=True}"
              DataContext="{Binding ResultsListViewModel}"
              d:DesignHeight="350" d:DesignWidth="555"
              Loaded="ResultsList_OnLoaded"
@@ -16,9 +17,7 @@
 		Loaded="ItemsControl_OnLoaded"
 		VirtualizingStackPanel.IsVirtualizing="True"
 		VirtualizingStackPanel.VirtualizationMode="Recycling"
-		ScrollViewer.CanContentScroll="True"
-		mc:Ignorable="d"
-		d:DataContext="{d:DesignInstance designerData:ResultsList, IsDesignTimeCreatable=True}">
+		ScrollViewer.CanContentScroll="True">
 		<ItemsControl.Style>
 			<Style TargetType="Control">
 				<Setter Property="Focusable" Value="False" />

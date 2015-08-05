@@ -3,12 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Else.Views"
         xmlns:designerData="clr-namespace:Else.DesignerData"
         xmlns:controls="clr-namespace:Else.Views.Controls"
-        xmlns:viewModels="clr-namespace:Else.ViewModels"
         WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance designerData:MockThemesWindowViewModel, IsDesignTimeCreatable=True}"
         Width="1000" Height="600"
         ResizeMode="NoResize"
         Title="Else Themes">
@@ -21,29 +20,9 @@
                         SelectionMode="Single"
                         DockPanel.Dock="Top"
                         BorderThickness="0"
-                        d:DataContext="{d:DesignInstance d:Type=designerData:Themes, IsDesignTimeCreatable=True}"
                         ItemsSource="{Binding Items}"
                         SelectedItem="{Binding SelectedItem}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-                        <ListView.Resources>
-                            <!--Style to ensure the selected item remains selected even when the control loses focus-->
-                            <!--<Style TargetType="ListViewItem">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="ListViewItem">
-                                            <Border Name="Border" Padding="2" SnapsToDevicePixels="true">
-                                                <ContentPresenter />
-                                            </Border>
-                                            <ControlTemplate.Triggers>
-                                                <Trigger Property="IsSelected" Value="true">
-                                                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
-                                                </Trigger>
-                                            </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>-->
-                        </ListView.Resources>
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="5 0 0 0">
@@ -79,8 +58,7 @@
                 </DockPanel>
             </Grid>
             <Grid DockPanel.Dock="Left" x:Name="DockLeft" Background="#336699">
-                <controls:ThemeEditor x:Name="ThemeEditor"
-                                      ActiveTheme="{Binding SelectedItem, ElementName=ThemeList, UpdateSourceTrigger=PropertyChanged}" />
+                <controls:ThemeEditor x:Name="ThemeEditor" />
             </Grid>
         </DockPanel>
     </Grid>
