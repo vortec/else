@@ -118,8 +118,6 @@ namespace Else
                     }
                     scope.Resolve<Updater>().BeginAutoUpdates();
                 }
-                var pluginWindow = scope.Resolve<PluginManagerWindow>();
-                pluginWindow.Show();
             }
             // trigger custom OnStartupComplete event, this is used by the theme editor.
             OnStartupComplete?.Invoke(this, EventArgs.Empty);
