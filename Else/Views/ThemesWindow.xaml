@@ -39,7 +39,9 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom"
                                 DockPanel.Dock="Bottom" Margin="10">
                         <StackPanel.Resources>
-                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" />
+                            <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+                                <Setter Property="Margin" Value="2 0"/>
+                            </Style>
                         </StackPanel.Resources>
                         <Button x:Name="DuplicateButton"
                                 Content="Duplicate"
