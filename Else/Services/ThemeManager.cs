@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -29,7 +30,7 @@ namespace Else.Services
         /// <summary>
         /// Loaded themes are stored here
         /// </summary>
-        public BindingList<Theme> Themes = new BindingList<Theme>();
+        public ObservableCollection<Theme> Themes = new ObservableCollection<Theme>();
 
         /// <summary>
         /// The currently active theme.
