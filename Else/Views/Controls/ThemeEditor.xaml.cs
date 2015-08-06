@@ -1,41 +1,17 @@
-﻿using System;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Else.Helpers;
-using Else.Model;
 using Else.ViewModels;
 
 namespace Else.Views.Controls
 {
-    
     /// <summary>
     /// This control extends the Launcher view with editing behaviour (choosing colors etc)
     /// </summary>
     partial class ThemeEditor
     {
         public ThemeEditorViewModel ViewModel;
-
-        public Theme ActiveTheme {
-            get {
-                return GetValue(ActiveThemeProperty) as Theme;
-            }
-            set{
-                SetValue(ActiveThemeProperty, value);
-            }
-        }
-        public static readonly DependencyProperty ActiveThemeProperty =
-            DependencyProperty.Register("ActiveTheme", typeof(Theme), typeof(ThemeEditor), new PropertyMetadata(ActiveThemeChanged));
-
-        private static void ActiveThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            //var obj = d as ThemeEditor;
-            //if (obj != null) {
-            //    var viewModel = obj.DataContext as ThemeEditorViewModel;
-            //    viewModel.SetTheme(e.NewValue as Theme);
-            //}
-        }
 
         public ThemeEditor()
         {
@@ -51,7 +27,7 @@ namespace Else.Views.Controls
 
         /// <summary>
         /// Because we use the same Launcher as the main app, we must augment its functionality to allow editing.
-        /// Adds click handlers to different components of the launcher, to allow editing. 
+        /// Adds click handlers to different components of the launcher, to allow editing.
         /// (e.g. will make QueryInput clickable to change text color)
         /// Modifies some elements to make them suit our purpose.
         /// </summary>
@@ -63,8 +39,10 @@ namespace Else.Views.Controls
             Launcher.QueryInput.HorizontalAlignment = HorizontalAlignment.Left;
 
             // setup interactive components of our wysiwyg style theme editor
-            SetMouseHandlersForElement("QueryBoxTextColor", "Query Box Text Color", UI.FindChildByTypeName(Launcher.QueryInput, "TextBoxView"));
-            SetMouseHandlersForElement("QueryBoxBackgroundColor", "Query Box Background Color", Launcher.QueryInputContainer);
+            SetMouseHandlersForElement("QueryBoxTextColor", "Query Box Text Color",
+                UI.FindChildByTypeName(Launcher.QueryInput, "TextBoxView"));
+            SetMouseHandlersForElement("QueryBoxBackgroundColor", "Query Box Background Color",
+                Launcher.QueryInputContainer);
             SetMouseHandlersForElement("WindowBorderColor", "Window Border Color", Launcher.WindowBorder);
             SetMouseHandlersForElement("WindowBackgroundColor", "Launcher Background Color", Launcher.Container);
 
@@ -80,7 +58,8 @@ namespace Else.Views.Controls
             foreach (var element in UI.FindVisualChildren<StackPanel>(Launcher.ResultsList, "ResultContainer")) {
                 // check if this element is selected, by checking if the subtitle 
                 if (element.Background.Equals(Application.Current.Resources["ResultSelectedBackgroundColor"])) {
-                    SetMouseHandlersForElement("ResultSelectedBackgroundColor", "Result Selected Background Color", element);
+                    SetMouseHandlersForElement("ResultSelectedBackgroundColor", "Result Selected Background Color",
+                        element);
                 }
                 else {
                     SetMouseHandlersForElement("ResultBackgroundColor", "Result Background Color", element);
@@ -97,7 +76,8 @@ namespace Else.Views.Controls
         }
 
         /// <summary>
-        /// Sets the mouse handlers for element. Mouse hover handler is added to change the helpful text, and click handler is added to open the color picker.
+        /// Sets the mouse handlers for element. Mouse hover handler is added to change the helpful text, and click handler is
+        /// added to open the color picker.
         /// When the color is saved, it updates the theme, and applies it.
         /// </summary>
         /// <param name="themeKey">The theme key (as per the json theme).</param>
@@ -109,8 +89,9 @@ namespace Else.Views.Controls
                 return;
             }
             // change the instruction text to hoverText
-            element.IsMouseDirectlyOverChanged += (sender, e) => {
-                if (ViewModel.Editable && (bool)e.NewValue) {
+            element.IsMouseDirectlyOverChanged += (sender, e) =>
+            {
+                if (ViewModel.Editable && (bool) e.NewValue) {
                     // mouse is now directly over this element, show the helpful text to the user so they know what they are hovering
                     HoveredElementInfo.Text = hoverText;
                     return;
@@ -119,9 +100,12 @@ namespace Else.Views.Controls
                 HoveredElementInfo.Text = "";
             };
             // handle onclick
-            element.PreviewMouseDown += (sender, e) => {
+            element.PreviewMouseDown += (sender, e) =>
+            {
                 // the rhs of the OR is a hack because TextBox elements have child element of TextBoxView (internal), its ugly, needs improvement
-                var isCorrectElement = e.OriginalSource.Equals(element) || (element.GetType() == typeof(TextBox) && e.OriginalSource.GetType().Name == "TextBoxView");
+                var isCorrectElement = e.OriginalSource.Equals(element) ||
+                                       (element.GetType() == typeof (TextBox) &&
+                                        e.OriginalSource.GetType().Name == "TextBoxView");
                 if (ViewModel.Editable && isCorrectElement) {
                     // mouse is now directly over this element, show the helpful text to the user so they know what they are hovering
                     ViewModel.ShowColorPicker(Window.GetWindow(this), hoverText, themeKey);

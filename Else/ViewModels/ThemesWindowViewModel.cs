@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Linq;
+﻿using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Else.Lib;
@@ -17,23 +16,22 @@ namespace Else.ViewModels
         /// The currently selected theme
         /// <remarks>ThemeList control binds to this</remarks>
         /// </summary>
-        private Theme _selectedItem;
+        private ThemeViewModel _selectedItem;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:ThemesTabViewModel"/> class.
+        /// Initializes a new instance of the <see cref="T:ThemesWindowViewModel" /> class.
         /// </summary>
         public ThemesWindowViewModel(ThemeEditorViewModel themeEditorViewModel, ThemeManager themeManager)
         {
             ThemeEditorViewModel = themeEditorViewModel;
-
             _themeManager = themeManager;
 
+            Items = new ViewModelCollectionWrapper<ThemeViewModel, Theme>(_themeManager.Themes);
 
             // select the current theme
             if (themeManager.ActiveTheme != null) {
-                SelectedItem = themeManager.ActiveTheme;
+                SelectedItem = Items.First(t => t.Model == themeManager.ActiveTheme);
             }
-
 
             // connect the commands to methods
             DuplicateCommand = new RelayCommand(param => Duplicate());
@@ -48,7 +46,7 @@ namespace Else.ViewModels
         /// <summary>
         /// Selected theme
         /// </summary>
-        public Theme SelectedItem
+        public ThemeViewModel SelectedItem
         {
             get { return _selectedItem; }
             set
@@ -56,7 +54,7 @@ namespace Else.ViewModels
                 if (value != null) {
                     SetProperty(ref _selectedItem, value);
                     // notify ThemeEditorViewModel
-                    ThemeEditorViewModel.SetTheme(_selectedItem);
+                    ThemeEditorViewModel.SetTheme(_selectedItem.Model);
                 }
             }
         }
@@ -65,15 +63,25 @@ namespace Else.ViewModels
         /// Provides access to the currently loaded themes from the ThemeManager
         /// <remarks>ThemeList control binds to this</remarks>
         /// </summary>
-        public BindingList<Theme> Items => _themeManager.Themes;
+        public ViewModelCollectionWrapper<ThemeViewModel, Theme> Items { get; set; }
 
-        // commands that are bound to xaml buttons
+        /// <summary>
+        /// Duplicate the currently selected theme.
+        /// </summary>
         public ICommand DuplicateCommand { get; set; }
+
+        /// <summary>
+        /// Export the currently selected theme.
+        /// </summary>
         public ICommand ExportCommand { get; set; }
+
+        /// <summary>
+        /// Delete the currently selected theme.
+        /// </summary>
         public ICommand DeleteCommand { get; set; }
 
         /// <summary>
-        /// Exports the selected theme to a .json file.
+        /// Show a save file dialog that will export the currently selected theme to a .json file.
         /// </summary>
         private void Export()
         {
@@ -86,6 +94,7 @@ namespace Else.ViewModels
 
             var result = dialog.ShowDialog();
 
+            // if 'save' button was pressed
             if (result == true) {
                 _themeManager.ActiveTheme.Save(dialog.FileName);
             }
@@ -96,10 +105,10 @@ namespace Else.ViewModels
         /// </summary>
         private void Duplicate()
         {
-            var clone = SelectedItem.Duplicate();
+            var clone = SelectedItem.Model.Duplicate();
             clone.Save();
             _themeManager.RegisterTheme(clone);
-            SelectedItem = clone;
+            SelectedItem = Items.First(model => model.Model == clone);
         }
 
         /// <summary>
@@ -111,10 +120,10 @@ namespace Else.ViewModels
             if (result == MessageBoxResult.Yes) {
                 var idx = Items.IndexOf(SelectedItem);
                 // delete the theme
-                SelectedItem.Delete();
+                SelectedItem.Model.Delete();
 
                 // unregister the theme
-                _themeManager.UnregisterTheme(SelectedItem);
+                _themeManager.UnregisterTheme(SelectedItem.Model);
 
                 // select another theme
                 if (Items.Any()) {

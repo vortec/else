@@ -1,72 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
+using Autofac.Extras.NLog;
 using Else.Services;
 using Newtonsoft.Json;
 
 namespace Else.Model
 {
-    public class Theme {
-        private readonly Autofac.Extras.NLog.ILogger _logger;
+    public class Theme
+    {
+        /// <summary>
+        /// Color paramaters we can take from the theme config and apply as brush overrides of our Styles.xaml
+        /// </summary>
+        private static readonly string[] ColorParams =
+        {
+            "WindowBorderColor",
+            "WindowBackgroundColor",
+            "QueryBoxBackgroundColor",
+            "QueryBoxTextColor",
+            "ResultBackgroundColor",
+            "ResultSelectedBackgroundColor",
+            "ResultTitleColor",
+            "ResultSubTitleColor",
+            "ResultSeparatorColor"
+        };
+
+        private readonly ILogger _logger;
         private readonly Func<Theme> _themeFactory;
         private readonly Paths _paths;
 
         /// <summary>
-        /// Failed to parse the theme JSON (either bad json, or missing required fields)
-        /// </summary>
-        public class ParseException : Exception {
-            public ParseException(string message) : base(message) {}
-        };
-
-        /// <summary>
-        /// Config for this theme (colors, fonts etc) is always stored in this dictionary.  We always work directly on this object when editing or reading theme config.
+        /// Config for this theme (colors, fonts etc) is always stored in this dictionary.  We always work directly on this
+        /// object
+        /// when editing or reading theme config.
         /// </summary>
         public Dictionary<string, string> Config = new Dictionary<string, string>();
+
         public string FilePath;
+
+        public Theme()
+        {
+        }
+
+        public Theme(Func<Theme> themeFactory, Paths paths, ILogger logger)
+        {
+            _themeFactory = themeFactory;
+            _paths = paths;
+            _logger = logger;
+        }
 
         /// <summary>
         /// Theme is editable and removable. (default themes are not editable)
         /// </summary>
         public bool Editable { get; set; } = true;
 
-        public string Name {
-            get {
-                return Config["Name"];
-            }
-            set {
-                Config["Name"] = value;
-            }
-        }
-        public string Author {
-            get {
-                return "by " + Config["Author"];
-            }
-            set {
-                Config["Author"] = value;
-            }
-        }
-        public string GUID {
-            get {
-                return Config["GUID"];
-            }
-            set {
-                Config["GUID"] = value;
-            }
+        public string Name
+        {
+            get { return Config["Name"]; }
+            set { Config["Name"] = value; }
         }
 
-        public Theme()
+        public string Author
         {
-            
+            get { return Config["Author"]; }
+            set { Config["Author"] = value; }
         }
 
-        public Theme(Func<Theme> themeFactory, Paths paths, Autofac.Extras.NLog.ILogger logger)
+        public string GUID
         {
-            _themeFactory = themeFactory;
-            _paths = paths;
-            _logger = logger;
+            get { return Config["GUID"]; }
+            set { Config["GUID"] = value; }
         }
 
         /// <summary>
@@ -76,15 +81,11 @@ namespace Else.Model
         /// <exception cref="FileNotFoundException">theme file not found</exception>
         public void LoadFromPath(string path)
         {
-            if (!File.Exists(path)) {
-                throw new FileNotFoundException("theme file not found", path);
-            }
             try {
                 dynamic result = JsonConvert.DeserializeObject(File.ReadAllText(path));
                 Dictionary<string, string> config = result.ToObject<Dictionary<string, string>>();
                 Load(config);
                 FilePath = path;
-                //_logger.Trace("Loaded theme: name={0} guid={1}", FilePath, GUID);
             }
             catch (ParseException) {
                 _logger.Warn("failed to parse theme file {0}", path);
@@ -118,7 +119,7 @@ namespace Else.Model
         /// Saves this theme to its FilePath.
         /// </summary>
         /// <param name="exportPath">Override destination path (e.g. when exporting).</param>
-        public void Save(string exportPath=null)
+        public void Save(string exportPath = null)
         {
             var json = JsonConvert.SerializeObject(Config, Formatting.Indented);
             var path = exportPath ?? FilePath;
@@ -134,21 +135,6 @@ namespace Else.Model
                 File.Delete(FilePath);
             }
         }
-
-        /// <summary>
-        /// Color paramaters we can take from the theme config and apply as brush overrides of our Styles.xaml
-        /// </summary>
-        private static readonly string[] ColorParams = {
-            "WindowBorderColor",
-            "WindowBackgroundColor",
-            "QueryBoxBackgroundColor",
-            "QueryBoxTextColor",
-            "ResultBackgroundColor",
-            "ResultSelectedBackgroundColor",
-            "ResultTitleColor",
-            "ResultSubTitleColor",
-            "ResultSeparatorColor"
-        };
 
         /// <summary>
         /// Produces a ResourceDictionary from this themes config.
@@ -178,7 +164,7 @@ namespace Else.Model
             clone.Editable = Editable;
             return clone;
         }
-        
+
         /// <summary>
         /// Returns a clone of this instance (with new GUID and file path)
         /// </summary>
@@ -202,5 +188,15 @@ namespace Else.Model
             Editable = theme.Editable;
             FilePath = theme.FilePath;
         }
+        
+        /// <summary>
+        /// Failed to parse the theme JSON (either bad json, or missing required fields)
+        /// </summary>
+        public class ParseException : Exception
+        {
+            public ParseException(string message) : base(message)
+            {
+            }
+        };
     }
 }
