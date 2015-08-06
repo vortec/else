@@ -27,8 +27,8 @@
     <!--Core styles now, these cannot be overridden by themes, but they reference elements above)-->
 
     <!-- Default Element Styles -->
-    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="Padding" Value="10 3" />
+    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}" x:Key="ButtonStyle">
+        <Setter Property="Padding" Value="6 3" />
         <Setter Property="FontSize" Value="14" />
     </Style>
 
