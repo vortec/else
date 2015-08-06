@@ -39,7 +39,7 @@ namespace Else.ViewModels
         /// </summary>
         public bool IsQueryInputFocused => true;
 
-        public RelayCommand QueryInputPreviewKeyDown { get; private set; }
+        public RelayCommand QueryInputPreviewKeyDown { get; set; }
         public RelayCommand RewriteQueryCommand { get; set; }
         public RelayCommand VisibilityChangedCommand { get; set; }
         public IResultsListViewModel ResultsListViewModel { get; set; }

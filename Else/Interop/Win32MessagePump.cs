@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using Else.Services;
+// ReSharper disable InconsistentNaming
 
 namespace Else.Interop
 {
@@ -44,7 +45,7 @@ namespace Else.Interop
             // WM_HOTKEY (we relay this to HotkeyManager)
             if (msg == WM_HOTKEY) {
                 // hotkey id, supplied upon registration
-                var id = (int) wParam;
+                //var id = (int) wParam;
 
                 // convert lParam to int, and split into high+low
                 var lpInt = (int) lParam;

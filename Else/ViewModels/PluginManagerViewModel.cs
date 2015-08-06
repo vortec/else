@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Threading;
 using Else.Core;
-using Else.Extensibility;
-using Else.Helpers;
 using Else.Lib;
-using Else.Model;
 
 namespace Else.ViewModels
 {

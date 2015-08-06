@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using Else.Helpers;
 
 namespace Else.Converter
 {
@@ -17,7 +17,7 @@ namespace Else.Converter
             // try to convert
             try {
                 if (value is string) {
-                    return Helpers.UI.LoadImageFromPath((string) value).Value;
+                    return UI.LoadImageFromPath((string) value).Value;
                 }
                 if (value is Lazy<BitmapSource> || value is BitmapSource) {
                     return value;

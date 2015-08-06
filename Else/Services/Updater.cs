@@ -10,7 +10,6 @@ using System.Windows;
 using Autofac.Extras.NLog;
 using Else.Helpers;
 using Else.Interop;
-using Else.Properties;
 using Squirrel;
 using Timer = System.Timers.Timer;
 
@@ -91,7 +90,6 @@ namespace Else.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="Updater"/> class and begins auto-update timer.
         /// </summary>
-        /// <param name="logger">The logger.</param>
         public Updater(ILogger logger, Settings settings)
         {
             _logger = logger;

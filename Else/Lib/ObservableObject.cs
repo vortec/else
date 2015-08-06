@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace Else.Lib
@@ -14,9 +13,7 @@ namespace Else.Lib
         protected void OnPropertyChanged([CallerMemberName] string propName = null)
         {
             var handler = PropertyChanged;
-            if (handler != null) {
-                handler(this, new PropertyChangedEventArgs(propName));
-            }
+            handler?.Invoke(this, new PropertyChangedEventArgs(propName));
         }
 
         /// <summary>

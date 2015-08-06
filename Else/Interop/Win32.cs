@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Interop;
@@ -16,7 +15,7 @@ namespace Else.Interop
     /// <summary>
     /// Win32 API calls
     /// </summary>
-    public class Win32 : Win32Signatures
+    public static class Win32
     {
         public delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
 
@@ -39,12 +38,12 @@ namespace Else.Interop
             // Get the window's handle
             var hwnd = new WindowInteropHelper(window).Handle;
             // Change the extended window style to not show a window icon
-            var extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_DLGMODALFRAME);
+            var extendedStyle = Win32Signatures.GetWindowLong(hwnd, GWL_EXSTYLE);
+            Win32Signatures.SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle | WS_EX_DLGMODALFRAME);
             // Update the window's non-client area to reflect the changes
-            SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOACTIVATE);
-            SendMessage(hwnd, WM_SETICON, new IntPtr(1), IntPtr.Zero);
-            SendMessage(hwnd, WM_SETICON, IntPtr.Zero, IntPtr.Zero);
+            Win32Signatures.SetWindowPos(hwnd, IntPtr.Zero, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOACTIVATE);
+            Win32Signatures.SendMessage(hwnd, WM_SETICON, new IntPtr(1), IntPtr.Zero);
+            Win32Signatures.SendMessage(hwnd, WM_SETICON, IntPtr.Zero, IntPtr.Zero);
         }
 
         /// <summary>
@@ -57,7 +56,7 @@ namespace Else.Interop
             var handles = new List<IntPtr>();
 
             foreach (ProcessThread thread in Process.GetProcessById(processId).Threads) {
-                EnumThreadWindows(thread.Id, (hWnd, lParam) =>
+                Win32Signatures.EnumThreadWindows(thread.Id, (hWnd, lParam) =>
                 {
                     handles.Add(hWnd);
                     return true;
@@ -91,13 +90,13 @@ namespace Else.Interop
                     foreach (var handle in handles) {
                         try {
                             // try and find the "Else Launcher" window (main window that we can send messages to)
-                            var length = GetWindowTextLength(handle);
+                            var length = Win32Signatures.GetWindowTextLength(handle);
                             var wtStr = new StringBuilder(length + 1);
-                            GetWindowText(handle, wtStr, wtStr.Capacity);
+                            Win32Signatures.GetWindowText(handle, wtStr, wtStr.Capacity);
                             if (wtStr.ToString() == LauncherWindow.WindowTitle) {
                                 // we have found the window that we can send messages to..
                                 // send WM_QUIT message
-                                SendMessage(handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
+                                Win32Signatures.SendMessage(handle, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
                                 // wait for the process to exit cleanly
                                 var exited = process.WaitForExit(500);
                                 // ugh, process didn't exit, we just kill it (bad because we will leave a tray icon)

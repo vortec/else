@@ -23,5 +23,15 @@ namespace Else.DesignerData
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean laoreet dolor id rutrum facilisis. Suspendisse lectus dui, bibendum non augue at, congue accumsan ante. Nam gravida, eros nec pharetra vestibulum."
             }
         };
+
+        public object ResultsListViewModel
+        {
+            get { throw new System.NotImplementedException(); }
+        }
+
+        public object SelectedIndex
+        {
+            get { throw new System.NotImplementedException(); }
+        }
     }
 }

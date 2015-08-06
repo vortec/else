@@ -11,14 +11,14 @@ namespace Else.Lib
     /// source: http://www.thesilvermethod.com/default.aspx?Id=VMCollectionWrapperSynchronizeaModelcollectionwithaViewModelcollection
     /// </summary>
     /// <typeparam name="T">The ViewModel type.  Must implment IViewModelModelProp"/></typeparam>
-    /// <typeparam name="U">The model type</typeparam>
-    public class ViewModelCollectionWrapper<T, U> : ObservableCollection<T> where T : IViewModelModelProp<U>, new()
+    /// <typeparam name="TU">The model type</typeparam>
+    public sealed class ViewModelCollectionWrapper<T, TU> : ObservableCollection<T> where T : IViewModelModelProp<TU>, new()
     {
-        private readonly IList<U> _collection;
-        private readonly Func<U, T> _vmFactory;
+        private readonly IList<TU> _collection;
+        private readonly Func<TU, T> _vmFactory;
         private bool _ignoreChanges;
 
-        public ViewModelCollectionWrapper(IList<U> modelCollection, Func<U, T> vmFactory = null)
+        public ViewModelCollectionWrapper(IList<TU> modelCollection, Func<TU, T> vmFactory = null)
         {
             _vmFactory = vmFactory;
             CollectionChanged += VMCollectionWrapper_CollectionChanged;
@@ -34,7 +34,7 @@ namespace Else.Lib
             _ignoreChanges = false;
         }
 
-        private T CreateVm(U model)
+        private T CreateVm(TU model)
         {
             if (_vmFactory != null) {
                 return _vmFactory(model);
@@ -60,7 +60,7 @@ namespace Else.Lib
             else {
                 var toRemove = new List<T>();
                 if (e.OldItems != null && e.OldItems.Count > 0) {
-                    foreach (U model in e.OldItems) {
+                    foreach (TU model in e.OldItems) {
                         foreach (var viewModel in this) {
                             if (viewModel.Model.Equals(model)) {
                                 toRemove.Add(viewModel);
@@ -73,7 +73,7 @@ namespace Else.Lib
                 }
 
                 if (e.NewItems != null && e.NewItems.Count > 0) {
-                    foreach (U model in e.NewItems) {
+                    foreach (TU model in e.NewItems) {
                         Add(CreateVm(model));
                     }
                 }
@@ -101,7 +101,7 @@ namespace Else.Lib
             }
             else {
                 // Remove items from the models collection
-                var toRemove = new List<U>();
+                var toRemove = new List<TU>();
 
                 if (null != e.OldItems && e.OldItems.Count > 0)
                     foreach (T viewModel in e.OldItems) {

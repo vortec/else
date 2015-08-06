@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using Else.DataTypes;
 using Else.Extensibility;
-using Else.Helpers;
 using Else.Lib;
 using Else.ViewModels.Interfaces;
 

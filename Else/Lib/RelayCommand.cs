@@ -6,7 +6,7 @@ namespace Else.Lib
 {
     /// <summary>
     /// Provides ICommand that supports delegates
-    /// Taken from: <see cref="https://msdn.microsoft.com/en-us/magazine/dd419663.aspx#id0090030"/>
+    /// Taken from: <see cref="http://msdn.microsoft.com/en-us/magazine/dd419663.aspx#id0090030"/>
     /// </summary>
     public class RelayCommand : ICommand
     {

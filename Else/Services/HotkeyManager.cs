@@ -53,7 +53,7 @@ namespace Else.Services
         public bool Register(KeyCombo keyCombo, int id, Action action)
         {
             int vk = KeyInterop.VirtualKeyFromKey(keyCombo.Item2);
-            if (Win32.RegisterHotKey( _hwndSource.Handle, id, (int)keyCombo.Item1, vk)) {
+            if (Win32Signatures.RegisterHotKey( _hwndSource.Handle, id, (int)keyCombo.Item1, vk)) {
                 _callbacks[keyCombo] = action;
                 return true;
             }

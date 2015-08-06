@@ -1,14 +1,10 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Lifetime;
-using Autofac.Extras.NLog;
 using Else.Extensibility;
 using Else.Services;
 
@@ -19,14 +15,12 @@ namespace Else.Core
     /// </summary>
     public class AssemblyPluginLoader : PluginLoader
     {
-        private readonly ILogger _logger;
         private readonly Paths _paths;
         private readonly ConcurrentDictionary<Plugin, AppDomain> _pluginDomains = new ConcurrentDictionary<Plugin, AppDomain>();
         private readonly ClientSponsor _sponsor = new ClientSponsor();
 
-        public AssemblyPluginLoader(ILogger logger, Paths paths)
+        public AssemblyPluginLoader(Paths paths)
         {
-            _logger = logger;
             _paths = paths;
         }
 
@@ -74,17 +68,6 @@ namespace Else.Core
         {
             public Plugin LoadPluginFromAssembly(string appPath, string assemblyPath)
             {
-                // custom assembly resolver
-                //var assemblyResolver = new PathBasedAssemblyResolver
-                //{
-                //    Paths = new List<string>
-                //    {
-                //        Path.GetDirectoryName(assemblyPath) + "\\",
-                //        appPath
-                //    }
-                //};
-                //AppDomain.CurrentDomain.AssemblyResolve += assemblyResolver.Resolve;
-                
                 // load the assembly
                 var assembly = Assembly.LoadFrom(assemblyPath);
 
@@ -102,26 +85,4 @@ namespace Else.Core
             }
         }
     }
-
-    //internal class PathBasedAssemblyResolver : MarshalByRefObject
-    //{
-    //    public List<string> Paths = new List<string>();
-
-    //    public Assembly Resolve(object sender, ResolveEventArgs args)
-    //    {
-    //        var name = new AssemblyName(args.Name);
-    //        foreach (var path in Paths) {
-    //            var dllPath = Path.Combine(path, string.Format("{0}.dll", name.Name));
-    //            if (File.Exists(dllPath)) {
-    //                return Assembly.LoadFrom(dllPath);
-    //            }
-    //            var exePath = Path.ChangeExtension(dllPath, "exe");
-    //            if (File.Exists(exePath)) {
-    //                return Assembly.LoadFrom(exePath);
-    //            }
-    //        }
-    //        // not found
-    //        return null;
-    //    }
-    //}
 }

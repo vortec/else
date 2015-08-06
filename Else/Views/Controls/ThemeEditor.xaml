@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:controls1="clr-namespace:Else.Views.Controls"
              xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:else="clr-namespace:Else"
              xmlns:designerData="clr-namespace:Else.DesignerData"
              DataContext="{Binding ThemeEditorViewModel}"
              d:DataContext="{d:DesignInstance designerData:MockThemeEditorViewModel, IsDesignTimeCreatable=True}"

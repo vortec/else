@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlTypes;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.IO;
@@ -45,7 +44,7 @@ namespace Else.Services
 
             // ensure we have AppDataDirectory
             if (!Directory.Exists(AppDataDirectory)) {
-                throw new FileNotFoundException(string.Format("Failed to find App Data directory (expected: {0})", AppDataDirectory));
+                throw new FileNotFoundException($"Failed to find App Data directory (expected: {AppDataDirectory})");
             }
 
             // create default user directories

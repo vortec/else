@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 using Else.Helpers;
-using Else.ViewModels;
 using Else.ViewModels.Interfaces;
 
 namespace Else.Views.Controls

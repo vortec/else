@@ -1,5 +1,6 @@
 ﻿using System;
 using Else.Extensibility;
+// ReSharper disable InconsistentNaming
 
 namespace Else.Core
 {

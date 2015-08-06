@@ -68,10 +68,10 @@ namespace Else.Model
             set { Config["Author"] = value; }
         }
 
-        public string GUID
+        public string Guid
         {
-            get { return Config["GUID"]; }
-            set { Config["GUID"] = value; }
+            get { return Config["Guid"]; }
+            set { Config["Guid"] = value; }
         }
 
         /// <summary>
@@ -171,8 +171,8 @@ namespace Else.Model
         public Theme Duplicate()
         {
             var clone = Clone();
-            clone.GUID = Guid.NewGuid().ToString();
-            clone.FilePath = clone._paths.GetUserPath($"themes/{clone.GUID}.json");
+            clone.Guid = System.Guid.NewGuid().ToString();
+            clone.FilePath = clone._paths.GetUserPath($"themes/{clone.Guid}.json");
             clone.Editable = true;
             clone.Save();
             return clone;

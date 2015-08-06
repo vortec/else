@@ -1,5 +1,4 @@
 ﻿using Else.Lib;
-using Else.Properties;
 using Else.Services;
 
 namespace Else.ViewModels

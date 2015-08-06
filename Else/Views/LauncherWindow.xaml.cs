@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
-using Else.Properties;
 using Else.Services;
 using Else.ViewModels;
 
@@ -18,7 +17,6 @@ namespace Else.Views
         /// <summary>
         /// Initializes a new instance of the <see cref="LauncherWindow"/> class.
         /// </summary>
-        /// <param name="viewModel"></param>
         public LauncherWindow(LauncherWindowViewModel viewModel, SplashScreenWindow splashScreenWindow, Settings settings)
         {
             InitializeComponent();
@@ -43,15 +41,17 @@ namespace Else.Views
                     Show();
                     Activate();
                     // begin animation
-                    var da = new DoubleAnimation(0.0, 1.0, new Duration(TimeSpan.FromMilliseconds(400)));
-                    da.FillBehavior = FillBehavior.HoldEnd;
+                    var da = new DoubleAnimation(0.0, 1.0, new Duration(TimeSpan.FromMilliseconds(400)))
+                    {
+                        FillBehavior = FillBehavior.HoldEnd,
+                        EasingFunction = new CubicEase
+                        {
+                            EasingMode = EasingMode.EaseOut,
+                        }
+                    };
                     //da.EasingFunction = new BackEase{
                     //    EasingMode = EasingMode.EaseOut,
                     //};
-                    da.EasingFunction = new CubicEase
-                    {
-                        EasingMode = EasingMode.EaseOut,
-                    };
                     // todo: this animation is still buggy when opening and closing the window fast (i tried cancelling the animation, but it doesn't work).
                     BeginAnimation(OpacityProperty, da);
                 }
@@ -81,14 +81,14 @@ namespace Else.Views
             }
         }
 
-        /// <summary>
-        /// Hide the launcher when the window loses focus (e.g. clicks on another window)
-        /// </summary>
-        private void OnDeactivated(object sender, EventArgs e)
-        {
-            if (_settings.User.AutoHideLauncher) {
-                HideWindow();
-            }
-        }
+        ///// <summary>
+        ///// Hide the launcher when the window loses focus (e.g. clicks on another window)
+        ///// </summary>
+        //private void OnDeactivated(object sender, EventArgs e)
+        //{
+        //    if (_settings.User.AutoHideLauncher) {
+        //        HideWindow();
+        //    }
+        //}
     }
 }

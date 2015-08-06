@@ -8,7 +8,7 @@ namespace Else.Views
     /// <summary>
     /// Interaction logic for SplashScreenWindow.xaml
     /// </summary>
-    public partial class SplashScreenWindow : Window
+    public partial class SplashScreenWindow
     {
         //private double opacity = 0;
         public SplashScreenWindow()
@@ -21,11 +21,13 @@ namespace Else.Views
             Opacity = 0;
             Show();
             Activate();
-            var da = new DoubleAnimation(0.0, 1.0, new Duration(TimeSpan.FromMilliseconds(500)));
-            da.FillBehavior = FillBehavior.HoldEnd;
-            da.EasingFunction = new CubicEase
+            var da = new DoubleAnimation(0.0, 1.0, new Duration(TimeSpan.FromMilliseconds(500)))
             {
-                EasingMode = EasingMode.EaseOut
+                FillBehavior = FillBehavior.HoldEnd,
+                EasingFunction = new CubicEase
+                {
+                    EasingMode = EasingMode.EaseOut
+                }
             };
             // todo: this animation is still buggy when opening and closing the window fast (i tried cancelling the animation, but it doesn't work).
             BeginAnimation(OpacityProperty, da);

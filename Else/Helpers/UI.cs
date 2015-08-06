@@ -8,6 +8,7 @@ using Else.Extensibility;
 
 namespace Else.Helpers
 {
+    // ReSharper disable once InconsistentNaming
     public static class UI
     {
         public static bool IsWindowOpen<T>(string name = "") where T : Window

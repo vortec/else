@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using Autofac.Extras.NLog;
 using Else.Model;
-using Else.Properties;
 
 namespace Else.Services
 {
@@ -77,12 +74,17 @@ namespace Else.Services
         /// <exception cref="ThemeGuidAlreadyExists">The theme name is already registered</exception>
         public void RegisterTheme(Theme theme)
         {
-            // check if GUID is already registered
-            if (Themes.Any(t => t.GUID == theme.GUID)) {
-                // todo: instead of crash, maybe we should just skip the theme
-                throw new ThemeGuidAlreadyExists(theme.GUID);
+            try {
+                // check if Guid is already registered
+                if (Themes.Any(t => t.Guid == theme.Guid)) {
+                    // todo: instead of crash, maybe we should just skip the theme
+                    throw new ThemeGuidAlreadyExists(theme.Guid);
+                }
+                Themes.Add(theme);
             }
-            Themes.Add(theme);
+            catch {
+                // ignored
+            }
         }
 
         /// <summary>
@@ -128,10 +130,10 @@ namespace Else.Services
         /// </summary>
         public void ApplyTheme(string guid)
         {
-            var theme = Themes.First(t => t.GUID == guid);
+            var theme = Themes.First(t => t.Guid == guid);
             ApplyTheme(theme);
             SaveSettings();
-            _logger.Debug("Applied Theme (GUID={0} Name={1})", theme.GUID, theme.Name);
+            _logger.Debug("Applied Theme (GUID={0} Name={1})", theme.Guid, theme.Name);
         }
 
         /// <summary>
@@ -157,7 +159,7 @@ namespace Else.Services
         public void SaveSettings()
         {
             if (ActiveTheme != null) {
-                _settings.User.Theme = ActiveTheme.GUID;
+                _settings.User.Theme = ActiveTheme.Guid;
                 _settings.Save();
             }
         }

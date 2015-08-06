@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using Else.Lib;
+﻿using Else.Lib;
 using Else.Model;
 
 namespace Else.ViewModels
@@ -14,9 +13,8 @@ namespace Else.ViewModels
             set { Model.Author = value; }
         }
 
-        public string GUID => Model.GUID;
+        public string Guid => Model.Guid;
         public bool Editable => Model.Editable;
         public Theme Model { get; set; }
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }

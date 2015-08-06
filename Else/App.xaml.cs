@@ -52,7 +52,7 @@ namespace Else
                 AppDomain.CurrentDomain.ProcessExit += (o, args) =>
                 {
                     _trayIcon?.Dispose();
-                    updater?.Dispose();
+                    updater.Dispose();
                 };
 
                 // quit the app if we could not create the mutex, another instance is already running

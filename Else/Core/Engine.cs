@@ -4,12 +4,11 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
 using Autofac.Extras.NLog;
 using Else.DataTypes;
 using Else.Extensibility;
-using Else.Helpers;
+
 #pragma warning disable 4014 // disable warning about no await on BeginQuery() calls (we don't care about the result)
 
 namespace Else.Core

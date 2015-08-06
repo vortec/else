@@ -14,19 +14,14 @@ namespace Else.Lib
 {
     public class TrayIcon : IDisposable
     {
-        private readonly Func<AboutWindow> _aboutWindowFactory;
         private readonly LauncherWindow _launcherWindow;
         private readonly ILifetimeScope _scope;
         private readonly SplashScreenWindow _splashScreenWindow;
-        private readonly Func<ThemesWindow> _themesWindowFactory;
         private NotifyIcon _trayIcon;
 
-        public TrayIcon(LauncherWindow launcherWindow, Func<ThemesWindow> themesWindowFactory,
-            Func<AboutWindow> aboutWindowFactory, ILifetimeScope scope, SplashScreenWindow splashScreenWindow)
+        public TrayIcon(LauncherWindow launcherWindow, ILifetimeScope scope, SplashScreenWindow splashScreenWindow)
         {
             _launcherWindow = launcherWindow;
-            _themesWindowFactory = themesWindowFactory;
-            _aboutWindowFactory = aboutWindowFactory;
             _scope = scope;
             _splashScreenWindow = splashScreenWindow;
         }
